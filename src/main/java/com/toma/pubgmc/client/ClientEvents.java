@@ -361,7 +361,7 @@ public class ClientEvents
     {
     	EntityPlayerSP sp = Minecraft.getMinecraft().player;
     	/** DEBUGGER **/
-    	if(KeyBinds.TRANSLATEXPLUS.isPressed())
+    	/*if(KeyBinds.TRANSLATEXPLUS.isPressed())
     	{
     		if(sp.isSneaking())
     		{
@@ -461,7 +461,7 @@ public class ClientEvents
     		}
     		
     		else ModelDebugger.scale -= 0.1f;
-    	}
+    	}*/
     	
     	/** NORMAL MODE ========================================================================== **/
     	
