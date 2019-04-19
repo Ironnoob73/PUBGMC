@@ -663,7 +663,7 @@ public class CommonEvents
 			case OUTDATED: {
 				sendMessage(player, "You are using old version! Get a new one.", TextFormatting.YELLOW);
 				TextComponentString comp = new TextComponentString(TextFormatting.YELLOW + "New version is available! You can get it " + TextFormatting.ITALIC +"HERE");
-				comp.setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://minecraft.curseforge.com/projects/pubgmc-mod/files")));
+				comp.setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/Toma1O6/PUBGMC/releases")));
 				player.sendMessage(comp);
 				break;
 			}

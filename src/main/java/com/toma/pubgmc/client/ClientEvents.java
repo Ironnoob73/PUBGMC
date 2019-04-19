@@ -293,7 +293,7 @@ public class ClientEvents
     		if(stack.getItem() instanceof GunBase)
     		{
         		GunBase gun = (GunBase) stack.getItem();
-        		if(data.isAiming() && mc.gameSettings.thirdPersonView == 0)
+        		if(sp.isSneaking() && mc.gameSettings.thirdPersonView == 0)
         		{
         			if(stack.getItem() == PMCRegistry.PMCItems.VSS)
         			{
@@ -307,7 +307,7 @@ public class ClientEvents
         				int left = halfX - 8;
         				int top = halfY - 8;
         				
-        				if(stack.getTagCompound().getInteger("scope") == 1 && aimingTicks >= AIM_TIME)
+        				/*if(stack.getTagCompound().getInteger("scope") == 1 && aimingTicks >= AIM_TIME)
         				{
             				ImageUtil.drawCustomSizedImage(mc, SCOPES.get(getScopeTypeID(data.getScopeType(), data.getScopeColor())), left, top, 17, 17, true);
         					
@@ -316,9 +316,9 @@ public class ClientEvents
         				else if(stack.getTagCompound().getInteger("scope") == 2 && aimingTicks >= AIM_TIME)
         				{
         					ImageUtil.drawCustomSizedImage(mc, HOLOS.get(getHoloID(data.getScopeColor())), left, top, 17, 17, true);
-        				}
+        				}*/
         				
-        				else if(stack.getTagCompound().getInteger("scope") == 3)
+        				if(stack.getTagCompound().getInteger("scope") == 3)
             			{
             				ImageUtil.drawFullScreenImage(mc, res, Scope2X, true);
             			}
@@ -847,7 +847,7 @@ public class ClientEvents
 			}
 			
         	//Zoom level based on weapon type; in future this will be based on item NBT - The scope you have attached
-	        if(data.isAiming())
+	        if(player.isSneaking())
 	        {	
 	        	if(item instanceof GunBase)
 	        	{
