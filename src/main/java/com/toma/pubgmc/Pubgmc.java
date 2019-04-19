@@ -55,11 +55,11 @@ public class Pubgmc
 	/** Some basic stuff **/
 	public static final String MOD_ID = "pubgmc";
 	public static final String NAME = "PUBGMC [VR Compat]";
-	public static final String VERSION = "1.5.1.1";
+	public static final String VERSION = "1.5.1.2";
 	public static final String ACCEPTED_VERSIONS = "[1.12.2]";
 	public static final String CLIENT_PROXY_CLASS = "com.toma.pubgmc.proxy.ClientProxy";
 	public static final String SERVER_PROXY_CLASS = "com.toma.pubgmc.proxy.ServerProxy";
-	public static final String UPDATEURL = "https://raw.githubusercontent.com/Toma1O6/PUBGMC/master/update.json";
+	public static final String UPDATEURL = "https://raw.githubusercontent.com/Toma1O6/PUBGMC/VR-Compat/update.json";
 	
 	/** Creative Tabs **/
 	public static final CreativeTabs pmcitemstab = new PMCItemsTab("pmcitemstab");

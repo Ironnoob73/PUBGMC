@@ -40,6 +40,11 @@ public class ConfigPMC
 		@Comment("Set bullet starting rotation offset from default player rotation")
 		@RangeDouble(min = -180D, max = 180D)
 		public float bulletOffset = 55F;
+		
+		@Name("Weapon yaw rotation")
+		@Comment("Rotate default weapon position so it fits your wrist")
+		@RangeDouble(min = -1.5, max = 1.5)
+		public float weaponYawRotation = -0.8f;
 	}
 	
 	public static class WorldSettings

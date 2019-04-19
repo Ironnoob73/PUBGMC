@@ -9,6 +9,7 @@ import javax.vecmath.Vector3f;
 
 import org.apache.commons.lang3.tuple.Pair;
 
+import com.toma.pubgmc.ConfigPMC;
 import com.toma.pubgmc.animation.Animation;
 import com.toma.pubgmc.client.renderer.WeaponTEISR;
 import com.toma.pubgmc.client.util.ModelDebugger;
@@ -73,7 +74,6 @@ public class BakedModelGun implements IBakedModel
 		return false;
 	}
 	
-	// TODO: make weapon animations here to prevent gui movement
 	@Override
 	public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType)
 	{
@@ -119,15 +119,17 @@ public class BakedModelGun implements IBakedModel
 			{
 				this.process();
 				
-				leftRot = this.getLeftRotation();
-				rightRot = this.getRightRotation();
+				leftRot = new Quat4f(1f, 0f, ConfigPMC.vrSettings.weaponYawRotation, 0f);
+				rightRot = new Quat4f(1f, 0f, 0f, 0f);
 				transl = this.getTranslation();
 				trsrt = new TRSRTransformation(transl, leftRot, scale, rightRot);
+				break;
 			}
 			
 			// Third person animations, sometime later propably
 			case THIRD_PERSON_RIGHT_HAND: {
 				trsrt = new TRSRTransformation(transl, leftRot, scale, rightRot);
+				break;
 			}
 			
 			default: break;
