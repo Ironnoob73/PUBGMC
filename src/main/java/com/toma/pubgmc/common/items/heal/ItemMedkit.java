@@ -8,7 +8,6 @@ import com.toma.pubgmc.init.PMCRegistry;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumAction;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 public class ItemMedkit extends ItemHealing
@@ -49,13 +48,13 @@ public class ItemMedkit extends ItemHealing
 	}
 	
 	@Override
-	public List<ItemStack> getCraftingRecipe(Item item)
+	public List<ItemStack> getCraftingRecipe()
 	{
 		List<ItemStack> recipe = new ArrayList<ItemStack>();
 		recipe.add(new ItemStack(PMCRegistry.PMCItems.FIRSTAIDKIT));
 		recipe.add(new ItemStack(PMCRegistry.PMCItems.BANDAGE, 2));
 		recipe.add(new ItemStack(Items.PAPER, 3));
-		recipe.add(new ItemStack(Items.GOLDEN_CARROT, 2));
+		recipe.add(new ItemStack(Items.GOLDEN_CARROT));
 		return recipe;
 	}
 }
