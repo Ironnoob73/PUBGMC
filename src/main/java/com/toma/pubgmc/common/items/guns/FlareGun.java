@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.toma.pubgmc.ConfigPMC;
 import com.toma.pubgmc.client.models.ModelGun;
 import com.toma.pubgmc.client.renderer.WeaponTEISR;
 import com.toma.pubgmc.common.capability.IPlayerData;
@@ -11,8 +12,10 @@ import com.toma.pubgmc.common.capability.IPlayerData.PlayerDataProvider;
 import com.toma.pubgmc.common.entity.EntityFlare;
 import com.toma.pubgmc.init.PMCRegistry;
 import com.toma.pubgmc.init.PMCSounds;
+import com.toma.pubgmc.init.PMCRegistry.PMCItems;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -74,5 +77,24 @@ public class FlareGun extends GunBase
 	public SoundEvent getWeaponReloadSound()
 	{
 		return PMCSounds.reload_flaregun;
+	}
+	
+	@Override
+	public List<ItemStack> getCraftingRecipe()
+	{
+		List<ItemStack> r = new ArrayList<>();
+		if(ConfigPMC.vrSettings.expensiveRecipeForFlare)
+		{
+			r.add(new ItemStack(Blocks.BEACON));
+			return r;
+		}
+		
+		else
+		{
+			r.add(new ItemStack(Items.IRON_INGOT, 15));
+			r.add(new ItemStack(PMCItems.STEEL_INGOT, 20));
+			r.add(new ItemStack(Items.DYE, 10, 1));
+			return r;
+		}
 	}
 }

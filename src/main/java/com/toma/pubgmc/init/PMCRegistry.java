@@ -872,14 +872,7 @@ public class PMCRegistry
 		{
 			GunBase gun = e.getGun();
 			
-			if(gun == PMCItems.FLARE_GUN)
-			{
-				e.addCraftingIngredient(new ItemStack(Items.IRON_INGOT, 15));
-				e.addCraftingIngredient(new ItemStack(PMCItems.STEEL_INGOT, 20));
-				e.addCraftingIngredient(new ItemStack(Items.DYE, 10, 1));
-			}
-			
-			else if(gun == PMCItems.P92)
+			if(gun == PMCItems.P92)
 			{
 				e.addCraftingIngredient(new ItemStack(PMCItems.STEEL_INGOT, 10));
 				e.addCraftingIngredient(new ItemStack(Items.IRON_INGOT, 15));

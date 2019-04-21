@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.toma.pubgmc.ConfigPMC;
 import com.toma.pubgmc.Pubgmc;
 import com.toma.pubgmc.common.items.guns.AmmoType;
 import com.toma.pubgmc.common.tileentity.TileEntityGunWorkbench;
@@ -25,7 +26,7 @@ public class ItemAmmo extends PMCItem implements ICraftable
 	public ItemAmmo(String name, AmmoType type)
 	{
 		super(name);
-		this.setMaxStackSize(30);
+		this.setMaxStackSize(ConfigPMC.vrSettings.ammoStackLimit);
 		this.type = type;
 		setCreativeTab(Pubgmc.pmcitemstab);
 		

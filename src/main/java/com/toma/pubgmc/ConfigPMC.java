@@ -5,6 +5,8 @@ import net.minecraftforge.common.config.Config.Comment;
 import net.minecraftforge.common.config.Config.Name;
 import net.minecraftforge.common.config.Config.RangeDouble;
 import net.minecraftforge.common.config.Config.RangeInt;
+import net.minecraftforge.common.config.Config.RequiresMcRestart;
+import net.minecraftforge.common.config.Config.RequiresWorldRestart;
 import net.minecraftforge.common.config.Config.Type;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
@@ -48,6 +50,16 @@ public class ConfigPMC
 		
 		@Name("Vehicle passenger Y offset")
 		public double vehiclePassengerOffset = 0.75;
+		
+		@Name("Enable expensive recipe for flare gun")
+		@RequiresWorldRestart
+		public boolean expensiveRecipeForFlare = true;
+		
+		@Name("Stack size for ammo")
+		@Comment("Requires MC restart!")
+		@RangeInt(min = 1, max = 64)
+		@RequiresMcRestart
+		public int ammoStackLimit = 30;
 	}
 	
 	public static class WorldSettings
