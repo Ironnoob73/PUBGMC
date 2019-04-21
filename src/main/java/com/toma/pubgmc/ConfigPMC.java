@@ -60,6 +60,10 @@ public class ConfigPMC
 		@RangeInt(min = 1, max = 64)
 		@RequiresMcRestart
 		public int ammoStackLimit = 30;
+		
+		@Name("Simple vehicle turning")
+		@RequiresWorldRestart
+		public boolean simpleVehicleTurning = true;
 	}
 	
 	public static class WorldSettings

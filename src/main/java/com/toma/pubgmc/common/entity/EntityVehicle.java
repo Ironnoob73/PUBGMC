@@ -7,6 +7,7 @@ import javax.annotation.Nullable;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.toma.pubgmc.ConfigPMC;
 import com.toma.pubgmc.Pubgmc;
 import com.toma.pubgmc.common.network.PacketHandler;
 import com.toma.pubgmc.common.network.sp.PacketVehicleData;
@@ -110,30 +111,30 @@ public abstract class EntityVehicle extends Entity implements IEntityAdditionalS
 	
 	@Override
 	public void onUpdate()
-	{
-		if(!this.isBeingRidden() && (!noAccerationInput() || !noTurningInput() || !hasFuel()))
-		{
-			inputForward = false;
-			inputBack = false;
-			inputRight = false;
-			inputLeft = false;
-		}
-		
-		updateMotion();
-		handleEntityCollisions();
-		checkState();
-		
-		if(collidedHorizontally)
-		{
-			currentSpeed *= 0.6;
-		}
-		
-		applyTerrainMotionMultiplier();
-		
+	{	
 		super.onUpdate();
 		
 		if(!world.isRemote)
 		{
+			if(!this.isBeingRidden() && (!noAccerationInput() || !noTurningInput() || !hasFuel()))
+			{
+				inputForward = false;
+				inputBack = false;
+				inputRight = false;
+				inputLeft = false;
+			}
+			
+			updateMotion();
+			handleEntityCollisions();
+			checkState();
+			
+			if(collidedHorizontally)
+			{
+				currentSpeed *= 0.6;
+			}
+			
+			applyTerrainMotionMultiplier();
+			
 			PacketHandler.sendToClientsAround(new PacketVehicleData(this), dimension, posX, posY, posZ, 256);
 		}
 		
@@ -194,13 +195,13 @@ public abstract class EntityVehicle extends Entity implements IEntityAdditionalS
 			turnModifier = turnModifier > -MAX_TURNING_MODIFIER ? turnModifier - turnSpeed : -MAX_TURNING_MODIFIER;
 		}
 		
-		if(noAccerationInput() || isBroken)
+		if(noAccerationInput() || isBroken || !hasFuel())
 		{
 			if(Math.abs(currentSpeed) < 0.009f) currentSpeed = 0f;
 			
 			if(currentSpeed != 0)
 			{
-				currentSpeed = currentSpeed > 0 ? currentSpeed - 0.008f : currentSpeed + 0.008f;
+				currentSpeed = currentSpeed > 0 ? currentSpeed - 0.032f : currentSpeed + 0.008f;
 			}
 		}
 		
@@ -389,6 +390,34 @@ public abstract class EntityVehicle extends Entity implements IEntityAdditionalS
 			
 			this.inputLeft = left;
 			this.inputRight = right;
+			
+			if(ConfigPMC.vrSettings.simpleVehicleTurning && isVehicleMoving())
+				this.rotationYaw = player.rotationYaw;
+		}
+	}
+	
+	/**
+	 * Not working properly under specific angles
+	 */
+	@Deprecated
+	public void handleAdditionalInput(EntityPlayer driver)
+	{
+		if((int)rotationYaw != (int)driver.rotationYaw && isVehicleMoving())
+		{
+			driver.rotationYaw = Math.abs(driver.rotationYaw);
+			int delta = (int)rotationYaw - (int)driver.rotationYaw;
+			
+			if(Math.abs(delta) <= MAX_TURNING_MODIFIER) {
+				this.rotationYaw = driver.rotationYaw;
+			}
+			
+			if(delta < -3) {
+				this.rotationYaw += MAX_TURNING_MODIFIER;
+			}
+			
+			else if(delta > 3) {
+				this.rotationYaw -= MAX_TURNING_MODIFIER;
+			}
 		}
 	}
 	
