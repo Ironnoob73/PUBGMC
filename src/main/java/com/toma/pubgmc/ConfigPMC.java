@@ -45,6 +45,9 @@ public class ConfigPMC
 		@Comment("Rotate default weapon position so it fits your wrist")
 		@RangeDouble(min = -1.5, max = 1.5)
 		public float weaponYawRotation = -0.8f;
+		
+		@Name("Vehicle passenger Y offset")
+		public double vehiclePassengerOffset = 0.75;
 	}
 	
 	public static class WorldSettings

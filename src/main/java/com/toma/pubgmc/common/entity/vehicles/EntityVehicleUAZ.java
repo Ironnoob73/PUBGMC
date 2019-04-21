@@ -1,5 +1,6 @@
 package com.toma.pubgmc.common.entity.vehicles;
 
+import com.toma.pubgmc.ConfigPMC;
 import com.toma.pubgmc.common.entity.EntityVehicle;
 import com.toma.pubgmc.init.PMCSounds;
 
@@ -38,7 +39,7 @@ public class EntityVehicleUAZ extends EntityVehicle
 	@Override
 	public double getMountedYOffset()
 	{
-		return 0.75d;
+		return ConfigPMC.vrSettings.vehiclePassengerOffset;
 	}
 	
 	@Override
