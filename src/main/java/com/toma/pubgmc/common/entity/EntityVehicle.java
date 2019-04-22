@@ -392,19 +392,21 @@ public abstract class EntityVehicle extends Entity implements IEntityAdditionalS
 			this.inputLeft = left;
 			this.inputRight = right;
 			
-			if(ConfigPMC.vrSettings.simpleVehicleTurning && isVehicleMoving() && !world.isRemote)
+			if(ConfigPMC.vrSettings.simpleVehicleTurning && !world.isRemote)
 				handleAdditionalInput(player);
 		}
 	}
 	
 	public void handleAdditionalInput(EntityPlayer driver)
 	{
-		float delta = Math.abs(rotationYaw) - Math.abs(driver.rotationYaw);
-		if((delta < -MAX_TURNING_MODIFIER && delta > -200f) || delta >= 200f) {
+		float playerRot = driver.rotationYaw;
+		playerRot = playerRot < 0 ? playerRot + 360f : playerRot > 360f ? playerRot - 360f : playerRot;
+		float delta = rotationYaw - playerRot;
+		if((delta < (-MAX_TURNING_MODIFIER*3) && delta > -200f) || delta >= 200f) {
 			inputRight = true;
 		}
 		
-		else if((delta > MAX_TURNING_MODIFIER && delta < 200f) || delta <= -200f) {
+		else if((delta > (MAX_TURNING_MODIFIER*3) && delta < 200f) || delta <= -200f) {
 			inputLeft = true;
 		}
 	}
