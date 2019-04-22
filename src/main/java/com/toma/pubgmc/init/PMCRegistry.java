@@ -4,6 +4,7 @@ import com.toma.pubgmc.ConfigPMC;
 import com.toma.pubgmc.Pubgmc;
 import com.toma.pubgmc.client.models.BakedModelGun;
 import com.toma.pubgmc.client.renderer.WeaponTEISR;
+import com.toma.pubgmc.common.HorizontalBlockBuilder;
 import com.toma.pubgmc.common.blocks.BlockAirdrop;
 import com.toma.pubgmc.common.blocks.BlockBigAirdrop;
 import com.toma.pubgmc.common.blocks.BlockBush;
@@ -22,6 +23,7 @@ import com.toma.pubgmc.common.blocks.BlockProp;
 import com.toma.pubgmc.common.blocks.BlockSolid;
 import com.toma.pubgmc.common.blocks.BlockSolidRotatable;
 import com.toma.pubgmc.common.blocks.PMCBlock;
+import com.toma.pubgmc.common.blocks.PMCBlockHorizontal;
 import com.toma.pubgmc.common.entity.EntityBullet;
 import com.toma.pubgmc.common.entity.EntityFlare;
 import com.toma.pubgmc.common.entity.EntityGrenade;
@@ -76,6 +78,7 @@ import com.toma.pubgmc.util.AttachmentHelper;
 import com.toma.pubgmc.util.PMCItemBlock;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
@@ -92,6 +95,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
@@ -271,6 +275,13 @@ public class PMCRegistry
 		public static final Block CHAIR = null;
 		public static final Block TABLE = null;
 		public static final Block COPPER_ORE = null;
+		
+		/** Props by OfficialMajonaise **/
+		public static final PMCBlockHorizontal DESK = null;
+		public static final PMCBlockHorizontal CHAIR1 = null;
+		public static final PMCBlockHorizontal STORAGEBASE = null;
+		public static final PMCBlockHorizontal STORAGETOP = null;
+		
 	}
 	
 	public static final class ToolMaterials
@@ -332,7 +343,22 @@ public class PMCRegistry
 					new BlockGunWorkbench("gun_workbench"),
 					new BlockBigAirdrop("big_airdrop"),
 					new BlockOre("copper_ore"),
-					new BlockLandMine("landmine")
+					new BlockLandMine("landmine"),
+					HorizontalBlockBuilder.create("desk", Material.WOOD)
+						.soundType(SoundType.WOOD).transparency(false, false)
+						.build(),
+						
+					HorizontalBlockBuilder.create("chair1", Material.WOOD)
+						.soundType(SoundType.WOOD).transparency(false, false)
+						.build(),
+						
+					HorizontalBlockBuilder.create("storagebase", Material.WOOD).aabb(new AxisAlignedBB(0, 0, 0, 1, 1, 0.85), new AxisAlignedBB(0.15, 0, 0, 1, 1, 1), new AxisAlignedBB(0, 0, 0.15, 1, 1, 1), new AxisAlignedBB(0, 0, 0, 0.85, 1, 1))
+						.soundType(SoundType.WOOD).transparency(false, false)
+						.build(),
+						
+					HorizontalBlockBuilder.create("storagetop", Material.WOOD).aabb(new AxisAlignedBB(0, 0, 0, 1, 0.8, 0.85), new AxisAlignedBB(0.15, 0, 0, 1, 0.8, 1), new AxisAlignedBB(0, 0, 0.15, 1, 0.8, 1), new AxisAlignedBB(0, 0, 0, 0.85, 0.8, 1))
+						.soundType(SoundType.WOOD).transparency(false, false)
+						.build()
 			};
 			
 			event.getRegistry().registerAll(BLOCKS);
@@ -458,7 +484,11 @@ public class PMCRegistry
 					new PMCItemBlock(PMCRegistry.PMCBlocks.GUN_WORKBENCH),
 					new PMCItemBlock(PMCRegistry.PMCBlocks.BIG_AIRDROP),
 					new PMCItemBlock(PMCRegistry.PMCBlocks.COPPER_ORE),
-					new PMCItemBlock(PMCRegistry.PMCBlocks.LANDMINE)
+					new PMCItemBlock(PMCRegistry.PMCBlocks.LANDMINE),
+					new PMCItemBlock(PMCRegistry.PMCBlocks.DESK),
+					new PMCItemBlock(PMCRegistry.PMCBlocks.CHAIR1),
+					new PMCItemBlock(PMCRegistry.PMCBlocks.STORAGEBASE),
+					new PMCItemBlock(PMCRegistry.PMCBlocks.STORAGETOP)
 			};
 			
 			event.getRegistry().registerAll(ITEMS);
@@ -688,25 +718,25 @@ public class PMCRegistry
 					.sound(PMCSounds.gun_vss, 2.5f)
 					.build();
 			
-			GunBase mini14 = GunBuilder.create("mini14").damage(ConfigPMC.weaponSettings.mini14).velocity(14).gravity(0.015, 8).firerate(2)
+			GunBase mini14 = GunBuilder.create("mini14").damage(ConfigPMC.weaponSettings.mini14).velocity(14).gravity(0.015, 8).firerate(1)
 					.recoil(3.5f, 2f).reload(ReloadType.MAGAZINE, 62, PMCSounds.reload_mini14).ammo(AmmoType.AMMO556, 20, 30)
 					.firemode(Firemode.SINGLE, Firemode.SINGLE).weaponType(GunType.DMR)
 					.sound(PMCSounds.gun_mini14, 12f, PMCSounds.gun_mini14_silenced, 8f)
 					.build();
 			
-			GunBase qbu = GunBuilder.create("qbu").damage(ConfigPMC.weaponSettings.qbu).velocity(14).gravity(0.015, 8).firerate(2)
+			GunBase qbu = GunBuilder.create("qbu").damage(ConfigPMC.weaponSettings.qbu).velocity(14).gravity(0.015, 8).firerate(1)
 					.recoil(3.5f, 2f).reload(ReloadType.MAGAZINE, 44, PMCSounds.reload_qbu).ammo(AmmoType.AMMO556, 10, 20)
 					.firemode(Firemode.SINGLE, Firemode.SINGLE).weaponType(GunType.DMR)
 					.sound(PMCSounds.gun_qbu, 12f, PMCSounds.gun_qbu_silenced, 6f)
 					.build();
 			
-			GunBase sks = GunBuilder.create("sks").damage(ConfigPMC.weaponSettings.sks).velocity(10).gravity(0.035, 7).firerate(2)
+			GunBase sks = GunBuilder.create("sks").damage(ConfigPMC.weaponSettings.sks).velocity(10).gravity(0.035, 7).firerate(1)
 					.recoil(5.5f, 2.25f).reload(ReloadType.MAGAZINE, 32, PMCSounds.reload_sks).ammo(AmmoType.AMMO762, 10, 20)
 					.firemode(Firemode.SINGLE, Firemode.SINGLE).weaponType(GunType.DMR)
 					.sound(PMCSounds.gun_sks, 12f, PMCSounds.gun_sks_silenced, 8f)
 					.build();
 			
-			GunBase slr = GunBuilder.create("slr").damage(ConfigPMC.weaponSettings.slr).velocity(10).gravity(0.035, 7).firerate(2)
+			GunBase slr = GunBuilder.create("slr").damage(ConfigPMC.weaponSettings.slr).velocity(10).gravity(0.035, 7).firerate(1)
 					.recoil(5.75f, 2.25f).reload(ReloadType.MAGAZINE, 53, PMCSounds.reload_slr).ammo(AmmoType.AMMO762, 10, 20)
 					.firemode(Firemode.SINGLE, Firemode.SINGLE).weaponType(GunType.DMR)
 					.sound(PMCSounds.gun_slr, 12f, PMCSounds.gun_slr_silenced, 8f)
