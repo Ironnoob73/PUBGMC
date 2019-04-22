@@ -13,6 +13,7 @@ import com.toma.pubgmc.init.PMCRegistry;
 import com.toma.pubgmc.util.ICraftable;
 
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -127,6 +128,12 @@ public class ItemAmmo extends PMCItem implements ICraftable
 		
 		else if(this == PMCRegistry.PMCItems.AMMO_FLARE)
 		{
+			if(ConfigPMC.vrSettings.expensiveRecipeForFlare)
+			{
+				rec.add(new ItemStack(Blocks.BEACON));
+				return rec;
+			}
+			
 			rec.add(new ItemStack(Items.DIAMOND, 5));
 			rec.add(new ItemStack(Items.IRON_INGOT));
 			rec.add(new ItemStack(Items.GUNPOWDER, 10));

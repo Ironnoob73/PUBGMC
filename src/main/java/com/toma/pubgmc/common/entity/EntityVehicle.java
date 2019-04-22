@@ -114,27 +114,27 @@ public abstract class EntityVehicle extends Entity implements IEntityAdditionalS
 	{	
 		super.onUpdate();
 		
-		if(!world.isRemote)
+		if(!this.isBeingRidden() && (!noAccerationInput() || !noTurningInput() || !hasFuel()))
 		{
-			if(!this.isBeingRidden() && (!noAccerationInput() || !noTurningInput() || !hasFuel()))
-			{
-				inputForward = false;
-				inputBack = false;
-				inputRight = false;
-				inputLeft = false;
-			}
-			
-			updateMotion();
-			handleEntityCollisions();
-			checkState();
-			
-			if(collidedHorizontally)
-			{
-				currentSpeed *= 0.6;
-			}
-			
-			applyTerrainMotionMultiplier();
-			
+			inputForward = false;
+			inputBack = false;
+			inputRight = false;
+			inputLeft = false;
+		}
+		
+		updateMotion();
+		handleEntityCollisions();
+		checkState();
+		
+		if(collidedHorizontally)
+		{
+			currentSpeed *= 0.6;
+		}
+		
+		applyTerrainMotionMultiplier();
+		
+		if(!world.isRemote)
+		{	
 			PacketHandler.sendToClientsAround(new PacketVehicleData(this), dimension, posX, posY, posZ, 256);
 		}
 		
@@ -324,7 +324,6 @@ public abstract class EntityVehicle extends Entity implements IEntityAdditionalS
 				world.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, true, posX + exhaustVec.x, posY + exhaustVec.y, posZ + exhaustVec.z, 0, 0.02d, 0);
 			}
 			
-			//TODO sync
 			if(isBroken)
 			{
 				Vec3d engine = (new Vec3d(getEnginePosition().x, getEnginePosition().y, getEnginePosition().z)).rotateYaw(-this.rotationYaw * 0.017453292F - ((float)Math.PI / 2f));
@@ -382,6 +381,8 @@ public abstract class EntityVehicle extends Entity implements IEntityAdditionalS
 	{
 		if(isPlayerDriver(player))
 		{
+			this.rotationYaw = rotationYaw < 0f ? rotationYaw + 360f : rotationYaw > 360f ? rotationYaw - 360f : rotationYaw;
+			
 			if(hasFuel())
 			{
 				this.inputForward = forward;
@@ -391,33 +392,20 @@ public abstract class EntityVehicle extends Entity implements IEntityAdditionalS
 			this.inputLeft = left;
 			this.inputRight = right;
 			
-			if(ConfigPMC.vrSettings.simpleVehicleTurning && isVehicleMoving())
-				this.rotationYaw = player.rotationYaw;
+			if(ConfigPMC.vrSettings.simpleVehicleTurning && isVehicleMoving() && !world.isRemote)
+				handleAdditionalInput(player);
 		}
 	}
 	
-	/**
-	 * Not working properly under specific angles
-	 */
-	@Deprecated
 	public void handleAdditionalInput(EntityPlayer driver)
 	{
-		if((int)rotationYaw != (int)driver.rotationYaw && isVehicleMoving())
-		{
-			driver.rotationYaw = Math.abs(driver.rotationYaw);
-			int delta = (int)rotationYaw - (int)driver.rotationYaw;
-			
-			if(Math.abs(delta) <= MAX_TURNING_MODIFIER) {
-				this.rotationYaw = driver.rotationYaw;
-			}
-			
-			if(delta < -3) {
-				this.rotationYaw += MAX_TURNING_MODIFIER;
-			}
-			
-			else if(delta > 3) {
-				this.rotationYaw -= MAX_TURNING_MODIFIER;
-			}
+		float delta = Math.abs(rotationYaw) - Math.abs(driver.rotationYaw);
+		if((delta < -MAX_TURNING_MODIFIER && delta > -200f) || delta >= 200f) {
+			inputRight = true;
+		}
+		
+		else if((delta > MAX_TURNING_MODIFIER && delta < 200f) || delta <= -200f) {
+			inputLeft = true;
 		}
 	}
 	
@@ -572,19 +560,6 @@ public abstract class EntityVehicle extends Entity implements IEntityAdditionalS
 	{
 		variantType = (byte) (getTextureVariants() != null ? rand.nextInt(getTextureVariants().length) : 0);
 	}
-	
-	//TODO: implement sometime
-	/*@Override
-	public World getWorld()
-	{
-		return this.world;
-	}
-	
-	@Override
-	public boolean attackEntityFromPart(MultiPartEntityPart part, DamageSource source, float damage)
-	{
-		return false;
-	}*/
 	
 	@Override
 	public void writeSpawnData(ByteBuf buf)

@@ -51,7 +51,7 @@ public class ConfigPMC
 		@Name("Vehicle passenger Y offset")
 		public double vehiclePassengerOffset = 0.75;
 		
-		@Name("Enable expensive recipe for flare gun")
+		@Name("Enable expensive recipe for flare")
 		@RequiresWorldRestart
 		public boolean expensiveRecipeForFlare = true;
 		

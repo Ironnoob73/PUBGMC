@@ -83,18 +83,9 @@ public class FlareGun extends GunBase
 	public List<ItemStack> getCraftingRecipe()
 	{
 		List<ItemStack> r = new ArrayList<>();
-		if(ConfigPMC.vrSettings.expensiveRecipeForFlare)
-		{
-			r.add(new ItemStack(Blocks.BEACON));
-			return r;
-		}
-		
-		else
-		{
-			r.add(new ItemStack(Items.IRON_INGOT, 15));
-			r.add(new ItemStack(PMCItems.STEEL_INGOT, 20));
-			r.add(new ItemStack(Items.DYE, 10, 1));
-			return r;
-		}
+		r.add(new ItemStack(Items.IRON_INGOT, 15));
+		r.add(new ItemStack(PMCItems.STEEL_INGOT, 20));
+		r.add(new ItemStack(Items.DYE, 10, 1));
+		return r;
 	}
 }
