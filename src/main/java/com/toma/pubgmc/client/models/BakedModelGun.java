@@ -11,7 +11,6 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import com.toma.pubgmc.ConfigPMC;
 import com.toma.pubgmc.animation.Animation;
-import com.toma.pubgmc.client.renderer.WeaponTEISR;
 import com.toma.pubgmc.client.util.ModelDebugger;
 import com.toma.pubgmc.common.capability.IPlayerData;
 import com.toma.pubgmc.common.capability.IPlayerData.PlayerDataProvider;
@@ -20,9 +19,9 @@ import com.toma.pubgmc.common.items.guns.GunBase;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -110,6 +109,7 @@ public class BakedModelGun implements IBakedModel
 			case GUI: {
 				leftRot = new Quat4f(-90.0f, 45.0f, 90.0f, 0f);
 				rightRot = new Quat4f(15f, 0f, 0f, 0f);
+				GlStateManager.rotate(-ConfigPMC.vrSettings.weaponYawRotation, 0f, 1f, 0f);
 				trsrt = new TRSRTransformation(new Vector3f(0f, -0.1f, 0f), leftRot, new Vector3f(0.5f, 0.5f, 0.5f), rightRot);
 				break;
 			}
@@ -119,8 +119,6 @@ public class BakedModelGun implements IBakedModel
 			{
 				this.process();
 				
-				leftRot = new Quat4f(1f, 0f, ConfigPMC.vrSettings.weaponYawRotation, 0f);
-				rightRot = new Quat4f(1f, 0f, 0f, 0f);
 				transl = this.getTranslation();
 				trsrt = new TRSRTransformation(transl, leftRot, scale, rightRot);
 				break;
@@ -138,16 +136,6 @@ public class BakedModelGun implements IBakedModel
 		return Pair.of(this, trsrt.getMatrix());
 	}
 	
-	private Quat4f debugQuat0(float x, float y, float z)
-	{
-		return new Quat4f(x, y, z, 0f);
-	}
-	
-	private Quat4f debugQuat1()
-	{
-		return new Quat4f(ModelDebugger.X, ModelDebugger.Y, ModelDebugger.Z, 0f);
-	}
-	
 	private void process()
 	{
 		((GunBase)held.getItem()).getWeaponModel().processAnimations(data.isAiming());
@@ -156,15 +144,5 @@ public class BakedModelGun implements IBakedModel
 	private Vector3f getTranslation()
 	{
 		return ((GunBase)held.getItem()).getWeaponModel().enableADS(held) ? ((GunBase)held.getItem()).getWeaponModel().getMovementVecFromAnimations() : Animation.EMPTYVEC;
-	}
-	
-	private Quat4f getLeftRotation()
-	{
-		return ((GunBase)held.getItem()).getWeaponModel().getLeftRotation();
-	}
-	
-	private Quat4f getRightRotation()
-	{
-		return ((GunBase)held.getItem()).getWeaponModel().getRightRotation();
 	}
 }

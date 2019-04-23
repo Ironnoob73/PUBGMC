@@ -3,6 +3,7 @@ package com.toma.pubgmc.client.models;
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
 
+import com.toma.pubgmc.ConfigPMC;
 import com.toma.pubgmc.animation.AimingAnimation;
 import com.toma.pubgmc.animation.Animation;
 import com.toma.pubgmc.animation.HeldAnimation;
@@ -66,6 +67,8 @@ public abstract class ModelGun extends ModelBase
 	 */
 	public void preRender(ItemStack stack)
 	{
+		GlStateManager.rotate(ConfigPMC.vrSettings.weaponYawRotation, 0f, 1f, 0f);
+		
 		if((!hasScopeAtachment(stack) || this.getScopeLevel(stack) > 2) && aimAnimation.getFinalState().y != aimStates[0]) {
 			initAimAnimation(aimAnimation.getFinalState().x, aimStates[0], aimAnimation.getFinalState().z);
 		}
@@ -315,7 +318,8 @@ public abstract class ModelGun extends ModelBase
 	public void processAnimations(boolean aim)
 	{
 		aimAnimation.processAnimation(aim);
-		heldAnimation.processAnimation();
+		if(ConfigPMC.vrSettings.enableHeldAnimations)
+			heldAnimation.processAnimation();
 	}
 	
 	public AimingAnimation getAimAnimation()

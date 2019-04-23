@@ -231,8 +231,8 @@ public class ClientEvents
     		if(weaponStack.hasTagCompound())
     		{
     			int ammo = weaponStack.getTagCompound().getInteger("ammo");
-        		mc.fontRenderer.drawStringWithShadow(gun.getItemStackDisplayName(new ItemStack(gun)) + ": " + gun.getFiremode(), x, y - 9, 16777215);
-    			mc.fontRenderer.drawStringWithShadow(TextFormatting.BOLD + "" + ammo + TextFormatting.RESET + " | " + totalCount, x, y, 16777215);
+        		mc.fontRenderer.drawStringWithShadow(gun.getItemStackDisplayName(new ItemStack(gun)) + ": " + gun.getFiremode(), x + ConfigPMC.vrSettings.wepStatusX, y - 9 + ConfigPMC.vrSettings.wepStatusY, 16777215);
+    			mc.fontRenderer.drawStringWithShadow(TextFormatting.BOLD + "" + ammo + TextFormatting.RESET + " | " + totalCount, x + ConfigPMC.vrSettings.wepStatusX, y + ConfigPMC.vrSettings.wepStatusY, 16777215);
     		}
     	}
     	

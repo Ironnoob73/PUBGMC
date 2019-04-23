@@ -12,6 +12,8 @@ import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 @Config(modid = Pubgmc.MOD_ID, name = Pubgmc.NAME + " Config")
 public class ConfigPMC
@@ -45,8 +47,8 @@ public class ConfigPMC
 		
 		@Name("Weapon yaw rotation")
 		@Comment("Rotate default weapon position so it fits your wrist")
-		@RangeDouble(min = -1.5, max = 1.5)
-		public float weaponYawRotation = -0.8f;
+		@RangeDouble(min = -180, max = 180)
+		public float weaponYawRotation = 30f;
 		
 		@Name("Vehicle passenger Y offset")
 		public double vehiclePassengerOffset = 0.75;
@@ -64,6 +66,18 @@ public class ConfigPMC
 		@Name("Simple vehicle turning")
 		@RequiresWorldRestart
 		public boolean simpleVehicleTurning = true;
+		
+		@Name("Held animations")
+		@Comment({"Enable held animations","Might not be compatible with the weapon rotation!"})
+		public boolean enableHeldAnimations = true;
+		
+		@Name("Weapon info overlay x")
+		@RangeInt(min = -3500, max = 4180)
+		public int wepStatusX = 0;
+		
+		@Name("Weapon info overlay y")
+		@RangeInt(min = -2000, max = 2320)
+		public int wepStatusY = 0;
 	}
 	
 	public static class WorldSettings
