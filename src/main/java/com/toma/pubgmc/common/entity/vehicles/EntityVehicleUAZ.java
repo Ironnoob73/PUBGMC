@@ -39,7 +39,7 @@ public class EntityVehicleUAZ extends EntityVehicle
 	@Override
 	public double getMountedYOffset()
 	{
-		return ConfigPMC.vrSettings.vehiclePassengerOffset;
+		return ConfigPMC.vr.vehiclePassengerOffset;
 	}
 	
 	@Override

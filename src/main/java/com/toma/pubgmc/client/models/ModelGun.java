@@ -67,7 +67,7 @@ public abstract class ModelGun extends ModelBase
 	 */
 	public void preRender(ItemStack stack)
 	{
-		GlStateManager.rotate(ConfigPMC.vrSettings.weaponYawRotation, 0f, 1f, 0f);
+		GlStateManager.rotate(ConfigPMC.vr.weaponYawRotation, 0f, 1f, 0f);
 		
 		if((!hasScopeAtachment(stack) || this.getScopeLevel(stack) > 2) && aimAnimation.getFinalState().y != aimStates[0]) {
 			initAimAnimation(aimAnimation.getFinalState().x, aimStates[0], aimAnimation.getFinalState().z);
@@ -318,7 +318,7 @@ public abstract class ModelGun extends ModelBase
 	public void processAnimations(boolean aim)
 	{
 		aimAnimation.processAnimation(aim);
-		if(ConfigPMC.vrSettings.enableHeldAnimations)
+		if(ConfigPMC.vr.enableHeldAnimations)
 			heldAnimation.processAnimation();
 	}
 	

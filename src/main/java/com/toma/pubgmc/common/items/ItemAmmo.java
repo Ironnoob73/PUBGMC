@@ -27,7 +27,7 @@ public class ItemAmmo extends PMCItem implements ICraftable
 	public ItemAmmo(String name, AmmoType type)
 	{
 		super(name);
-		this.setMaxStackSize(ConfigPMC.vrSettings.ammoStackLimit);
+		this.setMaxStackSize(ConfigPMC.vr.ammoStackLimit);
 		this.type = type;
 		setCreativeTab(Pubgmc.pmcitemstab);
 		
@@ -128,7 +128,7 @@ public class ItemAmmo extends PMCItem implements ICraftable
 		
 		else if(this == PMCRegistry.PMCItems.AMMO_FLARE)
 		{
-			if(ConfigPMC.vrSettings.expensiveRecipeForFlare)
+			if(ConfigPMC.vr.expensiveRecipeForFlare)
 			{
 				rec.add(new ItemStack(Blocks.BEACON));
 				return rec;

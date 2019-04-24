@@ -392,7 +392,7 @@ public abstract class EntityVehicle extends Entity implements IEntityAdditionalS
 			this.inputLeft = left;
 			this.inputRight = right;
 			
-			if(ConfigPMC.vrSettings.simpleVehicleTurning && !world.isRemote)
+			if(ConfigPMC.vr.simpleVehicleTurning && !world.isRemote)
 				handleAdditionalInput(player);
 		}
 	}

@@ -96,7 +96,7 @@ public class EntityBullet extends Entity
         survivalTime = (int)velocity + 3;
         stack = new ItemStack(gun);
         
-        Vec3d direct = getVectorForRotation(shooter.rotationPitch, shooter.getRotationYawHead() + ConfigPMC.vrSettings.bulletOffset);
+        Vec3d direct = getVectorForRotation(shooter.rotationPitch, shooter.getRotationYawHead() + ConfigPMC.vr.bulletOffset);
         
         calculateBulletHeading(direct, shooter);
 

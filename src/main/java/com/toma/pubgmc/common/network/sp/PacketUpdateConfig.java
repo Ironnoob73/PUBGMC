@@ -23,6 +23,12 @@ public class PacketUpdateConfig implements IMessage, IMessageHandler<PacketUpdat
 		uzi, vector, bizon, tommy, ump, m16, m4, scar, qbz, g36c, aug, ak, m762, mk47,
 		groza, dp28, m249, vss, mini, qbu, sks, slr, mk14, kar, m24, awm;
 	
+	// VR
+	int ammoStack;
+	float bulletYaw;
+	double passengerOffset;
+	boolean expensiveFlare, simpleVehicleControl;
+	
 	// from server config
 	@Override
 	public void toBytes(ByteBuf buf)
@@ -80,6 +86,13 @@ public class PacketUpdateConfig implements IMessage, IMessageHandler<PacketUpdat
 		buf.writeFloat(ConfigPMC.common.weaponSettings.kar98k);
 		buf.writeFloat(ConfigPMC.common.weaponSettings.m24);
 		buf.writeFloat(ConfigPMC.common.weaponSettings.awm);
+		
+		//VR options
+		buf.writeInt(ConfigPMC.vr.ammoStackLimit);
+		buf.writeFloat(ConfigPMC.vr.bulletOffset);
+		buf.writeDouble(ConfigPMC.vr.vehiclePassengerOffset);
+		buf.writeBoolean(ConfigPMC.vr.expensiveRecipeForFlare);
+		buf.writeBoolean(ConfigPMC.vr.simpleVehicleTurning);
 	}
 	
 	// received on client
@@ -136,6 +149,12 @@ public class PacketUpdateConfig implements IMessage, IMessageHandler<PacketUpdat
 		kar = buf.readFloat();
 		m24 = buf.readFloat();
 		awm = buf.readFloat();
+		
+		ammoStack = buf.readInt();
+		bulletYaw = buf.readFloat();
+		passengerOffset = buf.readDouble();
+		expensiveFlare = buf.readBoolean();
+		simpleVehicleControl = buf.readBoolean();
 	}
 	
 	@Override
@@ -201,5 +220,11 @@ public class PacketUpdateConfig implements IMessage, IMessageHandler<PacketUpdat
 		ConfigPMC.common.weaponSettings.kar98k = p.kar;
 		ConfigPMC.common.weaponSettings.m24 = p.m24;
 		ConfigPMC.common.weaponSettings.awm = p.awm;
+		
+		ConfigPMC.vr.ammoStackLimit = p.ammoStack;
+		ConfigPMC.vr.bulletOffset = p.bulletYaw;
+		ConfigPMC.vr.vehiclePassengerOffset = p.passengerOffset;
+		ConfigPMC.vr.expensiveRecipeForFlare = p.expensiveFlare;
+		ConfigPMC.vr.simpleVehicleTurning = p.simpleVehicleControl;
 	}
 }

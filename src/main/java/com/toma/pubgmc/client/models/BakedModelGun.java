@@ -109,7 +109,7 @@ public class BakedModelGun implements IBakedModel
 			case GUI: {
 				leftRot = new Quat4f(-90.0f, 45.0f, 90.0f, 0f);
 				rightRot = new Quat4f(15f, 0f, 0f, 0f);
-				GlStateManager.rotate(-ConfigPMC.vrSettings.weaponYawRotation, 0f, 1f, 0f);
+				GlStateManager.rotate(-ConfigPMC.vr.weaponYawRotation, 0f, 1f, 0f);
 				trsrt = new TRSRTransformation(new Vector3f(0f, -0.1f, 0f), leftRot, new Vector3f(0.5f, 0.5f, 0.5f), rightRot);
 				break;
 			}

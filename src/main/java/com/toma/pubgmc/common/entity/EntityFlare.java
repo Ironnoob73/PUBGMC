@@ -45,7 +45,7 @@ public class EntityFlare extends Entity //implements IEntityAdditionalSpawnData
         this.timer = 0;
         this.height = shooter.posY;
         
-        Vec3d direct = getVectorForRotation(shooter.rotationPitch, shooter.getRotationYawHead() + ConfigPMC.vrSettings.bulletOffset);
+        Vec3d direct = getVectorForRotation(shooter.rotationPitch, shooter.getRotationYawHead() + ConfigPMC.vr.bulletOffset);
         this.motionX = direct.x * 2;
         this.motionY = direct.y * 2;
         this.motionZ = direct.z * 2;
