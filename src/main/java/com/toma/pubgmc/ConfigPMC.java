@@ -1,5 +1,7 @@
 package com.toma.pubgmc;
 
+import javax.vecmath.Vector3f;
+
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.Config.Comment;
 import net.minecraftforge.common.config.Config.Name;
@@ -31,15 +33,15 @@ public class ConfigPMC
 	{
 		@Name("World Settings")
 		@Comment("All world related fields are here")
-		public static WorldSettings worldSettings = new WorldSettings();
+		public WorldSettings worldSettings = new WorldSettings();
 		
 		@Name("Player Settings")
 		@Comment("All player related fields are here")
-		public static PlayerSettings playerSettings = new PlayerSettings();
+		public PlayerSettings playerSettings = new PlayerSettings();
 		
 		@Name("Weapon Settings")
 		@Comment("All weapon related fiels are here")
-		public static WeaponSettings weaponSettings = new WeaponSettings();
+		public WeaponSettings weaponSettings = new WeaponSettings();
 	}
 	
 	public static class VRSettings
@@ -82,6 +84,10 @@ public class ConfigPMC
 		@Name("Weapon info overlay y")
 		@RangeInt(min = -2000, max = 2320)
 		public int wepStatusY = 0;
+		
+		@Name("Weapon position translation")
+		@Comment({"1. Value is for X","2. Value is for Y","3. Value is for Z","All 3 values MUST be defined!"})
+		public float[] weaponTranslation = {-0.5f, 0f, 0f};
 	}
 	
 	/**
@@ -109,9 +115,7 @@ public class ConfigPMC
 		@Config.RequiresMcRestart
 		public int lootRenderType = 2;
 	}
-	
-	
-	
+
 	public static class WorldSettings
 	{
 		@Name("Airdrop loot generation type")

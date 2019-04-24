@@ -101,6 +101,7 @@ public class ModelSawedOff extends ModelGun
 			IPlayerData data = player.getCapability(PlayerDataProvider.PLAYER_DATA, null);
 
 			GlStateManager.pushMatrix();
+			handleGunTransformsFromCfg();
 			renderSawedOff(data.isAiming(), stack);
 			GlStateManager.popMatrix();
 		}

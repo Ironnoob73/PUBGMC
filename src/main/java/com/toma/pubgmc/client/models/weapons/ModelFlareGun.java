@@ -111,6 +111,7 @@ public class ModelFlareGun extends ModelGun
 			
 			GlStateManager.pushMatrix();
 			{
+				handleGunTransformsFromCfg();
 				renderFlareGun(data.isAiming());
 			}
 			GlStateManager.popMatrix();

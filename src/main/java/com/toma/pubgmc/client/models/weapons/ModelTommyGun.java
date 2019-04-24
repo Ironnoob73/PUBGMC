@@ -107,6 +107,7 @@ public class ModelTommyGun extends ModelGun
 			boolean aiming = data.isAiming();
 			
 			GlStateManager.pushMatrix();
+			handleGunTransformsFromCfg();
 			renderTommyGun(aiming, stack);
 			GlStateManager.popMatrix();
 		}

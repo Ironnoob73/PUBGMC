@@ -76,6 +76,7 @@ public class ModelS686 extends ModelGun
 			IPlayerData data = player.getCapability(PlayerDataProvider.PLAYER_DATA, null);
 			GlStateManager.pushMatrix();
 			{
+				handleGunTransformsFromCfg();
 				renderS686(data.isAiming(), stack);
 			}
 			GlStateManager.popMatrix();

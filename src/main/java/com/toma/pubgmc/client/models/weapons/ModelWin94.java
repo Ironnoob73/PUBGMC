@@ -69,6 +69,7 @@ public class ModelWin94 extends ModelGun
 			
 			GlStateManager.pushMatrix();
 			{
+				handleGunTransformsFromCfg();
 				renderWin(data.isAiming());
 			}
 			GlStateManager.popMatrix();

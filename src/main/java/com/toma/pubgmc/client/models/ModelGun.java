@@ -60,6 +60,18 @@ public abstract class ModelGun extends ModelBase
 	
 	public abstract void initAnimations();
 	
+	public static void handleGunTransformsFromCfg()
+	{
+		GlStateManager.rotate(ConfigPMC.vr.weaponYawRotation, 0f, 1f, 0f);
+		GlStateManager.translate(ConfigPMC.vr.weaponTranslation[0], ConfigPMC.vr.weaponTranslation[1], ConfigPMC.vr.weaponTranslation[2]);
+	}
+	
+	public static void rotateModelForADSRendering()
+	{
+		GlStateManager.rotate(0.2f, 0, 1f, 0);
+		GlStateManager.rotate(0.5f, 1f, 0, 0);
+	}
+	
 	/**
 	 *  Manipulates with Y value of aim animation to react to different scopes
 	 *  <p><b>Call inside the render(ItemStack) function!</b></p>
@@ -67,7 +79,7 @@ public abstract class ModelGun extends ModelBase
 	 */
 	public void preRender(ItemStack stack)
 	{
-		GlStateManager.rotate(ConfigPMC.vr.weaponYawRotation, 0f, 1f, 0f);
+		handleGunTransformsFromCfg();
 		
 		if((!hasScopeAtachment(stack) || this.getScopeLevel(stack) > 2) && aimAnimation.getFinalState().y != aimStates[0]) {
 			initAimAnimation(aimAnimation.getFinalState().x, aimStates[0], aimAnimation.getFinalState().z);
@@ -79,12 +91,6 @@ public abstract class ModelGun extends ModelBase
 		
 		else if(hasHoloSight(stack) && aimAnimation.getFinalState().y != aimStates[2])
 			initAimAnimation(aimAnimation.getFinalState().x, aimStates[2], aimAnimation.getFinalState().z);
-	}
-	
-	public static void rotateModelForADSRendering()
-	{
-		GlStateManager.rotate(0.2f, 0, 1f, 0);
-		GlStateManager.rotate(0.5f, 1f, 0, 0);
 	}
 	
 	public int getScopeLevel(ItemStack stack)

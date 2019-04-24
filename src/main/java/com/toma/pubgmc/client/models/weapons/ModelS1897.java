@@ -73,6 +73,7 @@ public class ModelS1897 extends ModelGun
 			IPlayerData data = player.getCapability(PlayerDataProvider.PLAYER_DATA, null);
 			GlStateManager.pushMatrix();
 			{
+				handleGunTransformsFromCfg();
 				renderS1897(data.isAiming(),stack);
 			}
 			GlStateManager.popMatrix();

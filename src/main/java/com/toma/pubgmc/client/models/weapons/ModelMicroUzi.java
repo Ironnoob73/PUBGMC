@@ -64,6 +64,7 @@ public class ModelMicroUzi extends ModelGun
 			
 			GlStateManager.pushMatrix();
 			{
+				handleGunTransformsFromCfg();
 				renderUzi(aim, stack);
 			}
 			GlStateManager.popMatrix();
