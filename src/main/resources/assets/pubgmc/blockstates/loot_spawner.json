@@ -1,8 +1,0 @@
-{
-    "variants":
-     {
-        "loot=0": { "model": "pubgmc:loot_spawner" },
-        "loot=1": { "model": "pubgmc:loot_spawner" },
-        "loot=2": { "model": "pubgmc:loot_spawner" }
-     }
-}
