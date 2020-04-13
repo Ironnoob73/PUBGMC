@@ -1,7 +1,11 @@
 package dev.toma.pubgmc;
 
+import dev.toma.pubgmc.capability.IPlayerCap;
+import dev.toma.pubgmc.capability.player.PlayerCapFactory;
+import dev.toma.pubgmc.capability.player.PlayerCapStorage;
 import dev.toma.pubgmc.config.ConfigImpl;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -31,7 +35,7 @@ public class Pubgmc {
     }
 
     private void setupCommon(FMLCommonSetupEvent event) {
-
+        CapabilityManager.INSTANCE.register(IPlayerCap.class, new PlayerCapStorage(), PlayerCapFactory::new);
     }
 
     public static ResourceLocation makeResource(String path) {
