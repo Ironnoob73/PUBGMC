@@ -1,0 +1,144 @@
+package dev.toma.pubgmc.common.item.healing;
+
+import com.google.common.base.Preconditions;
+import dev.toma.pubgmc.common.item.PMCItem;
+import dev.toma.pubgmc.util.UsefulFunctions;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.UseAction;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Hand;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.World;
+
+import java.util.Objects;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+
+public class HealingItem extends PMCItem {
+
+    private final Predicate<PlayerEntity> canUse;
+    private final int useDuration;
+    private final UseAction useAction;
+    private final Consumer<PlayerEntity> onFinish;
+    private final Supplier<String> errorMessageSupplier;
+
+    protected HealingItem(String name, Builder builder) {
+        super(name, new Item.Properties().group(ITEMS).maxStackSize(builder.stackSize));
+        this.canUse = builder.canUse;
+        this.useDuration = builder.useDuration;
+        this.useAction = builder.useAction;
+        this.onFinish = builder.onFinish;
+        this.errorMessageSupplier = builder.errMsgSupplier;
+    }
+
+    @Override
+    public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
+        if(canUse.test(playerIn)) {
+            playerIn.setActiveHand(handIn);
+            return new ActionResult<>(ActionResultType.SUCCESS, playerIn.getHeldItem(handIn));
+        } else {
+            sendErrMsg(playerIn);
+        }
+        return super.onItemRightClick(worldIn, playerIn, handIn);
+    }
+
+    @Override
+    public int getUseDuration(ItemStack stack) {
+        return useDuration;
+    }
+
+    @Override
+    public UseAction getUseAction(ItemStack stack) {
+        return useAction;
+    }
+
+    @Override
+    public void onUsingTick(ItemStack stack, LivingEntity player, int count) {
+        if(player instanceof PlayerEntity) {
+            if(!canUse.test((PlayerEntity) player)) {
+                player.stopActiveHand();
+                sendErrMsg((PlayerEntity) player);
+            }
+        }
+    }
+
+    @Override
+    public ItemStack onItemUseFinish(ItemStack stack, World worldIn, LivingEntity entityLiving) {
+        if(entityLiving instanceof PlayerEntity) {
+            PlayerEntity player = (PlayerEntity) entityLiving;
+            if(!player.world.isRemote) this.onFinish.accept(player);
+            if(!player.isCreative()) {
+                stack.shrink(1);
+            }
+        }
+        return stack;
+    }
+
+    private void sendErrMsg(PlayerEntity entity) {
+        if(entity.world.isRemote) return;
+        String msg = errorMessageSupplier.get();
+        if(msg == null) return;
+        entity.sendStatusMessage(new TranslationTextComponent(msg), true);
+    }
+
+    public static class Builder {
+
+        private int stackSize;
+        private Predicate<PlayerEntity> canUse;
+        private int useDuration;
+        private UseAction useAction = UseAction.NONE;
+        private Consumer<PlayerEntity> onFinish;
+        private Supplier<String> errMsgSupplier = () -> null;
+
+        private Builder() {
+        }
+
+        public static Builder create() {
+            return new Builder();
+        }
+
+        public Builder stackSize(int n) {
+            this.stackSize = n;
+            return this;
+        }
+
+        public Builder useDuration(int ticks) {
+            this.useDuration = ticks;
+            return this;
+        }
+
+        public Builder canUse(Predicate<PlayerEntity> predicate) {
+            this.canUse = predicate;
+            return this;
+        }
+
+        public Builder useAction(UseAction useAction) {
+            this.useAction = Objects.requireNonNull(useAction, "Use action cannot be null!");
+            return this;
+        }
+
+        public Builder onFinish(Consumer<PlayerEntity> onFinish) {
+            this.onFinish = onFinish;
+            return this;
+        }
+
+        public Builder errorMsg(Supplier<String> errMsgSupplier) {
+            this.errMsgSupplier = Objects.requireNonNull(errMsgSupplier, "Message supplier cannot be null!");
+            return this;
+        }
+
+        public HealingItem build(String name) {
+            Preconditions.checkState(name != null && !name.isEmpty(), "Registry name cannot be null/empty!");
+            stackSize = UsefulFunctions.wrapBetween(stackSize, 1, 64);
+            canUse = canUse != null ? canUse : UsefulFunctions.alwaysTruePredicate();
+            useDuration = UsefulFunctions.wrapBetween(useDuration, 1, 1180);
+            Preconditions.checkNotNull(onFinish, "On finish action cannot be null!");
+            return new HealingItem(name, this);
+        }
+    }
+}

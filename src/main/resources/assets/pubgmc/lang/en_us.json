@@ -1,0 +1,11 @@
+{
+    "pubgmc.heal.bandage.fail": "§cYour health must be under 75%!",
+    "pubgmc.heal.first_aid.fail": "§cYour health must be under 75%!",
+    "pubgmc.heal.medkit.fail": "§cYour health must be under 100%!",
+    "pubgmc.heal.bandage.success": "§aSuccessfully used Bandage",
+    "pubgmc.heal.first_aid.success": "§aSuccessfully used First Aid Kit",
+    "pubgmc.heal.medkit.success": "§aSuccessfully used Medkit",
+    "pubgmc.heal.energy_drink.success": "§aSuccessfully used Energy Drink",
+    "pubgmc.heal.painkillers.success": "§aSuccessfully used Painkillers",
+    "pubgmc.heal.adrenaline_syringe.success": "§aSuccessfully used Adrenaline Syringe"
+}
