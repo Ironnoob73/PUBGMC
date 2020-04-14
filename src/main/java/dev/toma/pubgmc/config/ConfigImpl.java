@@ -6,8 +6,12 @@ import toma.config.object.builder.ConfigBuilder;
 
 public class ConfigImpl implements IConfig {
 
+    public static ClientConfig client = new ClientConfig();
+
     @Override
     public ConfigObject getConfig(ConfigBuilder builder) {
-        return builder.build();
+        return builder
+                .exec(client::populate)
+                .build();
     }
 }

@@ -17,7 +17,6 @@ import net.minecraft.world.World;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 public class HealingItem extends PMCItem {
 
@@ -25,7 +24,7 @@ public class HealingItem extends PMCItem {
     private final int useDuration;
     private final UseAction useAction;
     private final Consumer<PlayerEntity> onFinish;
-    private final Supplier<String> errorMessageSupplier;
+    private final String successKey, failKey;
 
     protected HealingItem(String name, Builder builder) {
         super(name, new Item.Properties().group(ITEMS).maxStackSize(builder.stackSize));
@@ -33,7 +32,8 @@ public class HealingItem extends PMCItem {
         this.useDuration = builder.useDuration;
         this.useAction = builder.useAction;
         this.onFinish = builder.onFinish;
-        this.errorMessageSupplier = builder.errMsgSupplier;
+        this.successKey = builder.successKey;
+        this.failKey = builder.failKey;
     }
 
     @Override
@@ -71,7 +71,10 @@ public class HealingItem extends PMCItem {
     public ItemStack onItemUseFinish(ItemStack stack, World worldIn, LivingEntity entityLiving) {
         if(entityLiving instanceof PlayerEntity) {
             PlayerEntity player = (PlayerEntity) entityLiving;
-            if(!player.world.isRemote) this.onFinish.accept(player);
+            if(!player.world.isRemote) {
+                this.onFinish.accept(player);
+                if(successKey != null) player.sendStatusMessage(new TranslationTextComponent(successKey), true);
+            }
             if(!player.isCreative()) {
                 stack.shrink(1);
             }
@@ -81,9 +84,8 @@ public class HealingItem extends PMCItem {
 
     private void sendErrMsg(PlayerEntity entity) {
         if(entity.world.isRemote) return;
-        String msg = errorMessageSupplier.get();
-        if(msg == null) return;
-        entity.sendStatusMessage(new TranslationTextComponent(msg), true);
+        if(failKey == null) return;
+        entity.sendStatusMessage(new TranslationTextComponent(failKey), true);
     }
 
     public static class Builder {
@@ -93,7 +95,7 @@ public class HealingItem extends PMCItem {
         private int useDuration;
         private UseAction useAction = UseAction.NONE;
         private Consumer<PlayerEntity> onFinish;
-        private Supplier<String> errMsgSupplier = () -> null;
+        private String successKey, failKey;
 
         private Builder() {
         }
@@ -127,8 +129,9 @@ public class HealingItem extends PMCItem {
             return this;
         }
 
-        public Builder errorMsg(Supplier<String> errMsgSupplier) {
-            this.errMsgSupplier = Objects.requireNonNull(errMsgSupplier, "Message supplier cannot be null!");
+        public Builder messages(String successKey, String failKey) {
+            this.successKey = successKey;
+            this.failKey = failKey;
             return this;
         }
 

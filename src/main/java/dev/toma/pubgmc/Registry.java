@@ -1,6 +1,8 @@
 package dev.toma.pubgmc;
 
+import dev.toma.pubgmc.capability.player.PlayerCapHelper;
 import dev.toma.pubgmc.common.item.healing.HealingItem;
+import dev.toma.pubgmc.util.UsefulFunctions;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -36,32 +38,44 @@ public class Registry {
                             .stackSize(5)
                             .canUse(player -> player.getHealth() < 15)
                             .useDuration(80)
-                            .errorMsg(() -> "pubgmc.heal.bandage.fail")
-                            .onFinish(player -> {
-                                player.setHealth(Math.min(15, player.getHealth() + 3));
-                                player.sendStatusMessage(new TranslationTextComponent("pubgmc.heal.bandage.success"), true);
-                            })
+                            .messages("pubgmc.heal.bandage.success", "pubgmc.heal.bandage.fail")
+                            .onFinish(player -> player.setHealth(Math.min(15, player.getHealth() + 3)))
                             .build("bandage"),
                     HealingItem.Builder.create()
                             .stackSize(1)
                             .canUse(player -> player.getHealth() < 15)
                             .useDuration(120)
-                            .errorMsg(() -> "pubgmc.heal.first_aid.fail")
-                            .onFinish(player -> {
-                                player.setHealth(15);
-                                player.sendStatusMessage(new TranslationTextComponent("pubgmc.heal.first_aid.success"), true);
-                            })
+                            .messages("pubgmc.heal.first_aid.success", "pubgmc.heal.first_aid.fail")
+                            .onFinish(player -> player.setHealth(15))
                             .build("first_aid_kit"),
                     HealingItem.Builder.create()
                             .stackSize(1)
                             .canUse(player -> player.getHealth() < 20)
                             .useDuration(160)
-                            .errorMsg(() -> "pubgmc.heal.medkit.fail")
-                            .onFinish(player -> {
-                                player.setHealth(20);
-                                player.sendStatusMessage(new TranslationTextComponent("pubgmc.heal.medkit.success"), true);
-                            })
-                            .build("medkit")
+                            .messages("pubgmc.heal.medkit.success", "pubgmc.heal.medkit.fail")
+                            .onFinish(player -> player.setHealth(20))
+                            .build("medkit"),
+                    HealingItem.Builder.create()
+                            .stackSize(3)
+                            .canUse(UsefulFunctions.alwaysTruePredicate())
+                            .useDuration(80)
+                            .messages("pubgmc.heal.energy_drink.success", null)
+                            .onFinish(player -> PlayerCapHelper.addBoostValue(player, 8))
+                            .build("energy_drink"),
+                    HealingItem.Builder.create()
+                            .stackSize(3)
+                            .canUse(UsefulFunctions.alwaysTruePredicate())
+                            .useDuration(120)
+                            .messages("pubgmc.heal.painkillers.success", null)
+                            .onFinish(player -> PlayerCapHelper.addBoostValue(player, 12))
+                            .build("painkillers"),
+                    HealingItem.Builder.create()
+                            .stackSize(1)
+                            .canUse(UsefulFunctions.alwaysTruePredicate())
+                            .useDuration(120)
+                            .messages("pubgmc.heal.adrenaline_syringe.success", null)
+                            .onFinish(player -> PlayerCapHelper.addBoostValue(player, 20))
+                            .build("adrenaline_syringe")
             );
         }
 

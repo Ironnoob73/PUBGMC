@@ -4,6 +4,7 @@ import dev.toma.pubgmc.capability.IPlayerCap;
 import dev.toma.pubgmc.capability.player.PlayerCapFactory;
 import dev.toma.pubgmc.capability.player.PlayerCapStorage;
 import dev.toma.pubgmc.config.ConfigImpl;
+import dev.toma.pubgmc.network.NetworkManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -35,7 +36,8 @@ public class Pubgmc {
     }
 
     private void setupCommon(FMLCommonSetupEvent event) {
-        CapabilityManager.INSTANCE.register(IPlayerCap.class, new PlayerCapStorage(), PlayerCapFactory::new);
+        NetworkManager.init();
+        CapabilityManager.INSTANCE.register(IPlayerCap.class, new PlayerCapStorage(), () -> new PlayerCapFactory(null));
     }
 
     public static ResourceLocation makeResource(String path) {

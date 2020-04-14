@@ -17,9 +17,9 @@ public class PlayerCapProvider implements ICapabilitySerializable<CompoundNBT> {
     @CapabilityInject(IPlayerCap.class)
     public static Capability<IPlayerCap> CAP = null;
     public LazyOptional<IPlayerCap> instance = LazyOptional.of(CAP::getDefaultInstance);
+    protected static DummyImpl dummyCap = new DummyImpl();
 
     public PlayerCapProvider() {
-
     }
 
     public PlayerCapProvider(PlayerEntity playerEntity) {
@@ -34,11 +34,11 @@ public class PlayerCapProvider implements ICapabilitySerializable<CompoundNBT> {
 
     @Override
     public CompoundNBT serializeNBT() {
-        return (CompoundNBT) CAP.getStorage().writeNBT(CAP, instance.orElseThrow(NullPointerException::new), null);
+        return (CompoundNBT) CAP.getStorage().writeNBT(CAP, instance.orElse(dummyCap), null);
     }
 
     @Override
     public void deserializeNBT(CompoundNBT nbt) {
-        CAP.getStorage().readNBT(CAP, instance.orElseThrow(NullPointerException::new), null, nbt);
+        CAP.getStorage().readNBT(CAP, instance.orElse(dummyCap), null, nbt);
     }
 }
