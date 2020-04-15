@@ -8,7 +8,11 @@ public class UsefulFunctions {
         return p -> true;
     }
 
-    public static int wrapBetween(int number, int min, int max) {
+    public static int wrap(int number, int min, int max) {
+        return number < min ? min : number > max ? max : number;
+    }
+
+    public static float wrap(float number, float min, float max) {
         return number < min ? min : number > max ? max : number;
     }
 }

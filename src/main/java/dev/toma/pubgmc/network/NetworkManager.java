@@ -2,6 +2,7 @@ package dev.toma.pubgmc.network;
 
 import dev.toma.pubgmc.Pubgmc;
 import dev.toma.pubgmc.network.packet.CPacketSendNBT;
+import dev.toma.pubgmc.network.packet.SPacketControllableInput;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkDirection;
@@ -10,7 +11,7 @@ import net.minecraftforge.fml.network.simple.SimpleChannel;
 
 public class NetworkManager {
 
-    protected static String protocolVersion = "1";
+    protected static String protocolVersion = "pmc1";
     private static final SimpleChannel network = NetworkRegistry.ChannelBuilder
             .named(Pubgmc.makeResource("network"))
             .networkProtocolVersion(() -> protocolVersion)
@@ -20,6 +21,7 @@ public class NetworkManager {
 
     public static void init() {
         register(CPacketSendNBT.class, new CPacketSendNBT(null, 0));
+        register(SPacketControllableInput.class, new SPacketControllableInput());
     }
 
     public static void sendToClient(ServerPlayerEntity player, NetworkPacket<?> packet) {

@@ -18,7 +18,7 @@ public class RenderHelper {
     }
 
     public static void x16Blit(int x, int y, int x2, int y2, int ax, int ay, int aw, int ah) {
-        blit(TEXTURES_X16, x, y, x2, y2, 16, ax, ay, aw, ah);
+        atlasBlit(TEXTURES_X16, x, y, x2, y2, 16, ax, ay, aw, ah);
     }
 
     public static void color_x32Blit(int x, int y, int x2, int y2, int ax, int ay, int aw, int ah, float r, float g, float b, float a) {
@@ -26,7 +26,7 @@ public class RenderHelper {
     }
 
     public static void x32Blit(int x, int y, int x2, int y2, int ax, int ay, int aw, int ah) {
-        blit(TEXTURES_X32, x, y, x2, y2, 32, ax, ay, aw, ah);
+        atlasBlit(TEXTURES_X32, x, y, x2, y2, 32, ax, ay, aw, ah);
     }
 
     public static void colorBlit(ResourceLocation location, int x, int y, int x2, int y2, int size, int atlasX, int atlasY, int atlasWidth, int atlasHeight, float r, float g, float b, float a) {
@@ -43,7 +43,7 @@ public class RenderHelper {
         GlStateManager.disableBlend();
     }
 
-    public static void blit(ResourceLocation location, int x, int y, int x2, int y2, int size, int atlasX, int atlasY, int atlasWidth, int atlasHeight) {
+    public static void atlasBlit(ResourceLocation location, int x, int y, int x2, int y2, int size, int atlasX, int atlasY, int atlasWidth, int atlasHeight) {
         Tessellator tessellator = Tessellator.getInstance();
         double us = (atlasX * size) / 256.0D;
         double vs = (atlasY * size) / 256.0D;
@@ -53,6 +53,26 @@ public class RenderHelper {
         GlStateManager.enableBlend();
         Minecraft.getInstance().getTextureManager().bindTexture(location);
         tex_shape(builder, x, y, x2, y2, us, vs, ue, ve);
+        tessellator.draw();
+        GlStateManager.disableBlend();
+    }
+
+    public static void blit(ResourceLocation location, int x, int y, int width, int height, double fromU, double fromV, double toU, double toV) {
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder builder = tessellator.getBuffer();
+        GlStateManager.enableBlend();
+        Minecraft.getInstance().getTextureManager().bindTexture(location);
+        tex_shape(builder, x, y, x + width, y + height, fromU, fromV, toU, toV);
+        tessellator.draw();
+        GlStateManager.disableBlend();
+    }
+
+    public static void blitColor(ResourceLocation location, int x, int y, int x2, int y2, double fromU, double fromV, double toU, double toV, float r, float g, float b, float a) {
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder builder = tessellator.getBuffer();
+        GlStateManager.enableBlend();
+        Minecraft.getInstance().getTextureManager().bindTexture(location);
+        color_tex_shape(builder, x, y, x2, y2, fromU, fromV, toU, toV, r, g, b, a);
         tessellator.draw();
         GlStateManager.disableBlend();
     }

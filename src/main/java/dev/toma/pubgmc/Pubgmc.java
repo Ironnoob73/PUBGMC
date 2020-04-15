@@ -32,7 +32,7 @@ public class Pubgmc {
     }
 
     private void setupClient(FMLClientSetupEvent event) {
-
+        //RenderingRegistry.registerEntityRenderingHandler(ParachuteEntity.class, ParachuteRenderer::new);
     }
 
     private void setupCommon(FMLCommonSetupEvent event) {

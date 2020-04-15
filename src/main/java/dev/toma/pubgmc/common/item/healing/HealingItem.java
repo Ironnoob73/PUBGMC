@@ -137,9 +137,9 @@ public class HealingItem extends PMCItem {
 
         public HealingItem build(String name) {
             Preconditions.checkState(name != null && !name.isEmpty(), "Registry name cannot be null/empty!");
-            stackSize = UsefulFunctions.wrapBetween(stackSize, 1, 64);
+            stackSize = UsefulFunctions.wrap(stackSize, 1, 64);
             canUse = canUse != null ? canUse : UsefulFunctions.alwaysTruePredicate();
-            useDuration = UsefulFunctions.wrapBetween(useDuration, 1, 1180);
+            useDuration = UsefulFunctions.wrap(useDuration, 1, 1180);
             Preconditions.checkNotNull(onFinish, "On finish action cannot be null!");
             return new HealingItem(name, this);
         }
