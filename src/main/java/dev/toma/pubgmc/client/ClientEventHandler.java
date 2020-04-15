@@ -7,6 +7,8 @@ import dev.toma.pubgmc.capability.IPlayerCap;
 import dev.toma.pubgmc.capability.player.BoostStats;
 import dev.toma.pubgmc.capability.player.PlayerCapFactory;
 import dev.toma.pubgmc.config.ConfigImpl;
+import dev.toma.pubgmc.network.NetworkManager;
+import dev.toma.pubgmc.network.packet.SPacketControllableInput;
 import dev.toma.pubgmc.util.RenderHelper;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.MainWindow;
@@ -55,6 +57,7 @@ public class ClientEventHandler {
     public static void clientTick(TickEvent.ClientTickEvent event) {
         Minecraft mc = Minecraft.getInstance();
         PlayerEntity player = mc.player;
+        if(event.phase == TickEvent.Phase.START) return;
         if(player != null) {
             GameSettings settings = mc.gameSettings;
             Entity entity = player.getRidingEntity();
@@ -65,6 +68,7 @@ public class ClientEventHandler {
                 boolean right = settings.keyBindRight.isKeyDown();
                 boolean left = settings.keyBindLeft.isKeyDown();
                 controllableEntity.onInputUpdate(fwd, bwd, right, left);
+                NetworkManager.sendToServer(new SPacketControllableInput(fwd, bwd, right, left));
             }
         }
     }

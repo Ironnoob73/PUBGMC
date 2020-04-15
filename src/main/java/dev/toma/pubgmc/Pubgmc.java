@@ -3,11 +3,14 @@ package dev.toma.pubgmc;
 import dev.toma.pubgmc.capability.IPlayerCap;
 import dev.toma.pubgmc.capability.player.PlayerCapFactory;
 import dev.toma.pubgmc.capability.player.PlayerCapStorage;
+import dev.toma.pubgmc.client.render.entity.ParachuteRenderer;
+import dev.toma.pubgmc.common.entity.ParachuteEntity;
 import dev.toma.pubgmc.config.ConfigImpl;
 import dev.toma.pubgmc.network.NetworkManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -32,7 +35,7 @@ public class Pubgmc {
     }
 
     private void setupClient(FMLClientSetupEvent event) {
-        //RenderingRegistry.registerEntityRenderingHandler(ParachuteEntity.class, ParachuteRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(ParachuteEntity.class, ParachuteRenderer::new);
     }
 
     private void setupCommon(FMLCommonSetupEvent event) {

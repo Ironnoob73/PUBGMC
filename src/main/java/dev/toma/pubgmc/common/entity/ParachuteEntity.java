@@ -14,11 +14,8 @@ import net.minecraftforge.fml.network.NetworkHooks;
 
 public class ParachuteEntity extends AbstractControllableEntity {
 
-    public static final int TIME_TO_DEPLOY = 30;
-    public static final float TURN_SPEED_LIMIT = 2.0F;
-
     protected float turningSpeed;
-    protected int timeWithoutOwner;
+    public int timeWithoutOwner;
 
     public ParachuteEntity(EntityType<?> entityType, World world) {
         super(entityType, world);
@@ -34,8 +31,11 @@ public class ParachuteEntity extends AbstractControllableEntity {
     protected void updateMovement() {
         super.updateMovement();
         if(noRotateKey()) {
-            float rotationSpeedSlowdown = 0.2f;
+            float rotationSpeedSlowdown = 1f;
             turningSpeed = Math.abs(turningSpeed - rotationSpeedSlowdown) <= rotationSpeedSlowdown ? 0.0F : turningSpeed > 0 ? turningSpeed - rotationSpeedSlowdown : turningSpeed < 0 ? turningSpeed + rotationSpeedSlowdown : 0.0F;
+        }
+        if(noVerticalKey()) {
+            rotationPitch = Math.abs(rotationPitch - 1.0F) <= 1.0F ? 0.0F : rotationPitch > 0 ? rotationPitch - 1.0F : rotationPitch < 0 ? rotationPitch + 1.0F : 0.0F;
         }
     }
 
@@ -48,12 +48,15 @@ public class ParachuteEntity extends AbstractControllableEntity {
         }
         this.rotationYaw += turningSpeed;
         if(isBeingRidden()) {
-            if(onGround) {
+            if(onGround || collided) {
                 this.removePassengers();
                 return;
             }
             Vec3d look = this.getLookVec();
-            setMotion(look.x, -0.25, look.z);
+            double x = look.x / 2;
+            double z = look.z / 2;
+            double speedModifier =  1 + rotationPitch / 30.0F;
+            setMotion(x, -0.25 * speedModifier, z);
         } else {
             setMotion(0, 0, 0);
         }
@@ -66,12 +69,22 @@ public class ParachuteEntity extends AbstractControllableEntity {
 
     @Override
     protected void moveRight() {
-        turningSpeed = UsefulFunctions.wrap(turningSpeed + 0.2F, -TURN_SPEED_LIMIT, TURN_SPEED_LIMIT);
+        turningSpeed = UsefulFunctions.wrap(turningSpeed + 1F, -5F, 5F);
     }
 
     @Override
     protected void moveLeft() {
-        turningSpeed = UsefulFunctions.wrap(turningSpeed - 0.2F, -TURN_SPEED_LIMIT, TURN_SPEED_LIMIT);
+        turningSpeed = UsefulFunctions.wrap(turningSpeed - 1F, -5F, +5F);
+    }
+
+    @Override
+    protected void moveForward() {
+        rotationPitch = UsefulFunctions.wrap(rotationPitch + 1.5F, -15.0F, 30.0F);
+    }
+
+    @Override
+    protected void moveBackward() {
+        rotationPitch = UsefulFunctions.wrap(rotationPitch - 1F, -15.0F, 30.0F);
     }
 
     @Override
@@ -96,11 +109,9 @@ public class ParachuteEntity extends AbstractControllableEntity {
 
     @Override
     protected void writeAdditional(CompoundNBT compound) {
-
     }
 
     @Override
     protected void readAdditional(CompoundNBT compound) {
-
     }
 }
