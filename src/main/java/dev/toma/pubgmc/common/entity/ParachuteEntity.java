@@ -24,7 +24,13 @@ public class ParachuteEntity extends AbstractControllableEntity {
     public ParachuteEntity(World world, Entity user) {
         this(Registry.PMCEntityTypes.PARACHUTE, world);
         this.setPosition(user.posX, user.posY, user.posZ);
-        this.setRotation(user.rotationYaw, user.rotationPitch);
+        this.setRotation(user.rotationYaw, 0.0F);
+        this.setMotion(user.getMotion());
+    }
+
+    @Override
+    public double getMountedYOffset() {
+        return 0.5d;
     }
 
     @Override
@@ -52,6 +58,8 @@ public class ParachuteEntity extends AbstractControllableEntity {
                 this.removePassengers();
                 return;
             }
+            if(!isDeployed()) return;
+            this.fallDistance = 0.0F;
             Vec3d look = this.getLookVec();
             double x = look.x / 2;
             double z = look.z / 2;
@@ -62,6 +70,10 @@ public class ParachuteEntity extends AbstractControllableEntity {
         }
     }
 
+    protected boolean isDeployed() {
+        return ticksExisted > 20;
+    }
+
     @Override
     protected void updateEntityPost() {
         move(MoverType.SELF, getMotion());
@@ -69,22 +81,22 @@ public class ParachuteEntity extends AbstractControllableEntity {
 
     @Override
     protected void moveRight() {
-        turningSpeed = UsefulFunctions.wrap(turningSpeed + 1F, -5F, 5F);
+        if(isDeployed()) turningSpeed = UsefulFunctions.wrap(turningSpeed + 1F, -5F, 5F);
     }
 
     @Override
     protected void moveLeft() {
-        turningSpeed = UsefulFunctions.wrap(turningSpeed - 1F, -5F, +5F);
+        if(isDeployed()) turningSpeed = UsefulFunctions.wrap(turningSpeed - 1F, -5F, +5F);
     }
 
     @Override
     protected void moveForward() {
-        rotationPitch = UsefulFunctions.wrap(rotationPitch + 1.5F, -15.0F, 30.0F);
+        if(isDeployed()) rotationPitch = UsefulFunctions.wrap(rotationPitch + 1.5F, -15.0F, 30.0F);
     }
 
     @Override
     protected void moveBackward() {
-        rotationPitch = UsefulFunctions.wrap(rotationPitch - 1F, -15.0F, 30.0F);
+        if(isDeployed())  rotationPitch = UsefulFunctions.wrap(rotationPitch - 1F, -15.0F, 30.0F);
     }
 
     @Override

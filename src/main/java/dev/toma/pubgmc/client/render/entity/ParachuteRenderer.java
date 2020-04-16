@@ -7,6 +7,7 @@ import dev.toma.pubgmc.common.entity.ParachuteEntity;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 
 import javax.annotation.Nullable;
 
@@ -35,16 +36,17 @@ public class ParachuteRenderer extends EntityRenderer<ParachuteEntity> {
         double prevMod = mod - 1 / 6D;
         double smooth = mod == 1 ? 1 : prevMod + (mod - prevMod) * partialTicks;
         GlStateManager.translated(x, y, z);
-        GlStateManager.translated(0, 3.7, 0);
+        GlStateManager.translated(0, 2.4, 0);
         GlStateManager.rotated(180, 1.0, 0.0, 0.0);
         GlStateManager.scaled(0.07 * smooth, 0.07 * smooth, 0.07 * smooth);
         GlStateManager.rotatef(entityYaw, 0.0F, 1.0F, 0.0F);
-        GlStateManager.rotatef(entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * partialTicks, 1.0F, 0.0F, 0.0F);
+        float p = MathHelper.lerp(partialTicks, entity.prevRotationPitch, entity.rotationPitch);
+        GlStateManager.rotatef(p, 1.0F, 0.0F, 0.0F);
         if(entity.timeWithoutOwner > 0) {
             double land = entity.timeWithoutOwner / 100.0D;
             double prevLand = land - 0.01D;
             double interpolatedLand = prevLand + (land - prevLand) * partialTicks;
-            GlStateManager.translated(0, 45 * interpolatedLand, 0);
+            GlStateManager.translated(0, 30 * interpolatedLand, 0);
             GlStateManager.rotated(90 * interpolatedLand, 1, 0, 0);
         }
         GlStateManager.disableLighting();
