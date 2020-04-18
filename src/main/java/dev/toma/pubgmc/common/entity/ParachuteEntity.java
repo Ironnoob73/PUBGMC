@@ -77,6 +77,9 @@ public class ParachuteEntity extends AbstractControllableEntity {
     @Override
     protected void updateEntityPost() {
         move(MoverType.SELF, getMotion());
+        if(!this.isBeingRidden()) {
+            resetInputState();
+        }
     }
 
     @Override

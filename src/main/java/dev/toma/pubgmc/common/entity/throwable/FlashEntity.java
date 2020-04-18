@@ -1,5 +1,7 @@
 package dev.toma.pubgmc.common.entity.throwable;
 
+import dev.toma.pubgmc.Registry;
+import dev.toma.pubgmc.client.ClientManager;
 import dev.toma.pubgmc.network.NetworkManager;
 import dev.toma.pubgmc.network.packet.CPacketFlashStatus;
 import dev.toma.pubgmc.util.RenderHelper;
@@ -11,6 +13,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.shapes.VoxelShapes;
@@ -38,8 +41,8 @@ public class FlashEntity extends ThrowableEntity {
         super(type, world, thrower, state);
     }
 
-    public FlashEntity(EntityType<?> type, World world, LivingEntity thrower, EnumEntityThrowState state, int timeLeft) {
-        super(type, world, thrower, state, timeLeft);
+    public FlashEntity(World world, LivingEntity thrower, EnumEntityThrowState state, int timeLeft) {
+        super(Registry.PMCEntityTypes.FLASH, world, thrower, state, timeLeft);
     }
 
     @Override
@@ -50,8 +53,7 @@ public class FlashEntity extends ThrowableEntity {
     @Override
     public void onExplode() {
         if (world.isRemote) {
-            // TODO
-            //Pubgmc.proxy.playDelayedSound(SoundEvents.ENTITY_GENERIC_EXPLODE, posX, posY, posZ, 5f);
+            ClientManager.playDelayedSoundAt(SoundEvents.ENTITY_GENERIC_EXPLODE, posX, posY, posZ, 5.0F, 1.0F);
             world.addParticle(ParticleTypes.EXPLOSION, posX, posY, posZ, 0, 0, 0);
             for (int i = 0; i < 7; i++) {
                 world.addParticle(ParticleTypes.CLOUD, posX, posY, posZ, rand.nextDouble() / 8 - rand.nextDouble() / 8, rand.nextDouble() / 4, rand.nextDouble() / 8 - rand.nextDouble() / 8);

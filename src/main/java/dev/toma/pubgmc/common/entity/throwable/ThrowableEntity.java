@@ -218,7 +218,7 @@ public abstract class ThrowableEntity extends Entity implements IEntityAdditiona
             this.world.playSound(null, this.posX, this.posY, this.posZ, SoundEvents.BLOCK_ANVIL_BREAK, SoundCategory.MASTER, 1.0F, 1.8F);
         }
         this.timesBounced++;
-        if(!canBounce()) {
+        if(!canBounce() && !world.isRemote) {
             this.freezeEntity();
         }
         this.bounce();

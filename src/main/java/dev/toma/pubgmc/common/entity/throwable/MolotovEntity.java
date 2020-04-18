@@ -1,5 +1,6 @@
 package dev.toma.pubgmc.common.entity.throwable;
 
+import dev.toma.pubgmc.Registry;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
@@ -15,6 +16,7 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.apache.commons.lang3.tuple.Pair;
@@ -42,8 +44,8 @@ public class MolotovEntity extends ThrowableEntity {
         this.timeLeft = 200;
     }
 
-    public MolotovEntity(EntityType<?> type, World world, LivingEntity thrower, EnumEntityThrowState state, int timeLeft) {
-        super(type, world, thrower, state, Integer.MAX_VALUE);
+    public MolotovEntity(World world, LivingEntity thrower, EnumEntityThrowState state, int timeLeft) {
+        super(Registry.PMCEntityTypes.MOLOTOV, world, thrower, state, Integer.MAX_VALUE);
         this.fireSpreader = new MolotovFireSpreader();
         this.timeLeft = 200;
     }
@@ -187,7 +189,9 @@ public class MolotovEntity extends ThrowableEntity {
             List<MolotovFirePosEntry> list = new ArrayList<>();
             BlockPos initial = molotov.getPosition();
             BlockPos ground = this.findGround(molotov.world, initial);
-            AxisAlignedBB alignedBB = molotov.world.getBlockState(ground).getCollisionShape(molotov.world, ground).getBoundingBox();
+            VoxelShape shape = molotov.world.getBlockState(ground).getCollisionShape(molotov.world, ground);
+            if(shape.isEmpty()) return Collections.emptyList();
+            AxisAlignedBB alignedBB = shape.getBoundingBox();
             if(molotov.world.isAirBlock(ground.up())) {
                 list.add(new MolotovFirePosEntry(ground, alignedBB));
             }
@@ -208,6 +212,8 @@ public class MolotovEntity extends ThrowableEntity {
                         continue;
                     }
                     BlockState state = molotov.world.getBlockState(ground);
+                    VoxelShape shape = state.getCollisionShape(molotov.world, ground);
+                    if(shape.isEmpty()) continue;
                     AxisAlignedBB alignedBB = state.getCollisionShape(molotov.world, ground).getBoundingBox();
                     if(state.getBlock() == Blocks.AIR || state.getMaterial().isLiquid()) {
                         continue;

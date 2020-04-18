@@ -4,7 +4,6 @@ import dev.toma.pubgmc.common.entity.throwable.ThrowableEntity;
 import dev.toma.pubgmc.common.item.PMCItem;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -17,23 +16,27 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 
 import java.util.List;
-import java.util.function.Supplier;
 
 public class ThrowableItem extends PMCItem {
 
     private final int maxFuse;
-    private final Supplier<EntityType<? extends ThrowableEntity>> typeSupplier;
-    private ThrowableFactory factory;
+    private final IFactory factory;
 
-    public ThrowableItem(String name, int fuse, Supplier<EntityType<? extends ThrowableEntity>> supplier) {
+    public ThrowableItem(String name, int fuse, IFactory factory) {
         super(name, new Properties().maxStackSize(1).group(ITEMS));
         this.maxFuse = fuse;
-        this.typeSupplier = supplier;
+        this.factory = factory;
     }
 
-    public ThrowableItem factory(ThrowableFactory factory) {
-        this.factory = factory;
-        return this;
+    public void startCooking(ItemStack stack) {
+        if(!stack.hasTag()) {
+            CompoundNBT nbt = new CompoundNBT();
+            nbt.putBoolean("cooking", false);
+            nbt.putInt("time", maxFuse);
+            stack.setTag(nbt);
+        } else {
+            stack.getTag().putBoolean("cooking", true);
+        }
     }
 
     @Override
@@ -44,11 +47,12 @@ public class ThrowableItem extends PMCItem {
                 CompoundNBT nbt = new CompoundNBT();
                 nbt.putBoolean("cooking", false);
                 nbt.putInt("time", maxFuse);
+                stack.setTag(nbt);
             } else {
                 if(stack.getTag().getBoolean("cooking")) {
                     int left = stack.getTag().getInt("time");
                     if(left <= 0) {
-                        worldIn.addEntity(factory.create(typeSupplier.get(), worldIn, (PlayerEntity) entityIn, ThrowableEntity.EnumEntityThrowState.FORCED, left));
+                        worldIn.addEntity(factory.create(worldIn, (PlayerEntity) entityIn, ThrowableEntity.EnumEntityThrowState.FORCED, left));
                         ((PlayerEntity) entityIn).inventory.removeStackFromSlot(itemSlot);
                         return;
                     }
@@ -67,11 +71,13 @@ public class ThrowableItem extends PMCItem {
     public boolean onEntitySwing(ItemStack stack, LivingEntity entity) {
         if(!(entity instanceof PlayerEntity)) return false;
         if(!entity.world.isRemote) {
+            PlayerEntity player = (PlayerEntity) entity;
             int left = maxFuse;
             if(stack.hasTag() && stack.getTag().contains("time")) {
                 left = stack.getTag().getInt("time");
             }
-            entity.world.addEntity(factory.create(typeSupplier.get(), entity.world, (PlayerEntity) entity, ThrowableEntity.EnumEntityThrowState.SHORT, left));
+            entity.world.addEntity(factory.create(entity.world, player, ThrowableEntity.EnumEntityThrowState.SHORT, left));
+            player.inventory.removeStackFromSlot(player.inventory.currentItem);
         }
         return false;
     }
@@ -84,7 +90,8 @@ public class ThrowableItem extends PMCItem {
             if(stack.hasTag() && stack.getTag().contains("time")) {
                 left = stack.getTag().getInt("time");
             }
-            worldIn.addEntity(factory.create(typeSupplier.get(), worldIn, playerIn, ThrowableEntity.EnumEntityThrowState.LONG, left));
+            worldIn.addEntity(factory.create(worldIn, playerIn, ThrowableEntity.EnumEntityThrowState.LONG, left));
+            playerIn.inventory.removeStackFromSlot(playerIn.inventory.currentItem);
         }
         return ActionResult.newResult(ActionResultType.PASS, stack);
     }
@@ -95,8 +102,8 @@ public class ThrowableItem extends PMCItem {
         tooltip.add(new TranslationTextComponent("Left-click: Short throw"));
     }
 
-    public interface ThrowableFactory {
+    public interface IFactory {
 
-        ThrowableEntity create(EntityType<?> type, World world, LivingEntity owner, ThrowableEntity.EnumEntityThrowState throwState, int time);
+        ThrowableEntity create(World world, LivingEntity owner, ThrowableEntity.EnumEntityThrowState throwState, int time);
     }
 }

@@ -67,8 +67,10 @@ public class ClientEventHandler {
                 boolean bwd = settings.keyBindBack.isKeyDown();
                 boolean right = settings.keyBindRight.isKeyDown();
                 boolean left = settings.keyBindLeft.isKeyDown();
-                controllableEntity.onInputUpdate(fwd, bwd, right, left);
-                NetworkManager.sendToServer(new SPacketControllableInput(fwd, bwd, right, left));
+                boolean ptUp = settings.keyBindJump.isKeyDown();
+                boolean ptDown = settings.keyBindSprint.isKeyDown();
+                controllableEntity.onInputUpdate(fwd, bwd, right, left, ptUp, ptDown);
+                NetworkManager.sendToServer(new SPacketControllableInput(fwd, bwd, right, left, ptUp, ptDown));
             }
         }
     }

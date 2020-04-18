@@ -13,13 +13,15 @@ public class SPacketControllableInput implements NetworkPacket<SPacketControllab
     public SPacketControllableInput() {
     }
 
-    private boolean f, b, r, l;
+    private boolean f, b, r, l, u, d;
 
-    public SPacketControllableInput(boolean f, boolean b, boolean r, boolean l) {
+    public SPacketControllableInput(boolean f, boolean b, boolean r, boolean l, boolean u, boolean d) {
         this.f = f;
         this.b = b;
         this.r = r;
         this.l = l;
+        this.u = u;
+        this.d = d;
     }
 
     @Override
@@ -28,11 +30,13 @@ public class SPacketControllableInput implements NetworkPacket<SPacketControllab
         buf.writeBoolean(instance.b);
         buf.writeBoolean(instance.r);
         buf.writeBoolean(instance.l);
+        buf.writeBoolean(instance.u);
+        buf.writeBoolean(instance.d);
     }
 
     @Override
     public SPacketControllableInput decode(PacketBuffer buf) {
-        return new SPacketControllableInput(buf.readBoolean(), buf.readBoolean(), buf.readBoolean(), buf.readBoolean());
+        return new SPacketControllableInput(buf.readBoolean(), buf.readBoolean(), buf.readBoolean(), buf.readBoolean(), buf.readBoolean(), buf.readBoolean());
     }
 
     @Override
@@ -40,7 +44,7 @@ public class SPacketControllableInput implements NetworkPacket<SPacketControllab
         ctx.get().enqueueWork(() -> {
             ServerPlayerEntity player = ctx.get().getSender();
             if(player.getRidingEntity() instanceof IControllableEntity) {
-                ((IControllableEntity) player.getRidingEntity()).onInputUpdate(instance.f, instance.b, instance.r, instance.l);
+                ((IControllableEntity) player.getRidingEntity()).onInputUpdate(instance.f, instance.b, instance.r, instance.l, instance.u, instance.d);
             }
         });
         ctx.get().setPacketHandled(true);

@@ -4,6 +4,7 @@ import dev.toma.pubgmc.capability.IPlayerCap;
 import dev.toma.pubgmc.capability.player.PlayerCapFactory;
 import dev.toma.pubgmc.capability.player.PlayerCapStorage;
 import dev.toma.pubgmc.client.ClientManager;
+import dev.toma.pubgmc.client.ModKeybinds;
 import dev.toma.pubgmc.config.ConfigImpl;
 import dev.toma.pubgmc.network.NetworkManager;
 import net.minecraft.util.ResourceLocation;
@@ -34,6 +35,7 @@ public class Pubgmc {
 
     private void setupClient(FMLClientSetupEvent event) {
         ClientManager.loadEntityRenderers();
+        ModKeybinds.init();
     }
 
     private void setupCommon(FMLCommonSetupEvent event) {

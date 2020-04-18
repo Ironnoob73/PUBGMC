@@ -1,5 +1,6 @@
 package dev.toma.pubgmc.common.entity.throwable;
 
+import dev.toma.pubgmc.Registry;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -25,8 +26,8 @@ public class SmokeEntity extends ThrowableEntity {
         super(type, world, thrower, state);
     }
 
-    public SmokeEntity(EntityType<?> type, World world, LivingEntity thrower, EnumEntityThrowState state, int timeLeft) {
-        super(type, world, thrower, state, timeLeft);
+    public SmokeEntity(World world, LivingEntity thrower, EnumEntityThrowState state, int timeLeft) {
+        super(Registry.PMCEntityTypes.SMOKE, world, thrower, state, timeLeft);
     }
 
     @Override

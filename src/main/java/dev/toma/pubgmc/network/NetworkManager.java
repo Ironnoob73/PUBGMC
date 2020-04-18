@@ -1,10 +1,7 @@
 package dev.toma.pubgmc.network;
 
 import dev.toma.pubgmc.Pubgmc;
-import dev.toma.pubgmc.network.packet.CPacketFlashStatus;
-import dev.toma.pubgmc.network.packet.CPacketSendNBT;
-import dev.toma.pubgmc.network.packet.CPacketSyncEntity;
-import dev.toma.pubgmc.network.packet.SPacketControllableInput;
+import dev.toma.pubgmc.network.packet.*;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkDirection;
@@ -26,6 +23,7 @@ public class NetworkManager {
         register(CPacketSyncEntity.class, new CPacketSyncEntity());
         register(CPacketFlashStatus.class, new CPacketFlashStatus());
         register(SPacketControllableInput.class, new SPacketControllableInput());
+        register(SPacketCookThrowable.class, new SPacketCookThrowable());
     }
 
     public static void sendToClient(ServerPlayerEntity player, NetworkPacket<?> packet) {

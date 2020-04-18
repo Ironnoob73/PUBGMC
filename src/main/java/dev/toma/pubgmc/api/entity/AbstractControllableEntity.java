@@ -13,17 +13,21 @@ public abstract class AbstractControllableEntity extends Entity implements ICont
     public boolean backwardKey;
     public boolean rightKey;
     public boolean leftKey;
+    public boolean pitchUpKey;
+    public boolean pitchDownKey;
 
     public AbstractControllableEntity(EntityType<?> type, World world) {
         super(type, world);
     }
 
     @Override
-    public void onInputUpdate(boolean forward, boolean backward, boolean right, boolean left) {
+    public void onInputUpdate(boolean forward, boolean backward, boolean right, boolean left, boolean pitchUp, boolean pitchDown) {
         this.forwardKey = forward;
         this.backwardKey = backward;
         this.rightKey = right;
         this.leftKey = left;
+        this.pitchUpKey = pitchUp;
+        this.pitchDownKey = pitchDown;
     }
 
     @Override
@@ -53,6 +57,12 @@ public abstract class AbstractControllableEntity extends Entity implements ICont
         }
         if(!rightKey && leftKey) {
             this.moveLeft();
+        }
+        if(pitchUpKey && !pitchDownKey) {
+            this.onPitchUpKey();
+        }
+        if(!pitchUpKey && pitchDownKey) {
+            this.onPitchDownKey();
         }
     }
 
@@ -86,6 +96,14 @@ public abstract class AbstractControllableEntity extends Entity implements ICont
 
     }
 
+    protected void onPitchUpKey() {
+
+    }
+
+    protected void onPitchDownKey() {
+
+    }
+
     protected boolean noKeyInput() {
         return noVerticalKey() && noRotateKey();
     }
@@ -96,5 +114,14 @@ public abstract class AbstractControllableEntity extends Entity implements ICont
 
     protected boolean noRotateKey() {
         return !rightKey && !leftKey;
+    }
+
+    protected void resetInputState() {
+        this.forwardKey = false;
+        this.backwardKey = false;
+        this.rightKey = false;
+        this.leftKey = false;
+        this.pitchUpKey = false;
+        this.pitchDownKey = false;
     }
 }

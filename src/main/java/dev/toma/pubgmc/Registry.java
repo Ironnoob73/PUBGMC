@@ -6,12 +6,16 @@ import dev.toma.pubgmc.common.entity.throwable.FlashEntity;
 import dev.toma.pubgmc.common.entity.throwable.GrenadeEntity;
 import dev.toma.pubgmc.common.entity.throwable.MolotovEntity;
 import dev.toma.pubgmc.common.entity.throwable.SmokeEntity;
+import dev.toma.pubgmc.common.entity.vehicle.AirDriveableEntity;
+import dev.toma.pubgmc.common.entity.vehicle.LandDriveableEntity;
 import dev.toma.pubgmc.common.item.healing.HealingItem;
 import dev.toma.pubgmc.common.item.utility.ParachuteItem;
 import dev.toma.pubgmc.common.item.utility.ThrowableItem;
+import dev.toma.pubgmc.common.item.utility.VehicleSpawnerItem;
 import dev.toma.pubgmc.common.item.wearable.BulletProofArmor;
 import dev.toma.pubgmc.util.UsefulFunctions;
 import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -42,6 +46,8 @@ public class Registry {
         public static final ThrowableItem SMOKE = null;
         public static final ThrowableItem FLASH = null;
         public static final ThrowableItem MOLOTOV = null;
+        public static final VehicleSpawnerItem SPAWN_UAZ = null;
+        public static final VehicleSpawnerItem SPAWN_GLIDER = null;
     }
 
     @ObjectHolder(Pubgmc.MODID)
@@ -56,6 +62,8 @@ public class Registry {
         public static final EntityType<GrenadeEntity> SMOKE = null;
         public static final EntityType<GrenadeEntity> MOLOTOV = null;
         public static final EntityType<FlashEntity> FLASH = null;
+        public static final EntityType<LandDriveableEntity.UAZDriveable> UAZ = null;
+        public static final EntityType<AirDriveableEntity.GliderDriveable> GLIDER = null;
     }
 
     @Mod.EventBusSubscriber(modid = Pubgmc.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -113,10 +121,12 @@ public class Registry {
                     new BulletProofArmor("military_helmet", 0.45F, BulletProofArmor.Material.MILITARY, EquipmentSlotType.HEAD).textureMap(2, 0, 2, 1),
                     new BulletProofArmor("military_vest", 0.45F, BulletProofArmor.Material.MILITARY, EquipmentSlotType.CHEST).textureMap(5, 0, 5, 1),
                     new ParachuteItem("parachute"),
-                    new ThrowableItem("grenade", 100, () -> PMCEntityTypes.GRENADE).factory(GrenadeEntity::new),
-                    new ThrowableItem("smoke", 20, () -> PMCEntityTypes.SMOKE).factory(SmokeEntity::new),
-                    new ThrowableItem("molotov", 0, () -> PMCEntityTypes.MOLOTOV).factory(MolotovEntity::new),
-                    new ThrowableItem("flash", 100, () -> PMCEntityTypes.FLASH).factory(FlashEntity::new)
+                    new ThrowableItem("grenade", 100, GrenadeEntity::new),
+                    new ThrowableItem("smoke", 20, SmokeEntity::new),
+                    new ThrowableItem("molotov", 0, MolotovEntity::new),
+                    new ThrowableItem("flash", 100, FlashEntity::new),
+                    new VehicleSpawnerItem("spawn_uaz", LandDriveableEntity.UAZDriveable::new),
+                    new VehicleSpawnerItem("spawn_glider", AirDriveableEntity.GliderDriveable::new)
             );
         }
 
@@ -128,42 +138,27 @@ public class Registry {
         @SubscribeEvent
         public static void onEntityTypeRegister(RegistryEvent.Register<EntityType<?>> event) {
             event.getRegistry().registerAll(
-                    EntityType.Builder.create(ParachuteEntity::new, EntityClassification.MISC)
-                            .setUpdateInterval(1)
-                            .setTrackingRange(256)
-                            .setShouldReceiveVelocityUpdates(true)
-                            .size(1.5F, 2.5F)
-                            .build("pubgmc:parachute")
-                    .setRegistryName(Pubgmc.makeResource("parachute")),
-                    EntityType.Builder.create(GrenadeEntity::new, EntityClassification.MISC)
-                            .setUpdateInterval(1)
-                            .setTrackingRange(32)
-                            .setShouldReceiveVelocityUpdates(true)
-                            .size(0.2F, 0.2F)
-                            .build("pubgmc:grenade")
-                    .setRegistryName(Pubgmc.makeResource("grenade")),
-                    EntityType.Builder.create(SmokeEntity::new, EntityClassification.MISC)
-                            .setUpdateInterval(1)
-                            .setTrackingRange(32)
-                            .setShouldReceiveVelocityUpdates(true)
-                            .size(0.2F, 0.2F)
-                            .build("pubgmc:smoke")
-                    .setRegistryName(Pubgmc.makeResource("smoke")),
-                    EntityType.Builder.create(MolotovEntity::new, EntityClassification.MISC)
-                            .setUpdateInterval(1)
-                            .setTrackingRange(32)
-                            .setShouldReceiveVelocityUpdates(true)
-                            .size(0.2F, 0.2F)
-                            .build("pubgmc:molotov")
-                    .setRegistryName(Pubgmc.makeResource("molotov")),
-                    EntityType.Builder.create(FlashEntity::new, EntityClassification.MISC)
-                            .setUpdateInterval(1)
-                            .setTrackingRange(32)
-                            .setShouldReceiveVelocityUpdates(true)
-                            .size(0.2F, 0.2F)
-                            .build("pubgmc:flash")
-                    .setRegistryName(Pubgmc.makeResource("flash"))
+                    registerType("parachute", track_builder(ParachuteEntity::new, EntityClassification.MISC, 256).size(1.5F, 2.5F)),
+                    registerType("grenade", track_builder(GrenadeEntity::new, EntityClassification.MISC, 32).size(0.2F, 0.2F)),
+                    registerType("smoke", track_builder(SmokeEntity::new, EntityClassification.MISC, 32).size(0.2F, 0.2F)),
+                    registerType("molotov", track_builder(MolotovEntity::new, EntityClassification.MISC, 32).size(0.2F, 0.2F)),
+                    registerType("flash", track_builder(FlashEntity::new, EntityClassification.MISC, 32).size(0.2F, 0.2F)),
+                    registerType("uaz", track_builder(LandDriveableEntity.UAZDriveable::new, EntityClassification.MISC, 64).size(2.0F, 2.5F)),
+                    registerType("glider", track_builder(AirDriveableEntity.GliderDriveable::new, EntityClassification.MISC, 64).size(2.0F, 2.5F))
             );
+        }
+
+        @SuppressWarnings("unchecked")
+        private static <E extends Entity> EntityType<E> registerType(String name, EntityType.Builder<E> builder) {
+            return (EntityType<E>) builder.build(Pubgmc.MODID + ":" + name).setRegistryName(Pubgmc.makeResource(name));
+        }
+
+        private static <E extends Entity> EntityType.Builder<E> builder(EntityType.IFactory<E> factory, EntityClassification classification) {
+            return EntityType.Builder.create(factory, classification);
+        }
+
+        private static <E extends Entity> EntityType.Builder<E> track_builder(EntityType.IFactory<E> factory, EntityClassification classification, int range) {
+            return EntityType.Builder.create(factory, classification).setTrackingRange(range).setUpdateInterval(1).setShouldReceiveVelocityUpdates(true);
         }
     }
 }

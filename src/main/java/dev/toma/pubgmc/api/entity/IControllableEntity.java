@@ -1,6 +1,15 @@
 package dev.toma.pubgmc.api.entity;
 
+import net.minecraft.client.MainWindow;
+import net.minecraft.client.Minecraft;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+
 public interface IControllableEntity {
 
-    void onInputUpdate(boolean forward, boolean backward, boolean right, boolean left);
+    void onInputUpdate(boolean forward, boolean backward, boolean right, boolean left, boolean pitchUp, boolean pitchDown);
+
+    // TODO Implement
+    @OnlyIn(Dist.CLIENT)
+    default void drawOnScreen(Minecraft mc, MainWindow window) {}
 }
