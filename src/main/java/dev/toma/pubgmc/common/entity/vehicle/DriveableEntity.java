@@ -2,6 +2,7 @@ package dev.toma.pubgmc.common.entity.vehicle;
 
 import dev.toma.pubgmc.api.entity.AbstractControllableEntity;
 import dev.toma.pubgmc.util.UsefulFunctions;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -46,6 +47,24 @@ public abstract class DriveableEntity extends AbstractControllableEntity impleme
     public void setBaseData() {
         this.health = data.maxHealth;
         this.fuel = data.maxFuel;
+    }
+
+    public void refuel() {
+        this.fuel = Math.min(fuel + 50.0F, data.maxFuel);
+    }
+
+    public abstract int maxUserAmount();
+
+    protected double getPassengerX(int index) {
+        return 0;
+    }
+
+    protected double getPassengerY(int index) {
+        return this.getMountedYOffset();
+    }
+
+    protected double getPassengerZ(int index) {
+        return 0;
     }
 
     public boolean canAccelerate() {
@@ -102,12 +121,29 @@ public abstract class DriveableEntity extends AbstractControllableEntity impleme
     @Override
     public boolean processInitialInteract(PlayerEntity player, Hand hand) {
         if(!world.isRemote) {
-            if(canFitPassenger(player)) {
+            if(!isPassenger(player) && canFitPassenger(player)) {
                 player.startRiding(this);
                 return true;
             }
         }
         return false;
+    }
+
+    @Override
+    protected boolean canFitPassenger(Entity passenger) {
+        return this.getPassengers().size() < this.maxUserAmount();
+    }
+
+    @Override
+    public void updatePassenger(Entity passenger) {
+        if(this.isPassenger(passenger)) {
+            int id = this.getPassengers().indexOf(passenger);
+            double x = this.getPassengerX(id);
+            double y = this.getPassengerY(id);
+            double z = this.getPassengerZ(id);
+            Vec3d vec = (new Vec3d(x, y, z)).rotateYaw(-this.rotationYaw * 0.017453292F - ((float) Math.PI / 2f));
+            passenger.setPosition(posX + vec.x, posY + vec.y, posZ + vec.z);
+        }
     }
 
     @Override

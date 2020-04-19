@@ -7,9 +7,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 public interface IControllableEntity {
 
-    void onInputUpdate(boolean forward, boolean backward, boolean right, boolean left, boolean pitchUp, boolean pitchDown);
+    void onInputUpdate(boolean forward, boolean backward, boolean right, boolean left, boolean rotorAccelerate, boolean rotorSlowdown);
 
-    // TODO Implement
     @OnlyIn(Dist.CLIENT)
     default void drawOnScreen(Minecraft mc, MainWindow window) {}
 }

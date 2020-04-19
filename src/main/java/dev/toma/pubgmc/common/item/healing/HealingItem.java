@@ -2,6 +2,7 @@ package dev.toma.pubgmc.common.item.healing;
 
 import com.google.common.base.Preconditions;
 import dev.toma.pubgmc.common.item.PMCItem;
+import dev.toma.pubgmc.common.item.utility.FuelCanItem;
 import dev.toma.pubgmc.util.UsefulFunctions;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -11,6 +12,7 @@ import net.minecraft.item.UseAction;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 
@@ -63,6 +65,8 @@ public class HealingItem extends PMCItem {
             if(!canUse.test((PlayerEntity) player)) {
                 player.stopActiveHand();
                 sendErrMsg((PlayerEntity) player);
+            } else {
+                if(!player.world.isRemote) ((PlayerEntity) player).sendStatusMessage(new StringTextComponent(FuelCanItem.numberFormatter.format(count / 20.0F) + "s"), true);
             }
         }
     }

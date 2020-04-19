@@ -5,7 +5,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class LandDriveableEntity extends DriveableEntity {
+public abstract class LandDriveableEntity extends DriveableEntity {
 
     public boolean isBroken;
     public int timeBeforeBreak;
@@ -42,6 +42,10 @@ public class LandDriveableEntity extends DriveableEntity {
         }
         public UAZDriveable(World world, BlockPos pos) {
             super(Registry.PMCEntityTypes.UAZ, world, pos, UAZ_DATA);
+        }
+        @Override
+        public int maxUserAmount() {
+            return 4;
         }
     }
 }

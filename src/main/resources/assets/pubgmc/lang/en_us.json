@@ -7,5 +7,7 @@
     "pubgmc.heal.medkit.success": "§aSuccessfully used Medkit",
     "pubgmc.heal.energy_drink.success": "§aSuccessfully used Energy Drink",
     "pubgmc.heal.painkillers.success": "§aSuccessfully used Painkillers",
-    "pubgmc.heal.adrenaline_syringe.success": "§aSuccessfully used Adrenaline Syringe"
+    "pubgmc.heal.adrenaline_syringe.success": "§aSuccessfully used Adrenaline Syringe",
+    "pubgmc.fuelcan.fail.vehicle": "§cYou can only use this item in vehicle!",
+    "pubgmc.fuelcan.fail.movement": "§cVehicle must be stationary!"
 }

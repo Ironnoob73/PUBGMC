@@ -13,21 +13,22 @@ public abstract class AbstractControllableEntity extends Entity implements ICont
     public boolean backwardKey;
     public boolean rightKey;
     public boolean leftKey;
-    public boolean pitchUpKey;
-    public boolean pitchDownKey;
+    public boolean rotorAccelerate;
+    public boolean rotorSlowndown;
 
     public AbstractControllableEntity(EntityType<?> type, World world) {
         super(type, world);
+        this.ignoreFrustumCheck = true;
     }
 
     @Override
-    public void onInputUpdate(boolean forward, boolean backward, boolean right, boolean left, boolean pitchUp, boolean pitchDown) {
+    public void onInputUpdate(boolean forward, boolean backward, boolean right, boolean left, boolean rotorAccelerate, boolean rotorSlowndown) {
         this.forwardKey = forward;
         this.backwardKey = backward;
         this.rightKey = right;
         this.leftKey = left;
-        this.pitchUpKey = pitchUp;
-        this.pitchDownKey = pitchDown;
+        this.rotorAccelerate = rotorAccelerate;
+        this.rotorSlowndown = rotorSlowndown;
     }
 
     @Override
@@ -58,11 +59,11 @@ public abstract class AbstractControllableEntity extends Entity implements ICont
         if(!rightKey && leftKey) {
             this.moveLeft();
         }
-        if(pitchUpKey && !pitchDownKey) {
-            this.onPitchUpKey();
+        if(rotorAccelerate && !rotorSlowndown) {
+            this.onRotorAccelerate();
         }
-        if(!pitchUpKey && pitchDownKey) {
-            this.onPitchDownKey();
+        if(!rotorAccelerate && rotorSlowndown) {
+            this.onRotorSlowndown();
         }
     }
 
@@ -96,11 +97,11 @@ public abstract class AbstractControllableEntity extends Entity implements ICont
 
     }
 
-    protected void onPitchUpKey() {
+    protected void onRotorAccelerate() {
 
     }
 
-    protected void onPitchDownKey() {
+    protected void onRotorSlowndown() {
 
     }
 
@@ -121,7 +122,7 @@ public abstract class AbstractControllableEntity extends Entity implements ICont
         this.backwardKey = false;
         this.rightKey = false;
         this.leftKey = false;
-        this.pitchUpKey = false;
-        this.pitchDownKey = false;
+        this.rotorAccelerate = false;
+        this.rotorSlowndown = false;
     }
 }

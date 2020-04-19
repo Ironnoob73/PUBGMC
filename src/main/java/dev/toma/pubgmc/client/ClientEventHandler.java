@@ -46,6 +46,9 @@ public class ClientEventHandler {
         if(event.getType() == RenderGameOverlayEvent.ElementType.ALL) {
             Minecraft mc = Minecraft.getInstance();
             PlayerEntity player = mc.player;
+            if(player.getRidingEntity() instanceof IControllableEntity) {
+                ((IControllableEntity) player.getRidingEntity()).drawOnScreen(mc, event.getWindow());
+            }
             if(player.isCreative() || player.isSpectator()) return;
             IPlayerCap cap = PlayerCapFactory.get(player);
             BoostStats stats = cap.getBoostStats();

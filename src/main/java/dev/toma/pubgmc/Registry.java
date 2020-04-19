@@ -9,6 +9,7 @@ import dev.toma.pubgmc.common.entity.throwable.SmokeEntity;
 import dev.toma.pubgmc.common.entity.vehicle.AirDriveableEntity;
 import dev.toma.pubgmc.common.entity.vehicle.LandDriveableEntity;
 import dev.toma.pubgmc.common.item.healing.HealingItem;
+import dev.toma.pubgmc.common.item.utility.FuelCanItem;
 import dev.toma.pubgmc.common.item.utility.ParachuteItem;
 import dev.toma.pubgmc.common.item.utility.ThrowableItem;
 import dev.toma.pubgmc.common.item.utility.VehicleSpawnerItem;
@@ -48,6 +49,7 @@ public class Registry {
         public static final ThrowableItem MOLOTOV = null;
         public static final VehicleSpawnerItem SPAWN_UAZ = null;
         public static final VehicleSpawnerItem SPAWN_GLIDER = null;
+        public static final FuelCanItem FUEL_CAN = null;
     }
 
     @ObjectHolder(Pubgmc.MODID)
@@ -126,7 +128,8 @@ public class Registry {
                     new ThrowableItem("molotov", 0, MolotovEntity::new),
                     new ThrowableItem("flash", 100, FlashEntity::new),
                     new VehicleSpawnerItem("spawn_uaz", LandDriveableEntity.UAZDriveable::new),
-                    new VehicleSpawnerItem("spawn_glider", AirDriveableEntity.GliderDriveable::new)
+                    new VehicleSpawnerItem("spawn_glider", AirDriveableEntity.GliderDriveable::new),
+                    new FuelCanItem("fuel_can")
             );
         }
 
