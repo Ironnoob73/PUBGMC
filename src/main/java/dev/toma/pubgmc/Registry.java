@@ -1,6 +1,7 @@
 package dev.toma.pubgmc;
 
 import dev.toma.pubgmc.capability.player.PlayerCapHelper;
+import dev.toma.pubgmc.common.block.crafting.WeaponFactoryBlock;
 import dev.toma.pubgmc.common.entity.ParachuteEntity;
 import dev.toma.pubgmc.common.entity.throwable.FlashEntity;
 import dev.toma.pubgmc.common.entity.throwable.GrenadeEntity;
@@ -20,11 +21,17 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.ObjectHolder;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class Registry {
 
@@ -54,7 +61,7 @@ public class Registry {
 
     @ObjectHolder(Pubgmc.MODID)
     public static class PMCBlocks {
-
+        public static final WeaponFactoryBlock WEAPON_FACTORY = null;
     }
 
     @ObjectHolder(Pubgmc.MODID)
@@ -73,7 +80,8 @@ public class Registry {
 
         @SubscribeEvent
         public static void onItemRegister(RegistryEvent.Register<Item> event) {
-            event.getRegistry().registerAll(
+            IForgeRegistry<Item> registry = event.getRegistry();
+            registry.registerAll(
                     HealingItem.Builder.create()
                             .stackSize(5)
                             .canUse(player -> player.getHealth() < 15)
@@ -131,11 +139,17 @@ public class Registry {
                     new VehicleSpawnerItem("spawn_glider", AirDriveableEntity.GliderDriveable::new),
                     new FuelCanItem("fuel_can")
             );
+            blockItemList.stream().filter(Objects::nonNull).forEach(registry::register);
+            blockItemList = null;
         }
+
+        public static List<BlockItem> blockItemList = new ArrayList<>();
 
         @SubscribeEvent
         public static void onBlockRegister(RegistryEvent.Register<Block> event) {
-
+            event.getRegistry().registerAll(
+                    new WeaponFactoryBlock("weapon_factory")
+            );
         }
 
         @SubscribeEvent
@@ -146,8 +160,8 @@ public class Registry {
                     registerType("smoke", track_builder(SmokeEntity::new, EntityClassification.MISC, 32).size(0.2F, 0.2F)),
                     registerType("molotov", track_builder(MolotovEntity::new, EntityClassification.MISC, 32).size(0.2F, 0.2F)),
                     registerType("flash", track_builder(FlashEntity::new, EntityClassification.MISC, 32).size(0.2F, 0.2F)),
-                    registerType("uaz", track_builder(LandDriveableEntity.UAZDriveable::new, EntityClassification.MISC, 64).size(2.0F, 2.5F)),
-                    registerType("glider", track_builder(AirDriveableEntity.GliderDriveable::new, EntityClassification.MISC, 64).size(2.0F, 2.5F))
+                    registerType("uaz", track_builder(LandDriveableEntity.UAZDriveable::new, EntityClassification.MISC, 64).size(2.25F, 2.0F)),
+                    registerType("glider", track_builder(AirDriveableEntity.GliderDriveable::new, EntityClassification.MISC, 64).size(2.5F, 2.0F))
             );
         }
 

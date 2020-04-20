@@ -9,10 +9,12 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import net.minecraftforge.fml.network.NetworkHooks;
@@ -44,6 +46,10 @@ public abstract class DriveableEntity extends AbstractControllableEntity impleme
         this.setBaseData();
     }
 
+    public void burnFuel() {
+        this.fuel = Math.max(0.0F, this.fuel - 0.05f);
+    }
+
     public void setBaseData() {
         this.health = data.maxHealth;
         this.fuel = data.maxFuel;
@@ -51,6 +57,14 @@ public abstract class DriveableEntity extends AbstractControllableEntity impleme
 
     public void refuel() {
         this.fuel = Math.min(fuel + 50.0F, data.maxFuel);
+    }
+
+    public void checkHealthState() {
+        if(!world.isRemote && this.health <= 0.0F) {
+            this.removePassengers();
+            world.createExplosion(this, posX, posY, posZ, 5.0F, Explosion.Mode.NONE);
+            this.remove();
+        }
     }
 
     public abstract int maxUserAmount();
@@ -73,12 +87,18 @@ public abstract class DriveableEntity extends AbstractControllableEntity impleme
 
     @Override
     protected void moveForward() {
-        if(this.canAccelerate()) currentSpeed = UsefulFunctions.wrap(currentSpeed + (currentSpeed < 0 ? data.brakeSpeed : data.acceleration), -data.maxSpeed / 2, data.maxSpeed);
+        if(this.canAccelerate()) {
+            currentSpeed = UsefulFunctions.wrap(currentSpeed + (currentSpeed < 0 ? data.brakeSpeed : data.acceleration), -data.maxSpeed / 2, data.maxSpeed);
+            this.burnFuel();
+        }
     }
 
     @Override
     protected void moveBackward() {
-        if(this.canAccelerate()) currentSpeed = UsefulFunctions.wrap(currentSpeed - (currentSpeed < 0 ? data.acceleration : data.brakeSpeed), -data.maxSpeed / 2, data.maxSpeed);
+        if(this.canAccelerate()) {
+            currentSpeed = UsefulFunctions.wrap(currentSpeed - (currentSpeed < 0 ? data.acceleration : data.brakeSpeed), -data.maxSpeed / 2, data.maxSpeed);
+            this.burnFuel();
+        }
     }
 
     @Override
@@ -94,7 +114,7 @@ public abstract class DriveableEntity extends AbstractControllableEntity impleme
     @Override
     protected void updateMovement() {
         super.updateMovement();
-        if(noVerticalKey()) {
+        if(noVerticalKey() || !hasFuel()) {
             float amount = data.acceleration / 3;
             currentSpeed = Math.abs(currentSpeed - amount) <= amount ? 0.0F : currentSpeed > 0 ? currentSpeed - amount : currentSpeed < 0 ? currentSpeed + amount : 0.0F;
         }
@@ -104,7 +124,7 @@ public abstract class DriveableEntity extends AbstractControllableEntity impleme
                 turnModifier = Math.abs(turnModifier - rotationSpeedSlowdown) <= rotationSpeedSlowdown ? 0.0F : turnModifier > 0 ? turnModifier - rotationSpeedSlowdown : turnModifier < 0 ? turnModifier + rotationSpeedSlowdown : 0.0F;
             }
         }
-        this.rotationYaw += turnModifier;
+        if(onGround) this.rotationYaw += turnModifier;
         Vec3d lookVec = this.getLookVec();
         this.setMotion(lookVec.mul(currentSpeed, currentSpeed, currentSpeed));
     }
@@ -113,6 +133,7 @@ public abstract class DriveableEntity extends AbstractControllableEntity impleme
     protected void updateEntityPost() {
         this.setMotion(this.getMotion().x, -0.25, this.getMotion().z);
         move(MoverType.SELF, this.getMotion());
+        this.checkHealthState();
         if(!this.isBeingRidden()) {
             resetInputState();
         }
@@ -175,6 +196,15 @@ public abstract class DriveableEntity extends AbstractControllableEntity impleme
         CompoundNBT c = new CompoundNBT();
         this.writeAdditional(c);
         buffer.writeCompoundTag(c);
+    }
+
+    @Override
+    public boolean attackEntityFrom(DamageSource source, float amount) {
+        if(!this.isPassenger(source.getTrueSource())) {
+            this.health -= amount;
+            return true;
+        }
+        return false;
     }
 
     @Override

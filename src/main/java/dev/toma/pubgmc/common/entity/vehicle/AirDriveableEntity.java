@@ -1,10 +1,14 @@
 package dev.toma.pubgmc.common.entity.vehicle;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import dev.toma.pubgmc.Registry;
 import dev.toma.pubgmc.util.RenderHelper;
 import dev.toma.pubgmc.util.UsefulFunctions;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MoverType;
 import net.minecraft.util.math.BlockPos;
@@ -13,6 +17,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.lwjgl.opengl.GL11;
 
 public abstract class AirDriveableEntity extends DriveableEntity {
 
@@ -36,7 +41,7 @@ public abstract class AirDriveableEntity extends DriveableEntity {
     protected void updateEntityPost() {
         if(onGround && (rotationPitch > 0 || currentSpeed == 0)) rotationPitch = 0;
         this.currentSpeed = throttle > 0.0F ? currentSpeed < this.maxSpeed() ? currentSpeed + throttle * data.getAcceleration() : Math.max(0.0F, currentSpeed - (onGround ? 0.05F : 0.005F)) : Math.max(0.0F, currentSpeed - (onGround ? 0.05F : 0.005F));
-        if(!onGround) this.currentSpeed = rotationPitch > 0 ? currentSpeed + 0.01F : rotationPitch < 0 ? currentSpeed - 0.001F : currentSpeed;
+        if(!onGround) this.currentSpeed = rotationPitch > 0 ? currentSpeed + 0.005F : rotationPitch < 0 ? currentSpeed - 0.005F : currentSpeed;
         if(this.posY > 128) this.rotationPitch += 1.5F;
         this.setMotion(this.getMotion().x, currentSpeed > 0.3F ? this.getMotion().y : -0.25, this.getMotion().z);
         move(MoverType.SELF, this.getMotion());
@@ -44,6 +49,7 @@ public abstract class AirDriveableEntity extends DriveableEntity {
             resetInputState();
             throttle = Math.max(0.0F, throttle - 0.025F);
         }
+        this.checkHealthState();
     }
 
     @Override
@@ -118,6 +124,31 @@ public abstract class AirDriveableEntity extends DriveableEntity {
         @OnlyIn(Dist.CLIENT)
         @Override
         public void drawOnScreen(Minecraft mc, MainWindow window) {
+            int left = 30;
+            int up = window.getScaledHeight() - 30;
+            Vec3d motion = this.getMotion();
+            double speed = Math.sqrt(motion.x * motion.x + motion.z * motion.z) * 20;
+            String speedString =  speed * 3.6d + " m/s";
+            mc.fontRenderer.drawStringWithShadow(speedString, left, up - 8, 0xFFFFFF);
+            mc.fontRenderer.drawStringWithShadow("E", left - 7, up + 1, 0xBB0000);
+            mc.fontRenderer.drawStringWithShadow("F", left + 152, up + 1, 0x00BB00);
+            RenderHelper.drawColoredShape(left, up, left + 150, up + 10, 0.4F, 0.4F, 0.4F, 0.5F);
+            float fuel = this.fuel / this.data.getMaxFuel();
+            Tessellator tessellator = Tessellator.getInstance();
+            BufferBuilder builder = tessellator.getBuffer();
+            GlStateManager.disableTexture();
+            GlStateManager.shadeModel(GL11.GL_SMOOTH);
+            builder.begin(7, DefaultVertexFormats.POSITION_COLOR);
+            builder.pos(left, up + 10, 0).color(1.0F, 0.0F, 0.0F, 1.0F).endVertex();
+            builder.pos(left + 150 * fuel, up + 10, 0).color(1.0F - fuel, fuel, 0.0F, 1.0F).endVertex();
+            builder.pos(left + 150 * fuel, up, 0).color(1.0F - fuel, fuel, 0.0F, 1.0F).endVertex();
+            builder.pos(left, up, 0).color(1.0F, 0.0F, 0.0F, 1.0F).endVertex();
+            tessellator.draw();
+            GlStateManager.shadeModel(GL11.GL_FLAT);
+            GlStateManager.enableTexture();
+            RenderHelper.drawColoredShape(left, up + 10, left + 150, up + 20, 0.0F, 0.0F, 0.0F, 0.5F);
+            float health = this.health / this.data.getMaxHealth();
+            RenderHelper.drawColoredShape(left, up + 10, (int)(left + 150 * health), up + 20, 1.0F, health, health, 1.0F);
             int x = window.getScaledWidth() / 2;
             int start = x + 120;
             int top = window.getScaledHeight() - 190;
