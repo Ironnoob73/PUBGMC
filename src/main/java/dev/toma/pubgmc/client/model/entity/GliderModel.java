@@ -396,8 +396,10 @@ public class GliderModel extends DriveableModel<AirDriveableEntity.GliderDriveab
 
     @Override
     public void doRender(AirDriveableEntity.GliderDriveable gliderDriveable, float partialTicks) {
-        float throttle = gliderDriveable.throttle;
-        setRotationAngle(rotorMain, 0, 0, MathHelper.lerp(partialTicks, gliderDriveable.ticksExisted - 1, gliderDriveable.ticksExisted) * throttle * 0.5F);
+        if(gliderDriveable != null) {
+            float throttle = gliderDriveable.throttle;
+            setRotationAngle(rotorMain, 0, 0, MathHelper.lerp(partialTicks, gliderDriveable.ticksExisted - 1, gliderDriveable.ticksExisted) * throttle * 0.5F);
+        }
         main.render(1f);
     }
 }

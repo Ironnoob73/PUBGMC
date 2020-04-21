@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "facing=north": {"model": "pubgmc:block/storage", "y": 0},
+        "facing=east": {"model": "pubgmc:block/storage", "y": 90},
+        "facing=south": {"model": "pubgmc:block/storage", "y": 180},
+        "facing=west": {"model": "pubgmc:block/storage", "y": 270}
+    }
+}

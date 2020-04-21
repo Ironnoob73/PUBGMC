@@ -13,17 +13,16 @@ import javax.annotation.Nullable;
 
 public class UAZRenderer extends DriveableRenderer<LandDriveableEntity.UAZDriveable> {
 
-    private final UAZModel model;
+    public static final UAZModel UAZ = new UAZModel();
     private static final ResourceLocation TEXTURE = Pubgmc.makeResource("textures/entity/uaz.png");
 
     public UAZRenderer(EntityRendererManager manager) {
         super(manager);
-        this.model = new UAZModel();
     }
 
     @Override
     public DriveableModel<LandDriveableEntity.UAZDriveable> getModel() {
-        return model;
+        return UAZ;
     }
 
     @Nullable

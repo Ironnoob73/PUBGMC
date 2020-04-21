@@ -1,0 +1,20 @@
+{
+    "variants": {
+        "facing=north,part=generator": {"model": "pubgmc:block/generator", "y": 0},
+        "facing=east,part=generator": {"model": "pubgmc:block/generator", "y": 90},
+        "facing=south,part=generator": {"model": "pubgmc:block/generator", "y": 180},
+        "facing=west,part=generator": {"model": "pubgmc:block/generator", "y": 270},
+        "facing=north,part=storage": {"model": "pubgmc:block/storage", "y": 0},
+        "facing=east,part=storage": {"model": "pubgmc:block/storage", "y": 90},
+        "facing=south,part=storage": {"model": "pubgmc:block/storage", "y": 180},
+        "facing=west,part=storage": {"model": "pubgmc:block/storage", "y": 270},
+        "facing=north,part=ui": {"model": "pubgmc:block/interface", "y": 0},
+        "facing=east,part=ui": {"model": "pubgmc:block/interface", "y": 90},
+        "facing=south,part=ui": {"model": "pubgmc:block/interface", "y": 180},
+        "facing=west,part=ui": {"model": "pubgmc:block/interface", "y": 270},
+        "facing=north,part=producer": {"model": "pubgmc:block/producer", "y": 0},
+        "facing=east,part=producer": {"model": "pubgmc:block/producer", "y": 90},
+        "facing=south,part=producer": {"model": "pubgmc:block/producer", "y": 180},
+        "facing=west,part=producer": {"model": "pubgmc:block/producer", "y": 270}
+    }
+}

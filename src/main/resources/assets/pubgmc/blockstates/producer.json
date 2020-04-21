@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "facing=north": {"model": "pubgmc:block/producer", "y": 0},
+        "facing=east": {"model": "pubgmc:block/producer", "y": 90},
+        "facing=south": {"model": "pubgmc:block/producer", "y": 180},
+        "facing=west": {"model": "pubgmc:block/producer", "y": 270}
+    }
+}

@@ -14,16 +14,15 @@ import javax.annotation.Nullable;
 public class GliderRenderer extends DriveableRenderer<AirDriveableEntity.GliderDriveable> {
 
     private static final ResourceLocation TEXTURE = Pubgmc.makeResource("textures/entity/glider.png");
-    private final GliderModel model;
+    public static final GliderModel GLIDER = new GliderModel();
 
     public GliderRenderer(EntityRendererManager manager) {
         super(manager);
-        this.model = new GliderModel();
     }
 
     @Override
     public DriveableModel<AirDriveableEntity.GliderDriveable> getModel() {
-        return model;
+        return GLIDER;
     }
 
     @Nullable

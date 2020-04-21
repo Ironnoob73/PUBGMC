@@ -1,6 +1,9 @@
 package dev.toma.pubgmc;
 
 import dev.toma.pubgmc.capability.player.PlayerCapHelper;
+import dev.toma.pubgmc.client.model.baked.DriveableSpawnerBakedModel;
+import dev.toma.pubgmc.common.block.PMCHorizontalBlock;
+import dev.toma.pubgmc.common.block.crafting.AmmoFactoryBlock;
 import dev.toma.pubgmc.common.block.crafting.WeaponFactoryBlock;
 import dev.toma.pubgmc.common.entity.ParachuteEntity;
 import dev.toma.pubgmc.common.entity.throwable.FlashEntity;
@@ -17,12 +20,19 @@ import dev.toma.pubgmc.common.item.utility.VehicleSpawnerItem;
 import dev.toma.pubgmc.common.item.wearable.BulletProofArmor;
 import dev.toma.pubgmc.util.UsefulFunctions;
 import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
+import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -31,6 +41,7 @@ import net.minecraftforge.registries.ObjectHolder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class Registry {
@@ -61,7 +72,12 @@ public class Registry {
 
     @ObjectHolder(Pubgmc.MODID)
     public static class PMCBlocks {
+        public static final PMCHorizontalBlock GENERATOR = null;
+        public static final PMCHorizontalBlock STORAGE = null;
+        public static final PMCHorizontalBlock INTERFACE = null;
+        public static final PMCHorizontalBlock PRODUCER = null;
         public static final WeaponFactoryBlock WEAPON_FACTORY = null;
+        public static final AmmoFactoryBlock AMMO_FACTORY = null;
     }
 
     @ObjectHolder(Pubgmc.MODID)
@@ -135,8 +151,8 @@ public class Registry {
                     new ThrowableItem("smoke", 20, SmokeEntity::new),
                     new ThrowableItem("molotov", 0, MolotovEntity::new),
                     new ThrowableItem("flash", 100, FlashEntity::new),
-                    new VehicleSpawnerItem("spawn_uaz", LandDriveableEntity.UAZDriveable::new),
-                    new VehicleSpawnerItem("spawn_glider", AirDriveableEntity.GliderDriveable::new),
+                    new VehicleSpawnerItem("spawn_uaz", LandDriveableEntity.UAZDriveable::new, instance -> instance.add(() -> PMCItems.SPAWN_UAZ, LandDriveableEntity.UAZDriveable.class)),
+                    new VehicleSpawnerItem("spawn_glider", AirDriveableEntity.GliderDriveable::new, instance -> instance.add(() -> PMCItems.SPAWN_GLIDER, AirDriveableEntity.GliderDriveable.class)),
                     new FuelCanItem("fuel_can")
             );
             blockItemList.stream().filter(Objects::nonNull).forEach(registry::register);
@@ -148,7 +164,12 @@ public class Registry {
         @SubscribeEvent
         public static void onBlockRegister(RegistryEvent.Register<Block> event) {
             event.getRegistry().registerAll(
-                    new WeaponFactoryBlock("weapon_factory")
+                    new PMCHorizontalBlock("generator", Block.Properties.create(Material.IRON).sound(SoundType.METAL).hardnessAndResistance(2.5F)),
+                    new PMCHorizontalBlock("storage", Block.Properties.create(Material.IRON).sound(SoundType.METAL).hardnessAndResistance(2.5F)),
+                    new PMCHorizontalBlock("interface", Block.Properties.create(Material.IRON).sound(SoundType.METAL).hardnessAndResistance(2.5F)),
+                    new PMCHorizontalBlock("producer", Block.Properties.create(Material.IRON).sound(SoundType.METAL).hardnessAndResistance(2.5F)),
+                    new WeaponFactoryBlock("weapon_factory"),
+                    new AmmoFactoryBlock("ammo_factory")
             );
         }
 
@@ -176,6 +197,22 @@ public class Registry {
 
         private static <E extends Entity> EntityType.Builder<E> track_builder(EntityType.IFactory<E> factory, EntityClassification classification, int range) {
             return EntityType.Builder.create(factory, classification).setTrackingRange(range).setUpdateInterval(1).setShouldReceiveVelocityUpdates(true);
+        }
+    }
+
+    @Mod.EventBusSubscriber(modid = Pubgmc.MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
+    public static class ClientHandler {
+
+        @SubscribeEvent
+        public static void bake(ModelBakeEvent event) {
+            Map<ResourceLocation, IBakedModel> registry = event.getModelRegistry();
+            IBakedModel model = new DriveableSpawnerBakedModel();
+            registry.put(get(PMCItems.SPAWN_UAZ), model);
+            registry.put(get(PMCItems.SPAWN_GLIDER), model);
+        }
+
+        public static ModelResourceLocation get(Item item) {
+            return new ModelResourceLocation(item.getRegistryName(), "inventory");
         }
     }
 }

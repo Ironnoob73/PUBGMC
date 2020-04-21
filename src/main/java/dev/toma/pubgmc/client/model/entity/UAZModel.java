@@ -281,7 +281,6 @@ public class UAZModel extends DriveableModel<LandDriveableEntity.UAZDriveable> {
 
     @Override
     public void doRender(LandDriveableEntity.UAZDriveable entity, float partialTicks) {
-        float turningModifier = entity.getTurnModifier();
         bone.render(1f);
         wheelBR.render(1f);
         wheelBL2.render(1f);
@@ -289,6 +288,7 @@ public class UAZModel extends DriveableModel<LandDriveableEntity.UAZDriveable> {
         mirror.render(1f);
         mirror2.render(1f);
         interior.render(1f);
+        float turningModifier = entity != null ? entity.getTurnModifier() : 0.0F;
         renderSteeringWheel(steering_wheel, turningModifier);
         renderFrontWheel(wheelFR, turningModifier);
         renderFrontWheel(wheelFL, turningModifier);

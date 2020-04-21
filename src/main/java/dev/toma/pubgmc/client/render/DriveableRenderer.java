@@ -20,6 +20,11 @@ public abstract class DriveableRenderer<T extends DriveableEntity> extends Entit
     }
 
     @Override
+    protected void renderName(T entity, double x, double y, double z) {
+        // don't :)
+    }
+
+    @Override
     public void doRender(T entity, double x, double y, double z, float entityYaw, float partialTicks) {
         GlStateManager.pushMatrix();
         {
@@ -30,7 +35,7 @@ public abstract class DriveableRenderer<T extends DriveableEntity> extends Entit
             GlStateManager.rotated(180, 1, 0, 0);
             GlStateManager.scalef(0.05F, 0.05F, 0.05F);
             GlStateManager.rotatef(entityYaw, 0f, 1f, 0f);
-            GlStateManager.rotatef(MathHelper.lerp(partialTicks, entity.prevRotationPitch, entity.rotationPitch), 1.0F, 0.0F, 0.0F);
+            if(entity != null) GlStateManager.rotatef(MathHelper.lerp(partialTicks, entity.prevRotationPitch, entity.rotationPitch), 1.0F, 0.0F, 0.0F);
             this.getModel().doRender(entity, partialTicks);
             GlStateManager.enableLighting();
             GlStateManager.disableBlend();

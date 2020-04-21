@@ -4,9 +4,11 @@ import dev.toma.pubgmc.common.entity.vehicle.DriveableEntity;
 import net.minecraft.client.renderer.entity.model.RendererModel;
 import net.minecraft.client.renderer.model.Model;
 
+import javax.annotation.Nullable;
+
 public abstract class DriveableModel<E extends DriveableEntity> extends Model {
 
-    public abstract void doRender(E entity, float partialTicks);
+    public abstract void doRender(@Nullable E entity, float partialTicks);
 
     public void renderFrontWheel(RendererModel wheelRenderer, float turnModifier) {
         setRotationAngle(wheelRenderer, 0f, turnModifier / 5f, 0f);
