@@ -3,6 +3,8 @@ package dev.toma.pubgmc.util;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 
+import java.util.Collection;
+import java.util.Map;
 import java.util.function.Predicate;
 
 public class UsefulFunctions {
@@ -33,5 +35,13 @@ public class UsefulFunctions {
 
     public static float wrap(float number, float min, float max) {
         return number < min ? min : number > max ? max : number;
+    }
+
+    public static int getElementCount(Map<?, ? extends Collection<?>> map) {
+        int c = 0;
+        for(Map.Entry<?, ? extends Collection<?>> entry : map.entrySet()) {
+            c += entry.getValue().size();
+        }
+        return c;
     }
 }

@@ -1,9 +1,7 @@
 package dev.toma.pubgmc.client.render.item;
 
 import com.mojang.blaze3d.platform.GlStateManager;
-import dev.toma.pubgmc.client.model.entity.DriveableModel;
 import dev.toma.pubgmc.common.entity.vehicle.DriveableEntity;
-import dev.toma.pubgmc.common.entity.vehicle.LandDriveableEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;

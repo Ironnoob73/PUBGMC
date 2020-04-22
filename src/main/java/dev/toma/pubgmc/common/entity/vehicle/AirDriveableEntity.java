@@ -9,10 +9,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MoverType;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraftforge.api.distmarker.Dist;
@@ -41,15 +44,40 @@ public abstract class AirDriveableEntity extends DriveableEntity {
     protected void updateEntityPost() {
         if(onGround && (rotationPitch > 0 || currentSpeed == 0)) rotationPitch = 0;
         this.currentSpeed = throttle > 0.0F ? currentSpeed < this.maxSpeed() ? currentSpeed + throttle * data.getAcceleration() : Math.max(0.0F, currentSpeed - (onGround ? 0.05F : 0.005F)) : Math.max(0.0F, currentSpeed - (onGround ? 0.05F : 0.005F));
-        if(!onGround) this.currentSpeed = rotationPitch > 0 ? currentSpeed + 0.005F : rotationPitch < 0 ? currentSpeed - 0.005F : currentSpeed;
+        if(!onGround) this.currentSpeed = rotationPitch > 0 ? currentSpeed + 0.0075F : rotationPitch < 0 ? currentSpeed - 0.0075F : currentSpeed;
         if(this.posY > 128) this.rotationPitch += 1.5F;
         this.setMotion(this.getMotion().x, currentSpeed > 0.3F ? this.getMotion().y : -0.25, this.getMotion().z);
         move(MoverType.SELF, this.getMotion());
+        if(this.health <= 0.0F) {
+            throttle = Math.max(0.0F, throttle - 0.1F);
+        }
         if(!this.isBeingRidden()) {
             resetInputState();
             throttle = Math.max(0.0F, throttle - 0.025F);
         }
         this.checkHealthState();
+        if(this.collidedHorizontally) {
+            float damage = currentSpeed < 0.3F ? 0.0F : currentSpeed * 20.0F;
+            this.attackEntityFrom(DamageSource.FALL, damage);
+            for(Entity entity : this.getPassengers()) {
+                if(!entity.isInvulnerable()) {
+                    entity.attackEntityFrom(DamageSource.FALL, damage / 2.0F);
+                }
+            }
+            this.currentSpeed = 0.0F;
+            this.setMotion(0, 0, 0);
+        }
+    }
+
+    @Override
+    public void checkHealthState() {
+        if(health <= 0) {
+            if(!world.isRemote && onGround) {
+                this.removePassengers();
+                world.createExplosion(this, posX, posY, posZ, 5.0F, Explosion.Mode.NONE);
+                this.remove();
+            }
+        }
     }
 
     @Override
@@ -97,7 +125,7 @@ public abstract class AirDriveableEntity extends DriveableEntity {
 
     @Override
     protected void onRotorAccelerate() {
-        if(hasFuel() && submergedHeight < 1.0D) throttle = Math.min(1.0F, throttle + 0.04F);
+        if(hasFuel() && submergedHeight < 1.0D && health > 0) throttle = Math.min(1.0F, throttle + 0.04F);
     }
 
     @Override

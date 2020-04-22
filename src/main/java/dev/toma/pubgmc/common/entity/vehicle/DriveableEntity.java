@@ -2,6 +2,7 @@ package dev.toma.pubgmc.common.entity.vehicle;
 
 import dev.toma.pubgmc.api.entity.AbstractControllableEntity;
 import dev.toma.pubgmc.util.UsefulFunctions;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MoverType;
@@ -27,9 +28,7 @@ public abstract class DriveableEntity extends AbstractControllableEntity impleme
     protected float fuel;
     protected float health;
     protected float currentSpeed;
-    protected float prevSpeed;
     protected float turnModifier;
-    protected float prevTurnModifier;
 
     public DriveableEntity(EntityType<?> type, World world) {
         super(type, world);
@@ -137,6 +136,18 @@ public abstract class DriveableEntity extends AbstractControllableEntity impleme
         if(!this.isBeingRidden()) {
             resetInputState();
         }
+        if(this.collidedHorizontally) {
+            float damage = currentSpeed < 0.3F ? 0.0F : currentSpeed * 20.0F;
+            System.out.println(damage);
+            this.attackEntityFrom(DamageSource.FALL, damage);
+            for(Entity entity : this.getPassengers()) {
+                if(!entity.isInvulnerable()) {
+                    entity.attackEntityFrom(DamageSource.FALL, damage / 2.0F);
+                }
+            }
+            this.currentSpeed = 0.0F;
+            this.setMotion(0, 0, 0);
+        }
     }
 
     @Override
@@ -148,6 +159,20 @@ public abstract class DriveableEntity extends AbstractControllableEntity impleme
             }
         }
         return false;
+    }
+
+    @Override
+    public void applyOrientationToEntity(Entity entity) {
+        float f = MathHelper.wrapDegrees(entity.rotationYaw - this.rotationYaw);
+        float f1 = MathHelper.clamp(f, -120.0F, 120.0F);
+        entity.prevRotationYaw += f1 - f;
+        entity.rotationYaw += f1 - f;
+        entity.setRotationYawHead(entity.rotationYaw);
+    }
+
+    @Override
+    protected final void playStepSound(BlockPos pos, BlockState blockIn) {
+
     }
 
     @Override
@@ -201,7 +226,7 @@ public abstract class DriveableEntity extends AbstractControllableEntity impleme
     @Override
     public boolean attackEntityFrom(DamageSource source, float amount) {
         if(!this.isPassenger(source.getTrueSource())) {
-            this.health -= amount;
+            this.health = Math.max(0.0F, this.health - amount);
             return true;
         }
         return false;
@@ -235,14 +260,6 @@ public abstract class DriveableEntity extends AbstractControllableEntity impleme
 
     public boolean isMoving() {
         return currentSpeed != 0;
-    }
-
-    public float getInterpolatedSpeed(float partialTicks) {
-        return MathHelper.lerp(partialTicks, prevSpeed, currentSpeed);
-    }
-
-    public float getInterpolatedTurning(float partialTicks) {
-        return MathHelper.lerp(partialTicks, prevTurnModifier, turnModifier);
     }
 
     public static class DriveableData {
