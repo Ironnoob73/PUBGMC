@@ -17,9 +17,13 @@ public class PMCRecipe {
     protected final ItemStack result;
     protected final List<ItemStack> ingredientList;
 
-    protected PMCRecipe(ItemStack stack, List<ItemStack> ingredientList) {
+    public PMCRecipe(ItemStack stack, List<ItemStack> ingredientList) {
         this.result = stack;
         this.ingredientList = ingredientList;
+    }
+
+    public ItemStack getRaw() {
+        return this.result;
     }
 
     public ItemStack craft() {

@@ -24,7 +24,7 @@ public class FactoryCraftingRecipes extends JsonReloadListener {
             .registerTypeAdapter(ItemStack.class, new PMCRecipe.StackDeserializer())
             .registerTypeAdapter(new TypeToken<List<ItemStack>>(){}.getType(), new PMCRecipe.ListDeserializer())
             .create();
-    public static Map<String, List<PMCRecipe>> recipeMap = new HashMap<>();
+    public Map<String, List<PMCRecipe>> recipeMap = new HashMap<>();
 
     public FactoryCraftingRecipes() {
         super(gson, "factory");
