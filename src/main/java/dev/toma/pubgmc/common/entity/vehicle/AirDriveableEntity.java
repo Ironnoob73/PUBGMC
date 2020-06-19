@@ -2,6 +2,7 @@ package dev.toma.pubgmc.common.entity.vehicle;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import dev.toma.pubgmc.Registry;
+import dev.toma.pubgmc.config.ConfigImpl;
 import dev.toma.pubgmc.util.RenderHelper;
 import dev.toma.pubgmc.util.UsefulFunctions;
 import net.minecraft.client.MainWindow;
@@ -156,7 +157,7 @@ public abstract class AirDriveableEntity extends DriveableEntity {
             int up = window.getScaledHeight() - 30;
             Vec3d motion = this.getMotion();
             double speed = Math.sqrt(motion.x * motion.x + motion.z * motion.z) * 20;
-            String speedString =  speed * 3.6d + " m/s";
+            String speedString = ConfigImpl.client.speedUnit.asString(speed);
             mc.fontRenderer.drawStringWithShadow(speedString, left, up - 8, 0xFFFFFF);
             mc.fontRenderer.drawStringWithShadow("E", left - 7, up + 1, 0xBB0000);
             mc.fontRenderer.drawStringWithShadow("F", left + 152, up + 1, 0x00BB00);

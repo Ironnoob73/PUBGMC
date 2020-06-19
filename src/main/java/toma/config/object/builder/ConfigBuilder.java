@@ -136,6 +136,10 @@ public class ConfigBuilder {
         return new ObjectTypeBuilder(this);
     }
 
+    public ConfigBuilder push(String name) {
+        return push().name(name).init();
+    }
+
     public ConfigBuilder pop() {
         return this.parent;
     }

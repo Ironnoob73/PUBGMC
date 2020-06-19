@@ -5,6 +5,8 @@ import dev.toma.pubgmc.capability.player.PlayerCapFactory;
 import dev.toma.pubgmc.capability.player.PlayerCapStorage;
 import dev.toma.pubgmc.client.ClientManager;
 import dev.toma.pubgmc.client.ModKeybinds;
+import dev.toma.pubgmc.client.animation.builder.BuilderMain;
+import dev.toma.pubgmc.client.render.item.VehicleSpawnerRenderer;
 import dev.toma.pubgmc.config.ConfigImpl;
 import dev.toma.pubgmc.network.NetworkManager;
 import dev.toma.pubgmc.util.recipe.FactoryCraftingRecipes;
@@ -14,6 +16,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.DeferredWorkQueue;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -23,6 +26,8 @@ import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import toma.config.Config;
+
+import static dev.toma.pubgmc.Registry.PMCContainers.CONTAINER_TYPES;
 
 @Mod(Pubgmc.MODID)
 public class Pubgmc {
@@ -35,6 +40,8 @@ public class Pubgmc {
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
         IEventBus forge = MinecraftForge.EVENT_BUS;
 
+        CONTAINER_TYPES.register(modBus);
+
         modBus.addListener(this::setupClient);
         modBus.addListener(this::setupCommon);
         forge.addListener(this::serverInit);
@@ -45,6 +52,10 @@ public class Pubgmc {
     private void setupClient(FMLClientSetupEvent event) {
         ClientManager.loadEntityRenderers();
         ModKeybinds.init();
+        DeferredWorkQueue.runLater(() -> {
+            //ScreenManager.registerFactory(Registry.PMCContainers.WEAPON_FACTORY.get(), null);
+        });
+        if(ConfigImpl.client.builderConfig.enabled) BuilderMain.init();
     }
 
     private void setupCommon(FMLCommonSetupEvent event) {

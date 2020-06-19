@@ -4,6 +4,7 @@ import dev.toma.pubgmc.Pubgmc;
 import dev.toma.pubgmc.capability.IPlayerCap;
 import dev.toma.pubgmc.network.NetworkManager;
 import dev.toma.pubgmc.network.packet.CPacketSendNBT;
+import dev.toma.pubgmc.network.packet.CPacketSendRecipes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -81,6 +82,7 @@ public class PlayerCapFactory implements IPlayerCap {
         public static void onPlayerLogIn(PlayerEvent.PlayerLoggedInEvent event) {
             IPlayerCap cap = PlayerCapFactory.get(event.getPlayer());
             cap.syncAllData();
+            NetworkManager.sendToClient((ServerPlayerEntity) event.getPlayer(), new CPacketSendRecipes(Pubgmc.recipeManager.recipeMap));
         }
     }
 }

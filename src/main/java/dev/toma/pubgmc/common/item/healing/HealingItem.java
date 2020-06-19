@@ -1,6 +1,7 @@
 package dev.toma.pubgmc.common.item.healing;
 
 import com.google.common.base.Preconditions;
+import dev.toma.pubgmc.client.animation.Animation;
 import dev.toma.pubgmc.common.item.PMCItem;
 import dev.toma.pubgmc.common.item.utility.FuelCanItem;
 import dev.toma.pubgmc.util.UsefulFunctions;
@@ -15,27 +16,33 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 
-import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public class HealingItem extends PMCItem {
 
     private final Predicate<PlayerEntity> canUse;
     private final int useDuration;
-    private final UseAction useAction;
     private final Consumer<PlayerEntity> onFinish;
     private final String successKey, failKey;
+    private Supplier<Animation> useAnimation;
 
     protected HealingItem(String name, Builder builder) {
         super(name, new Item.Properties().group(ITEMS).maxStackSize(builder.stackSize));
         this.canUse = builder.canUse;
         this.useDuration = builder.useDuration;
-        this.useAction = builder.useAction;
         this.onFinish = builder.onFinish;
         this.successKey = builder.successKey;
         this.failKey = builder.failKey;
+        DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
+            if(builder.useAnimation != null) {
+                useAnimation = builder.useAnimation.get();
+            }
+        });
     }
 
     @Override
@@ -56,7 +63,7 @@ public class HealingItem extends PMCItem {
 
     @Override
     public UseAction getUseAction(ItemStack stack) {
-        return useAction;
+        return UseAction.NONE;
     }
 
     @Override
@@ -97,9 +104,9 @@ public class HealingItem extends PMCItem {
         private int stackSize;
         private Predicate<PlayerEntity> canUse;
         private int useDuration;
-        private UseAction useAction = UseAction.NONE;
         private Consumer<PlayerEntity> onFinish;
         private String successKey, failKey;
+        private Supplier<Supplier<Animation>> useAnimation;
 
         private Builder() {
         }
@@ -123,8 +130,8 @@ public class HealingItem extends PMCItem {
             return this;
         }
 
-        public Builder useAction(UseAction useAction) {
-            this.useAction = Objects.requireNonNull(useAction, "Use action cannot be null!");
+        public Builder animate(Supplier<Supplier<Animation>> useAnimation) {
+            this.useAnimation = useAnimation;
             return this;
         }
 

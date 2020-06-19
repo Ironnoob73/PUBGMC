@@ -2,7 +2,7 @@
     "category": "ammo",
     "recipe": {
         "result": {
-            "item": "pubgmc:ammo_9mm",
+            "item": "pubgmc:fuel_can",
             "count": 10
         },
         "ingredients": [

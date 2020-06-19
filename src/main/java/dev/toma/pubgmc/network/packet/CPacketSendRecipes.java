@@ -37,7 +37,7 @@ public class CPacketSendRecipes implements NetworkPacket<CPacketSendRecipes> {
                 PMCRecipe recipe = list.get(i);
                 buf.writeItemStack(recipe.getRaw());
                 buf.writeVarInt(recipe.ingredientList().size());
-                for(int k = 0; i < recipe.ingredientList().size(); i++) {
+                for(int k = 0; k < recipe.ingredientList().size(); k++) {
                     buf.writeItemStack(recipe.ingredientList().get(k));
                 }
             }

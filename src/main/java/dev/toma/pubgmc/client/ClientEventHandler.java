@@ -1,11 +1,14 @@
 package dev.toma.pubgmc.client;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import dev.toma.pubgmc.Pubgmc;
 import dev.toma.pubgmc.api.IPMCArmor;
 import dev.toma.pubgmc.api.entity.IControllableEntity;
 import dev.toma.pubgmc.capability.IPlayerCap;
 import dev.toma.pubgmc.capability.player.BoostStats;
 import dev.toma.pubgmc.capability.player.PlayerCapFactory;
+import dev.toma.pubgmc.client.animation.AnimationManager;
+import dev.toma.pubgmc.client.animation.HandAnimate;
 import dev.toma.pubgmc.config.ConfigImpl;
 import dev.toma.pubgmc.network.NetworkManager;
 import dev.toma.pubgmc.network.packet.SPacketControllableInput;
@@ -13,13 +16,16 @@ import dev.toma.pubgmc.util.RenderHelper;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Hand;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.RenderSpecificHandEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -28,7 +34,7 @@ import net.minecraftforge.fml.common.Mod;
 public class ClientEventHandler {
 
     @SubscribeEvent
-    public static void renderOverlayPre(RenderGameOverlayEvent.Pre event) {
+    public static void cancelOverlayRenders(RenderGameOverlayEvent.Pre event) {
         if(ConfigImpl.client.specialHUDRender) {
             if(event.getType() == RenderGameOverlayEvent.ElementType.ARMOR
                     || event.getType() == RenderGameOverlayEvent.ElementType.HEALTH
@@ -62,6 +68,7 @@ public class ClientEventHandler {
         PlayerEntity player = mc.player;
         if(event.phase == TickEvent.Phase.START) return;
         if(player != null) {
+            AnimationManager.clientTick();
             GameSettings settings = mc.gameSettings;
             Entity entity = player.getRidingEntity();
             if(entity instanceof IControllableEntity && entity.getControllingPassenger() == player) {
@@ -76,6 +83,59 @@ public class ClientEventHandler {
                 NetworkManager.sendToServer(new SPacketControllableInput(fwd, bwd, right, left, ptUp, ptDown));
             }
         }
+    }
+
+    @SubscribeEvent
+    public static void renderHandEvent(RenderSpecificHandEvent event) {
+        ItemStack stack = event.getItemStack();
+        ClientPlayerEntity player = Minecraft.getInstance().player;
+        float partial = event.getPartialTicks();
+        if(stack.getItem() instanceof HandAnimate) {
+            HandAnimate animate = (HandAnimate) stack.getItem();
+            event.setCanceled(true);
+            float pitch = player.prevRotationPitch + (player.rotationPitch - player.prevRotationPitch) * partial;
+            float swing = event.getSwingProgress();
+            float equip = event.getEquipProgress();
+            GlStateManager.pushMatrix();
+            {
+                AnimationManager.animateItemAndHands(partial);
+                GlStateManager.pushMatrix();
+                {
+                    float yOff = 0.5F * equip;
+                    AnimationManager.animateHands(partial);
+                    GlStateManager.pushMatrix();
+                    {
+                        GlStateManager.disableCull();
+                        GlStateManager.translatef(0, yOff, 0);
+                        GlStateManager.pushMatrix();
+                        {
+                            AnimationManager.animateRightHand(partial);
+                            animate.renderRightArm();
+                        }
+                        GlStateManager.popMatrix();
+                        GlStateManager.pushMatrix();
+                        {
+                            AnimationManager.animateLeftHand(partial);
+                            animate.renderLeftArm();
+                        }
+                        GlStateManager.popMatrix();
+                        GlStateManager.enableCull();
+                    }
+                    GlStateManager.popMatrix();
+                }
+                GlStateManager.popMatrix();
+            }
+            AnimationManager.animateItem(partial);
+            if(!AnimationManager.isItemRenderCanceled()) {
+                Minecraft.getInstance().getFirstPersonRenderer().renderItemInFirstPerson(player, partial, pitch, Hand.MAIN_HAND, swing, stack, equip);
+            }
+            GlStateManager.popMatrix();
+        }
+    }
+
+    @SubscribeEvent
+    public static void onRenderTick(TickEvent.RenderTickEvent event) {
+        AnimationManager.renderTick(event.renderTickTime, event.phase);
     }
 
     private static void renderHUD(Minecraft mc, MainWindow window, BoostStats stats, boolean specialRenderer) {

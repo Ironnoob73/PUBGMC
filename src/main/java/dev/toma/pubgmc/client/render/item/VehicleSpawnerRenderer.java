@@ -9,6 +9,8 @@ import net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,7 +20,6 @@ import java.util.function.Supplier;
 
 public class VehicleSpawnerRenderer extends ItemStackTileEntityRenderer {
 
-    public static VehicleSpawnerRenderer instance = new VehicleSpawnerRenderer();
     public Map<Item, Class<? extends Entity>> ITEM_TO_CLASS_MAP = new HashMap<>();
     private List<EntryHolder<Supplier<Item>, Class<? extends Entity>>> entryHolderList = new ArrayList<>();
 

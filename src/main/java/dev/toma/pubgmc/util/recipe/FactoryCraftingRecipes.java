@@ -32,16 +32,17 @@ public class FactoryCraftingRecipes extends JsonReloadListener {
 
     @Override
     protected void apply(Map<ResourceLocation, JsonObject> objectMap, IResourceManager resourceManagerIn, IProfiler profilerIn) {
+        recipeMap = new HashMap<>();
         for(Map.Entry<ResourceLocation, JsonObject> entry : objectMap.entrySet()) {
             try {
                 DeserializationOutput output = gson.fromJson(entry.getValue(), DeserializationOutput.class);
                 if(!recipeMap.containsKey(output.factory)) {
                     recipeMap.put(output.factory, new ArrayList<>());
-                    Pubgmc.pubgmcLog.info("Created new factory category with key {}", output.factory);
+                    Pubgmc.pubgmcLog.info("Created new factory category with key '{}'", output.factory);
                 }
                 recipeMap.get(output.factory).add(output.recipe);
             } catch (JsonParseException e) {
-                Pubgmc.pubgmcLog.error("Invalid factory recipe {}: {}", entry.getKey(), e.getMessage());
+                Pubgmc.pubgmcLog.error("Invalid factory recipe file {}: {}", entry.getKey(), e.getMessage());
             }
         }
         Pubgmc.pubgmcLog.info("Registered {} recipe categories with total of {} recipes", recipeMap.size(), UsefulFunctions.getElementCount(recipeMap));

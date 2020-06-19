@@ -1,23 +1,21 @@
 package dev.toma.pubgmc.common.item.utility;
 
-import dev.toma.pubgmc.client.render.item.VehicleSpawnerRenderer;
 import dev.toma.pubgmc.common.entity.vehicle.DriveableEntity;
 import dev.toma.pubgmc.common.item.PMCItem;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import java.util.function.Function;
-
 public class VehicleSpawnerItem extends PMCItem {
 
-    private final IFactory<?> factory;
+    private final IFactory factory;
 
-    public <T extends DriveableEntity> VehicleSpawnerItem(String name, IFactory<T> factory, Function<VehicleSpawnerRenderer, VehicleSpawnerRenderer> registerFunc) {
-        super(name, new Properties().maxStackSize(1).group(ITEMS).setTEISR(() -> () -> registerFunc.apply(VehicleSpawnerRenderer.instance)));
+    public VehicleSpawnerItem(String name, IFactory factory, Item.Properties properties) {
+        super(name, properties);
         this.factory = factory;
     }
 
@@ -36,7 +34,7 @@ public class VehicleSpawnerItem extends PMCItem {
         return ActionResultType.PASS;
     }
 
-    public interface IFactory<E extends DriveableEntity> {
-        E create(World world, BlockPos pos);
+    public interface IFactory {
+        DriveableEntity create(World world, BlockPos pos);
     }
 }
