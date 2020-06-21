@@ -1,6 +1,7 @@
 package dev.toma.pubgmc.client.animation;
 
 import dev.toma.pubgmc.util.object.Pair;
+import net.minecraftforge.event.TickEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +55,7 @@ public abstract class MultiStepAnimation extends TickableAnimation {
 
     @Override
     public void animateRightHand(float partialTicks) {
-        current.getRight().animateHands(partialTicks);
+        current.getRight().animateRightHand(partialTicks);
     }
 
     @Override
@@ -68,6 +69,11 @@ public abstract class MultiStepAnimation extends TickableAnimation {
     }
 
     @Override
+    public void renderTick(float partialTicks, TickEvent.Phase phase) {
+        current.getRight().renderTick(partialTicks, phase);
+    }
+
+    @Override
     public void tick() {
         super.tick();
         float progress = 1.0F - getAnimationProgress();
@@ -76,7 +82,7 @@ public abstract class MultiStepAnimation extends TickableAnimation {
         if(range.isInRange(progress)) {
             animation.clientTick();
             float stepProgress = range.getProgress(progress);
-            animation.setAnimationProgress(progress);
+            animation.setAnimationProgress(stepProgress);
         } else if(range.isOutsideRange(progress)) {
             if(!isAtLastStep()) {
                 ++index;

@@ -2,6 +2,7 @@ package dev.toma.pubgmc.client.animation.builder;
 
 import dev.toma.pubgmc.client.animation.Animation;
 import dev.toma.pubgmc.client.animation.AnimationManager;
+import dev.toma.pubgmc.client.animation.Animations;
 import dev.toma.pubgmc.util.RenderHelper;
 import dev.toma.pubgmc.util.object.LazyLoader;
 import dev.toma.pubgmc.util.object.Optional;
@@ -95,7 +96,7 @@ public class GuiAnimationBuilder extends Screen {
         } else if(overview.get().enabled) {
             this.addComponent(new UIComponent(guiLeft + 10, guiTop + 35, 85, 20, "Play animation", b -> {
                 b.setState(false);
-                AnimationManager.playNewAnimation(-1, BuilderData.asAnimation());
+                AnimationManager.playNewAnimation(Animations.DEBUG, BuilderData.asAnimation());
             }));
             this.addComponent(new UIComponent(guiLeft + 105, guiTop + 35, 85, 20, "Export", b -> {
                 b.setState(false);
@@ -124,7 +125,7 @@ public class GuiAnimationBuilder extends Screen {
                     b.setState(false);
                     Animation animation = step.asTempAnimation();
                     if(animation == null) return;
-                    AnimationManager.playNewAnimation(-1, animation);
+                    AnimationManager.playNewAnimation(Animations.DEBUG, animation);
                 }));
                 this.addComponent(new UIComponent(guiLeft + 145, guiTop + 85 + id * 25, 20, 20, "-", b -> {
                     b.setState(false);
@@ -170,6 +171,18 @@ public class GuiAnimationBuilder extends Screen {
             selectedInput.ifPresent(cp -> cp.keyPressed('\b', 259));
         }
         return super.keyPressed(k1, k2, k3);
+    }
+
+    @Override
+    public boolean mouseScrolled(double x, double y, double value) {
+        int i = -(int) value;
+        int next = index + i;
+        if(next < BuilderData.steps.size() - 2 && next >= 0) {
+            index = next;
+            init();
+            return true;
+        }
+        return false;
     }
 
     @Override

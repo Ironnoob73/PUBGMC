@@ -6,6 +6,7 @@ import net.minecraftforge.event.TickEvent;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -67,6 +68,13 @@ public class AnimationManager {
     }
 
     public static void clientTick() {
-        ACTIVE_ANIMATIONS.values().forEach(Animation::clientTick);
+        Iterator<Map.Entry<AnimationType, Animation>> iterator = ACTIVE_ANIMATIONS.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Animation animation = iterator.next().getValue();
+            animation.clientTick();
+            if(animation.isAnimationFinished()) {
+                iterator.remove();
+            }
+        }
     }
 }

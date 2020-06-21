@@ -56,7 +56,19 @@ public class BuilderData {
     }
 
     public enum Axis {
-        X, Y, Z
+        X(1),
+        Y(0),
+        Z(2);
+
+        private final int index;
+
+        Axis(int index) {
+            this.index = index;
+        }
+
+        public int index() {
+            return this.index;
+        }
     }
 
     public enum Part {

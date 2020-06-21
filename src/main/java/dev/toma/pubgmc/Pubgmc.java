@@ -6,8 +6,7 @@ import dev.toma.pubgmc.capability.player.PlayerCapStorage;
 import dev.toma.pubgmc.client.ClientManager;
 import dev.toma.pubgmc.client.ModKeybinds;
 import dev.toma.pubgmc.client.animation.builder.BuilderMain;
-import dev.toma.pubgmc.client.render.item.VehicleSpawnerRenderer;
-import dev.toma.pubgmc.config.ConfigImpl;
+import dev.toma.pubgmc.config.Config;
 import dev.toma.pubgmc.network.NetworkManager;
 import dev.toma.pubgmc.util.recipe.FactoryCraftingRecipes;
 import net.minecraft.resources.IReloadableResourceManager;
@@ -17,15 +16,17 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DeferredWorkQueue;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import toma.config.Config;
 
 import static dev.toma.pubgmc.Registry.PMCContainers.CONTAINER_TYPES;
 
@@ -46,16 +47,19 @@ public class Pubgmc {
         modBus.addListener(this::setupCommon);
         forge.addListener(this::serverInit);
 
-        Config.registerConfig(this.getClass(), ConfigImpl::new);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Config.CLIENT);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.COMMON);
+        Config.load(Config.CLIENT, FMLPaths.CONFIGDIR.get().resolve("pubgmc-client.toml"));
+        Config.load(Config.COMMON, FMLPaths.CONFIGDIR.get().resolve("pubgmc-common.toml"));
     }
 
     private void setupClient(FMLClientSetupEvent event) {
         ClientManager.loadEntityRenderers();
         ModKeybinds.init();
-        DeferredWorkQueue.runLater(() -> {
-            //ScreenManager.registerFactory(Registry.PMCContainers.WEAPON_FACTORY.get(), null);
-        });
-        if(ConfigImpl.client.builderConfig.enabled) BuilderMain.init();
+        /*DeferredWorkQueue.runLater(() -> {
+            ScreenManager.registerFactory(Registry.PMCContainers.WEAPON_FACTORY.get(), null);
+        });*/
+        if(Config.animationTool.get()) BuilderMain.init();
     }
 
     private void setupCommon(FMLCommonSetupEvent event) {

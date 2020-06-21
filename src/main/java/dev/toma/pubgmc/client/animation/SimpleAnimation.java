@@ -1,10 +1,8 @@
 package dev.toma.pubgmc.client.animation;
 
 import dev.toma.pubgmc.util.object.Optional;
-import net.minecraft.client.Minecraft;
 import net.minecraftforge.event.TickEvent;
 
-import java.util.Objects;
 import java.util.function.Consumer;
 
 public class SimpleAnimation implements Animation {
@@ -117,11 +115,6 @@ public class SimpleAnimation implements Animation {
         }
 
         public SimpleAnimation create() {
-            Objects.requireNonNull(itemAndHand);
-            Objects.requireNonNull(hand);
-            Objects.requireNonNull(rightHand);
-            Objects.requireNonNull(leftHand);
-            Objects.requireNonNull(item);
             return new SimpleAnimation(this);
         }
     }

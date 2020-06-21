@@ -2,7 +2,7 @@ package dev.toma.pubgmc.client.animation.builder;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import dev.toma.pubgmc.client.animation.AnimationManager;
-import dev.toma.pubgmc.config.ConfigImpl;
+import dev.toma.pubgmc.client.animation.Animations;
 import dev.toma.pubgmc.util.RenderHelper;
 import dev.toma.pubgmc.util.object.Pair;
 import net.minecraft.client.Minecraft;
@@ -27,68 +27,66 @@ public class BuilderMain {
     public static KeyBinding activate;
 
     public static void init() {
-        if(ConfigImpl.client.builderConfig.enabled) {
-            openToolUI = register("open_builder_ui", 77);
-            add = register("add", 38);
-            subtract = register("subtract", 40);
-            reset = register("reset", 88);
-            activate = register("activate", 78);
-            MinecraftForge.EVENT_BUS.addListener(BuilderMain::handleKeyInput);
-            MinecraftForge.EVENT_BUS.addListener(BuilderMain::renderInfoOnScreen);
-        }
+        openToolUI = register("open_builder_ui", 77);
+        add = register("add", 265);
+        subtract = register("subtract", 264);
+        reset = register("reset", 88);
+        activate = register("activate", 78);
+        MinecraftForge.EVENT_BUS.addListener(BuilderMain::handleKeyInput);
+        MinecraftForge.EVENT_BUS.addListener(BuilderMain::renderInfoOnScreen);
     }
 
     public static void handleKeyInput(InputEvent.KeyInputEvent event) {
         PlayerEntity player = Minecraft.getInstance().player;
-        if(openToolUI.isPressed()) {
+        if (openToolUI.isPressed()) {
             Minecraft.getInstance().displayGuiScreen(new GuiAnimationBuilder());
-        } else if(add.isPressed()) {
+        } else if (add.isPressed()) {
             BuilderData.add(player.isSneaking());
-        } else if(subtract.isPressed()) {
+        } else if (subtract.isPressed()) {
             BuilderData.subtract(player.isSneaking());
-        } else if(activate.isPressed()) {
-            boolean b = AnimationManager.isAnimationActive(-1);
-            if(b) AnimationManager.stopAnimation(-1);
+        } else if (activate.isPressed()) {
+            boolean b = AnimationManager.isAnimationActive(Animations.DEBUG);
+            if (b) AnimationManager.stopAnimation(Animations.DEBUG);
             else {
                 BuilderData.current.setAnimationProgress(1.0F);
-                AnimationManager.playNewAnimation(-1, BuilderData.current);
+                AnimationManager.playNewAnimation(Animations.DEBUG, BuilderData.current);
             }
-        } else if(reset.isPressed()) {
+        } else if (reset.isPressed()) {
             BuilderData.resetToDefaultState();
-            AnimationManager.playNewAnimation(-1, BuilderData.current);
+            AnimationManager.playNewAnimation(Animations.DEBUG, BuilderData.current);
         }
     }
 
     public static void renderInfoOnScreen(RenderGameOverlayEvent.Post event) {
-        if(event.getType() == RenderGameOverlayEvent.ElementType.ALL) {
+        if (event.getType() == RenderGameOverlayEvent.ElementType.ALL) {
             FontRenderer renderer = Minecraft.getInstance().fontRenderer;
             BuilderAnimationStep step = BuilderData.current;
             int totalLength = BuilderData.animationLength;
-            renderer.drawStringWithShadow("Animation render: " + (AnimationManager.isAnimationActive(-1) ? TextFormatting.GREEN + "Active" : TextFormatting.RED + "Inactive"), 10, 10, 0xffffff);
+            renderer.drawStringWithShadow("Animation render: " + (AnimationManager.isAnimationActive(Animations.DEBUG) ? TextFormatting.GREEN + "Active" : TextFormatting.RED + "Inactive"), 10, 10, 0xffffff);
             renderer.drawStringWithShadow("Animation steps: " + TextFormatting.YELLOW + BuilderData.steps.size(), 10, 20, 0xffffff);
             renderer.drawStringWithShadow(String.format("Animation length: %s ticks", TextFormatting.YELLOW.toString() + totalLength), 10, 30, 0xffffff);
             renderer.drawStringWithShadow("Context: " + TextFormatting.AQUA + BuilderData.context.name(), 10, 40, 0xffffff);
             renderer.drawStringWithShadow("Axis: " + TextFormatting.AQUA + BuilderData.axis.name(), 10, 50, 0xffffff);
             renderer.drawStringWithShadow("Part: " + TextFormatting.AQUA + BuilderData.part.name(), 10, 60, 0xffffff);
             renderer.drawStringWithShadow(TextFormatting.BOLD + "Current animation", 10, 75, 0xffffff);
-            renderer.drawStringWithShadow("Length: " + TextFormatting.YELLOW.toString() + (int)(totalLength * step.length), 10, 85, 0xffffff);
+            renderer.drawStringWithShadow("Length: " + TextFormatting.YELLOW.toString() + (int) (totalLength * step.length), 10, 85, 0xffffff);
             int j = 0;
             DecimalFormat df = new DecimalFormat("###.##");
-            for(BuilderData.Part part : BuilderData.Part.values()) {
+            for (BuilderData.Part part : BuilderData.Part.values()) {
                 BuilderAnimationStep.Data data = step.map.get(part);
-                if(data.isEmpty()) continue;
+                if (data.isEmpty()) continue;
                 renderer.drawStringWithShadow(TextFormatting.UNDERLINE + part.name(), 10, 95 + j * 10, 0xffffff);
                 BuilderAnimationStep.TranslationContext ctx0 = data.translationContext;
-                if(!ctx0.isEmpty()) {
+                if (!ctx0.isEmpty()) {
                     ++j;
                     renderer.drawStringWithShadow(String.format(TextFormatting.YELLOW + "Move" + TextFormatting.WHITE + ":[%s+%s, %s+%s, %s+%s]", TextFormatting.RED + df.format(ctx0.baseX) + TextFormatting.WHITE, TextFormatting.GREEN + df.format(ctx0.newX) + TextFormatting.WHITE, TextFormatting.RED + df.format(ctx0.baseY) + TextFormatting.WHITE, TextFormatting.GREEN + df.format(ctx0.newY) + TextFormatting.WHITE, TextFormatting.RED + df.format(ctx0.baseZ) + TextFormatting.WHITE, TextFormatting.GREEN + df.format(ctx0.newZ) + TextFormatting.WHITE), 10, 95 + j * 10, 0xffffff);
                 }
                 BuilderAnimationStep.RotationContext ctx = data.rotationContext;
-                if(!ctx.isEmpty()) {
+                if (!ctx.isEmpty()) {
                     ++j;
                     StringBuilder builder = new StringBuilder();
                     builder.append(TextFormatting.YELLOW).append("Rotate").append(TextFormatting.WHITE).append(":[");
-                    for(Map.Entry<BuilderData.Axis, Pair<Float, Float>> entry : ctx.rotations.entrySet()) {
+                    for (Map.Entry<BuilderData.Axis, Pair<Float, Float>> entry : ctx.rotations.entrySet()) {
                         Pair<Float, Float> pair = entry.getValue();
                         builder.append(TextFormatting.AQUA).append(entry.getKey().name()).append(TextFormatting.WHITE).append(":").append(TextFormatting.RED).append(df.format(pair.getLeft())).append(TextFormatting.WHITE).append("+").append(TextFormatting.GREEN).append(df.format(pair.getRight())).append(TextFormatting.WHITE).append(";");
                     }

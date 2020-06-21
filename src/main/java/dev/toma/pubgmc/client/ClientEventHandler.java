@@ -9,7 +9,7 @@ import dev.toma.pubgmc.capability.player.BoostStats;
 import dev.toma.pubgmc.capability.player.PlayerCapFactory;
 import dev.toma.pubgmc.client.animation.AnimationManager;
 import dev.toma.pubgmc.client.animation.HandAnimate;
-import dev.toma.pubgmc.config.ConfigImpl;
+import dev.toma.pubgmc.config.Config;
 import dev.toma.pubgmc.network.NetworkManager;
 import dev.toma.pubgmc.network.packet.SPacketControllableInput;
 import dev.toma.pubgmc.util.RenderHelper;
@@ -35,7 +35,7 @@ public class ClientEventHandler {
 
     @SubscribeEvent
     public static void cancelOverlayRenders(RenderGameOverlayEvent.Pre event) {
-        if(ConfigImpl.client.specialHUDRender) {
+        if(Config.specialHUDRenderer.get()) {
             if(event.getType() == RenderGameOverlayEvent.ElementType.ARMOR
                     || event.getType() == RenderGameOverlayEvent.ElementType.HEALTH
                     || event.getType() == RenderGameOverlayEvent.ElementType.FOOD
@@ -58,7 +58,7 @@ public class ClientEventHandler {
             if(player.isCreative() || player.isSpectator()) return;
             IPlayerCap cap = PlayerCapFactory.get(player);
             BoostStats stats = cap.getBoostStats();
-            renderHUD(mc, event.getWindow(), stats, ConfigImpl.client.specialHUDRender);
+            renderHUD(mc, event.getWindow(), stats, Config.specialHUDRenderer.get());
         }
     }
 
@@ -101,7 +101,7 @@ public class ClientEventHandler {
                 AnimationManager.animateItemAndHands(partial);
                 GlStateManager.pushMatrix();
                 {
-                    float yOff = 0.5F * equip;
+                    float yOff = -0.5F * equip;
                     AnimationManager.animateHands(partial);
                     GlStateManager.pushMatrix();
                     {

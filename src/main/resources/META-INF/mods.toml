@@ -14,26 +14,6 @@ description='''
 Description here
 '''
 
-[[mods]]
-modId="configlib"
-version="1.0"
-displayName="Toma's Config Library"
-authors="Toma"
-description='''
-This is config library based on .json format
-
-Supports multiple objects, collections and better general design
-
-Made as much user friendly as possible, same applies for devs
-'''
-
-[[dependencies.pubgmc]]
-    modId="configlib"
-    mandatory=true
-    versionRange="[1.0,)"
-    ordering="BEFORE"
-    side="BOTH"
-
 [[dependencies.pubgmc]]
     modId="forge" #mandatory
     mandatory=true #mandatory
