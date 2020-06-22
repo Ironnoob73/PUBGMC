@@ -49,7 +49,7 @@ public class UIComponent {
         return mouseX >= x && mouseX <= x + w && mouseY >= y && mouseY <= y + h;
     }
 
-    public void onClick() {
+    public void onClick(double mousex, double mousey) {
         enabled = !enabled;
         onPress.accept(this);
     }

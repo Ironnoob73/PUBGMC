@@ -39,7 +39,7 @@ public class BuilderMain {
     public static void handleKeyInput(InputEvent.KeyInputEvent event) {
         PlayerEntity player = Minecraft.getInstance().player;
         if (openToolUI.isPressed()) {
-            Minecraft.getInstance().displayGuiScreen(new GuiAnimationBuilder());
+            Minecraft.getInstance().displayGuiScreen(new AnimationBuilderScreen());
         } else if (add.isPressed()) {
             BuilderData.add(player.isSneaking());
         } else if (subtract.isPressed()) {
@@ -58,7 +58,7 @@ public class BuilderMain {
     }
 
     public static void renderInfoOnScreen(RenderGameOverlayEvent.Post event) {
-        if (event.getType() == RenderGameOverlayEvent.ElementType.ALL) {
+        if (event.getType() == RenderGameOverlayEvent.ElementType.ALL && Minecraft.getInstance().currentScreen == null) {
             FontRenderer renderer = Minecraft.getInstance().fontRenderer;
             BuilderAnimationStep step = BuilderData.current;
             int totalLength = BuilderData.animationLength;

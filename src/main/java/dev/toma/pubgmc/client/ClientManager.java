@@ -1,11 +1,13 @@
 package dev.toma.pubgmc.client;
 
 import dev.toma.pubgmc.Registry;
+import dev.toma.pubgmc.client.render.RenderBullet;
 import dev.toma.pubgmc.client.render.entity.GliderRenderer;
 import dev.toma.pubgmc.client.render.entity.ParachuteRenderer;
 import dev.toma.pubgmc.client.render.entity.ThrowableRenderer;
 import dev.toma.pubgmc.client.render.entity.UAZRenderer;
 import dev.toma.pubgmc.client.render.item.VehicleSpawnerRenderer;
+import dev.toma.pubgmc.common.entity.BulletEntity;
 import dev.toma.pubgmc.common.entity.ParachuteEntity;
 import dev.toma.pubgmc.common.entity.throwable.FlashEntity;
 import dev.toma.pubgmc.common.entity.throwable.GrenadeEntity;
@@ -38,6 +40,7 @@ public class ClientManager {
         RenderingRegistry.registerEntityRenderingHandler(MolotovEntity.class, manager -> new ThrowableRenderer<>(manager, () -> Registry.PMCItems.MOLOTOV));
         RenderingRegistry.registerEntityRenderingHandler(LandDriveableEntity.UAZDriveable.class, UAZRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(AirDriveableEntity.GliderDriveable.class, GliderRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(BulletEntity.class, RenderBullet::new);
         instance.ITEM_TO_CLASS_MAP.put(Registry.PMCItems.SPAWN_UAZ, LandDriveableEntity.UAZDriveable.class);
         instance.ITEM_TO_CLASS_MAP.put(Registry.PMCItems.SPAWN_GLIDER, AirDriveableEntity.GliderDriveable.class);
     }

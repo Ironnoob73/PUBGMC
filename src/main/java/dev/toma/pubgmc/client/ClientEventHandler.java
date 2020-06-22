@@ -9,9 +9,11 @@ import dev.toma.pubgmc.capability.player.BoostStats;
 import dev.toma.pubgmc.capability.player.PlayerCapFactory;
 import dev.toma.pubgmc.client.animation.AnimationManager;
 import dev.toma.pubgmc.client.animation.HandAnimate;
+import dev.toma.pubgmc.common.item.gun.TestGun;
 import dev.toma.pubgmc.config.Config;
 import dev.toma.pubgmc.network.NetworkManager;
 import dev.toma.pubgmc.network.packet.SPacketControllableInput;
+import dev.toma.pubgmc.network.packet.SPacketShoot;
 import dev.toma.pubgmc.util.RenderHelper;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.MainWindow;
@@ -81,6 +83,13 @@ public class ClientEventHandler {
                 boolean ptDown = settings.keyBindSprint.isKeyDown();
                 controllableEntity.onInputUpdate(fwd, bwd, right, left, ptUp, ptDown);
                 NetworkManager.sendToServer(new SPacketControllableInput(fwd, bwd, right, left, ptUp, ptDown));
+            }
+
+            ItemStack stack = player.getHeldItemMainhand();
+            if(stack.getItem() instanceof TestGun) {
+                if(settings.keyBindAttack.isKeyDown()) {
+                    NetworkManager.sendToServer(new SPacketShoot());
+                }
             }
         }
     }

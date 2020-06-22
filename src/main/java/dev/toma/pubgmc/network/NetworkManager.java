@@ -25,6 +25,7 @@ public class NetworkManager {
         register(CPacketSendRecipes.class, new CPacketSendRecipes());
         register(SPacketControllableInput.class, new SPacketControllableInput());
         register(SPacketCookThrowable.class, new SPacketCookThrowable());
+        register(SPacketShoot.class, new SPacketShoot());
     }
 
     public static void sendToClient(ServerPlayerEntity player, NetworkPacket<?> packet) {

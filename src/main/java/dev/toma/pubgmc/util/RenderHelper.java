@@ -88,6 +88,21 @@ public class RenderHelper {
         GlStateManager.enableTexture();
     }
 
+    public static void line(int fromX, int fromY, int toX, int toY, float r, float g, float b, float a, int width) {
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder builder = tessellator.getBuffer();
+        GlStateManager.disableTexture();
+        GlStateManager.enableBlend();
+        builder.begin(3, DefaultVertexFormats.POSITION_COLOR);
+        builder.pos(fromX, fromY, 0).color(r, g, b, a).endVertex();
+        builder.pos(toX, toY, 0).color(r, g, b, a).endVertex();
+        GlStateManager.lineWidth(width);
+        tessellator.draw();
+        GlStateManager.lineWidth(1);
+        GlStateManager.disableBlend();
+        GlStateManager.enableTexture();
+    }
+
     public static void tex_shape(BufferBuilder builder, int x, int y, int x2, int y2, double fromU, double fromV, double toU, double toV) {
         builder.begin(7, DefaultVertexFormats.POSITION_TEX);
         builder.pos(x, y2, 0).tex(fromU, toV).endVertex();

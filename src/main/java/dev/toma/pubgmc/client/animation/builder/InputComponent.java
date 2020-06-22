@@ -5,10 +5,10 @@ import net.minecraft.client.gui.FontRenderer;
 
 public class InputComponent extends UIComponent {
 
-    private final GuiAnimationBuilder parent;
+    private final AnimationBuilderScreen parent;
     private final int index;
 
-    public InputComponent(GuiAnimationBuilder parent, int index, int x, int y, int w, int h, int entryValue) {
+    public InputComponent(AnimationBuilderScreen parent, int index, int x, int y, int w, int h, int entryValue) {
         super(x, y, w, h, entryValue + "");
         this.parent = parent;
         this.index = index;

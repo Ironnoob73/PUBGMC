@@ -6,6 +6,7 @@ import dev.toma.pubgmc.client.render.item.VehicleSpawnerRenderer;
 import dev.toma.pubgmc.common.block.PMCHorizontalBlock;
 import dev.toma.pubgmc.common.block.crafting.AmmoFactoryBlock;
 import dev.toma.pubgmc.common.block.crafting.WeaponFactoryBlock;
+import dev.toma.pubgmc.common.entity.BulletEntity;
 import dev.toma.pubgmc.common.entity.ParachuteEntity;
 import dev.toma.pubgmc.common.entity.throwable.FlashEntity;
 import dev.toma.pubgmc.common.entity.throwable.GrenadeEntity;
@@ -14,6 +15,7 @@ import dev.toma.pubgmc.common.entity.throwable.SmokeEntity;
 import dev.toma.pubgmc.common.entity.vehicle.AirDriveableEntity;
 import dev.toma.pubgmc.common.entity.vehicle.LandDriveableEntity;
 import dev.toma.pubgmc.common.item.PMCItem;
+import dev.toma.pubgmc.common.item.gun.TestGun;
 import dev.toma.pubgmc.common.item.healing.*;
 import dev.toma.pubgmc.common.item.utility.FuelCanItem;
 import dev.toma.pubgmc.common.item.utility.ParachuteItem;
@@ -59,6 +61,7 @@ public class Registry {
 
     @ObjectHolder(Pubgmc.MODID)
     public static class PMCItems {
+        public static final TestGun TESTGUN = null;
         public static final HealingItem BANDAGE = null;
         public static final HealingItem FIRST_AID_KIT = null;
         public static final HealingItem MEDKIT = null;
@@ -100,6 +103,7 @@ public class Registry {
         public static final EntityType<FlashEntity> FLASH = null;
         public static final EntityType<LandDriveableEntity.UAZDriveable> UAZ = null;
         public static final EntityType<AirDriveableEntity.GliderDriveable> GLIDER = null;
+        public static final EntityType<BulletEntity> BULLET = null;
     }
 
     @ObjectHolder(Pubgmc.MODID)
@@ -123,6 +127,7 @@ public class Registry {
         public static void onItemRegister(RegistryEvent.Register<Item> event) {
             IForgeRegistry<Item> registry = event.getRegistry();
             registry.registerAll(
+                    new TestGun(),
                     new BandageItem("bandage"),
                     new FirstAidKitItem("first_aid_kit"),
                     new MedkitItem("medkit"),
@@ -171,7 +176,8 @@ public class Registry {
                     registerEntity("molotov", track_builder(MolotovEntity::new, EntityClassification.MISC, 32).size(0.2F, 0.2F)),
                     registerEntity("flash", track_builder(FlashEntity::new, EntityClassification.MISC, 32).size(0.2F, 0.2F)),
                     registerEntity("uaz", track_builder(LandDriveableEntity.UAZDriveable::new, EntityClassification.MISC, 64).size(2.25F, 2.0F)),
-                    registerEntity("glider", track_builder(AirDriveableEntity.GliderDriveable::new, EntityClassification.MISC, 64).size(2.5F, 2.0F))
+                    registerEntity("glider", track_builder(AirDriveableEntity.GliderDriveable::new, EntityClassification.MISC, 64).size(2.5F, 2.0F)),
+                    registerEntity("bullet", track_builder(BulletEntity::new, EntityClassification.MISC, 64).size(0.01F, 0.01F))
             );
         }
 
