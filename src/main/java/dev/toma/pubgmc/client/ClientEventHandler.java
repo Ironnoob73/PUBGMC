@@ -24,6 +24,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.CooldownTracker;
 import net.minecraft.util.Hand;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -87,7 +88,8 @@ public class ClientEventHandler {
 
             ItemStack stack = player.getHeldItemMainhand();
             if(stack.getItem() instanceof TestGun) {
-                if(settings.keyBindAttack.isKeyDown()) {
+                CooldownTracker tracker = player.getCooldownTracker();
+                if(settings.keyBindAttack.isKeyDown() && !tracker.hasCooldown(stack.getItem())) {
                     NetworkManager.sendToServer(new SPacketShoot());
                 }
             }

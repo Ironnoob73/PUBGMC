@@ -41,8 +41,6 @@ public class ClientManager {
         RenderingRegistry.registerEntityRenderingHandler(LandDriveableEntity.UAZDriveable.class, UAZRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(AirDriveableEntity.GliderDriveable.class, GliderRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(BulletEntity.class, RenderBullet::new);
-        instance.ITEM_TO_CLASS_MAP.put(Registry.PMCItems.SPAWN_UAZ, LandDriveableEntity.UAZDriveable.class);
-        instance.ITEM_TO_CLASS_MAP.put(Registry.PMCItems.SPAWN_GLIDER, AirDriveableEntity.GliderDriveable.class);
     }
 
     public static void run(Supplier<Runnable> supplier) {

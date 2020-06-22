@@ -1,7 +1,11 @@
 package dev.toma.pubgmc.client.render.item;
 
 import com.mojang.blaze3d.platform.GlStateManager;
+import dev.toma.pubgmc.Registry;
+import dev.toma.pubgmc.common.entity.vehicle.AirDriveableEntity;
 import dev.toma.pubgmc.common.entity.vehicle.DriveableEntity;
+import dev.toma.pubgmc.common.entity.vehicle.LandDriveableEntity;
+import dev.toma.pubgmc.util.object.LazyLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
@@ -20,18 +24,16 @@ import java.util.function.Supplier;
 
 public class VehicleSpawnerRenderer extends ItemStackTileEntityRenderer {
 
-    public Map<Item, Class<? extends Entity>> ITEM_TO_CLASS_MAP = new HashMap<>();
-    private List<EntryHolder<Supplier<Item>, Class<? extends Entity>>> entryHolderList = new ArrayList<>();
-
-    public VehicleSpawnerRenderer add(Supplier<Item> k, Class<? extends DriveableEntity> v) {
-        entryHolderList.add(new EntryHolder<>(k, v));
-        return this;
-    }
+    public LazyLoader<Map<Item, Class<? extends Entity>>> ITEM_TO_CLASS_MAP_LOADER = new LazyLoader<>(() -> {
+        Map<Item, Class<? extends Entity>> map = new HashMap<>();
+        map.put(Registry.PMCItems.SPAWN_UAZ, LandDriveableEntity.UAZDriveable.class);
+        map.put(Registry.PMCItems.SPAWN_GLIDER, AirDriveableEntity.GliderDriveable.class);
+        return map;
+    });
 
     @Override
     public void renderByItem(ItemStack itemStackIn) {
-        this.updateItemClassMap();
-        Class<? extends Entity> entityClass = ITEM_TO_CLASS_MAP.get(itemStackIn.getItem());
+        Class<? extends Entity> entityClass = ITEM_TO_CLASS_MAP_LOADER.get().get(itemStackIn.getItem());
         if(entityClass == null) return;
         Minecraft mc = Minecraft.getInstance();
         EntityRendererManager rendererManager = mc.getRenderManager();
@@ -43,20 +45,5 @@ public class VehicleSpawnerRenderer extends ItemStackTileEntityRenderer {
         GlStateManager.scaled(0.15, 0.15, 0.15);
         renderer.doRender(null, 0, 0, 0, 0.0F, 1.0F);
         GlStateManager.popMatrix();
-    }
-
-    private void updateItemClassMap() {
-        if(entryHolderList != null) {
-            entryHolderList.forEach(e -> ITEM_TO_CLASS_MAP.put(e.key.get(), e.value));
-            entryHolderList = null;
-        }
-    }
-
-    private static class EntryHolder<K, V> {
-        K key; V value;
-        private EntryHolder(K key, V value) {
-            this.key = key;
-            this.value = value;
-        }
     }
 }

@@ -46,7 +46,7 @@ public class PainkillerItem extends HealingItem {
 
         @Override
         public void initAnimation() {
-            addStep(0F, 0.1F, SimpleAnimation.newSimpleAnimation().itemHand(f -> GlStateManager.translatef(0.0F, 0.0F, -0.3F * f)).rightHand(f -> GlStateManager.translatef(+0.2F * f, -0.3F * f, -0.4F * f)).leftHand(f -> GlStateManager.translatef(0.0F, 0.0F, +0.2F * f)).create());
+            /*addStep(0F, 0.1F, SimpleAnimation.newSimpleAnimation().itemHand(f -> GlStateManager.translatef(0.0F, 0.0F, -0.3F * f)).rightHand(f -> GlStateManager.translatef(+0.2F * f, -0.3F * f, -0.4F * f)).leftHand(f -> GlStateManager.translatef(0.0F, 0.0F, +0.2F * f)).create());
             addStep(0.1F, 0.3F, SimpleAnimation.newSimpleAnimation().itemHand(f -> GlStateManager.translatef(0.0F, 0.0F, -0.3F)).rightHand(f -> GlStateManager.translatef(0.2F, -0.3F, -0.4F)).leftHand(f -> {
                 GlStateManager.translatef(+0.1F * f, -0.3F * f, 0.2F - 0.6F * f);
                 GlStateManager.rotatef(-30F * f, 0.0F, 1.0F, 0.0F);
@@ -82,6 +82,52 @@ public class PainkillerItem extends HealingItem {
                 GlStateManager.rotatef(50F - 50F * f, 1.0F, 0.0F, 0.0F);
             }).item(f -> {
                 GlStateManager.translatef(0F, -0.6F, 0.6F);
+                GlStateManager.rotatef(0.0F, 0.0F, 0.0F, 1.0F);
+            }).create());*/
+            addStep(0F, 0.1F, SimpleAnimation.newSimpleAnimation().itemHand(f -> GlStateManager.translatef(0.0F, 0.0F, -0.2F * f)).rightHand(f -> GlStateManager.translatef(+0.15F * f, -0.3F * f, -0.3F * f)).leftHand(f -> GlStateManager.translatef(0.0F, -0.2F * f, 0.0F)).create());
+            addStep(0.1F, 0.3F, SimpleAnimation.newSimpleAnimation().itemHand(f -> GlStateManager.translatef(0.0F, 0.0F, -0.2F)).rightHand(f -> GlStateManager.translatef(0.15F, -0.3F, -0.3F)).leftHand(f -> {
+                GlStateManager.translatef(+0.2F * f, -0.2F - 0.1F * f, -0.4F * f);
+                GlStateManager.rotatef(-40F * f, 0.0F, 1.0F, 0.0F);
+            }).item(f -> {
+                GlStateManager.translatef(-0.4F * f, -0.8F * f, 0.0F);
+                GlStateManager.rotatef(+60F * f, 0.0F, 0.0F, 1.0F);
+            }).create());
+            addStep(0.3F, 0.45F, SimpleAnimation.newSimpleAnimation().itemHand(f -> GlStateManager.translatef(0.0F, 0.0F, -0.2F)).rightHand(f -> GlStateManager.translatef(0.15F, -0.3F + 0.1F * f, -0.3F)).leftHand(f -> {
+                GlStateManager.translatef(0.2F, -0.3F, -0.4F);
+                GlStateManager.rotatef(-40F, 0.0F, 1.0F, 0.0F);
+            }).item(f -> {
+                GlStateManager.translatef(-0.4F + 0.1F * f, -0.8F - 0.1F * f, 0.0F);
+                GlStateManager.rotatef(60F + 20F * f, 0.0F, 0.0F, 1.0F);
+            }).create());
+            addStep(0.45F, 0.6F, SimpleAnimation.newSimpleAnimation().itemHand(f -> GlStateManager.translatef(0.0F, 0.0F, -0.2F)).rightHand(f -> GlStateManager.translatef(0.15F, -0.2F - 0.1F * f, -0.3F)).leftHand(f -> {
+                GlStateManager.translatef(0.2F, -0.3F, -0.4F);
+                GlStateManager.rotatef(-40F, 0.0F, 1.0F, 0.0F);
+            }).item(f -> {
+                GlStateManager.translatef(-0.3F, -0.9F + 0.1F * f, 0.0F);
+                GlStateManager.rotatef(80F - 20F * f, 0.0F, 0.0F, 1.0F);
+            }).create());
+            addStep(0.6F, 0.7F, SimpleAnimation.newSimpleAnimation().itemHand(f -> GlStateManager.translatef(0.0F, 0.0F, -0.2F)).rightHand(f -> GlStateManager.translatef(0.15F, -0.3F, -0.3F + 0.2F * f)).leftHand(f -> {
+                GlStateManager.translatef(0.2F, -0.3F, -0.4F);
+                GlStateManager.rotatef(-40F + 20F * f, 0.0F, 1.0F, 0.0F);
+                GlStateManager.rotatef(+40F * f, 1.0F, 0.0F, 0.0F);
+            }).item(f -> {
+                GlStateManager.translatef(-0.3F + 0.3F * f, -0.8F + 0.2F * f, 0.0F);
+                GlStateManager.rotatef(60F - 60F * f, 0.0F, 0.0F, 1.0F);
+            }).create());
+            addStep(0.7F, 0.8F, SimpleAnimation.newSimpleAnimation().itemHand(f -> GlStateManager.translatef(0.0F, 0.0F, -0.2F)).rightHand(f -> GlStateManager.translatef(0.15F, -0.3F, -0.1F)).leftHand(f -> {
+                GlStateManager.translatef(0.2F + 0.1F * f, -0.3F + 0.1F * f, -0.4F + 0.3F * f);
+                GlStateManager.rotatef(-20F + 20F * f, 0.0F, 1.0F, 0.0F);
+                GlStateManager.rotatef(40F + 20F * f, 1.0F, 0.0F, 0.0F);
+            }).item(f -> {
+                GlStateManager.translatef(0.0F, -0.6F, 0.0F);
+                GlStateManager.rotatef(0.0F, 0.0F, 0.0F, 1.0F);
+            }).create());
+            addStep(0.8F, 1F, SimpleAnimation.newSimpleAnimation().itemHand(f -> GlStateManager.translatef(0.0F, 0.0F, -0.2F)).rightHand(f -> GlStateManager.translatef(0.15F, -0.3F, -0.1F)).leftHand(f -> {
+                GlStateManager.translatef(0.3F - 0F * f, -0.2F + 0.1F * f, -0.1F - 0F * f);
+                GlStateManager.rotatef(0.0F, 0.0F, 1.0F, 0.0F);
+                GlStateManager.rotatef(60F - 60F * f, 1.0F, 0.0F, 0.0F);
+            }).item(f -> {
+                GlStateManager.translatef(0.0F, -0.6F, 0.0F);
                 GlStateManager.rotatef(0.0F, 0.0F, 0.0F, 1.0F);
             }).create());
 

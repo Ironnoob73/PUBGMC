@@ -1,8 +1,8 @@
 package dev.toma.pubgmc;
 
 import com.mojang.datafixers.types.Type;
+import dev.toma.pubgmc.client.ClientManager;
 import dev.toma.pubgmc.client.model.baked.DriveableSpawnerBakedModel;
-import dev.toma.pubgmc.client.render.item.VehicleSpawnerRenderer;
 import dev.toma.pubgmc.common.block.PMCHorizontalBlock;
 import dev.toma.pubgmc.common.block.crafting.AmmoFactoryBlock;
 import dev.toma.pubgmc.common.block.crafting.WeaponFactoryBlock;
@@ -145,8 +145,8 @@ public class Registry {
                     new ThrowableItem("smoke", 20, SmokeEntity::new),
                     new ThrowableItem("molotov", 0, MolotovEntity::new),
                     new ThrowableItem("flash", 100, FlashEntity::new),
-                    new VehicleSpawnerItem("spawn_uaz", LandDriveableEntity.UAZDriveable::new, new Item.Properties().maxStackSize(1).group(PMCItem.ITEMS).setTEISR(() -> () -> VehicleSpawnerRenderer.instance)),
-                    new VehicleSpawnerItem("spawn_glider", AirDriveableEntity.GliderDriveable::new, new Item.Properties().maxStackSize(1).group(PMCItem.ITEMS).setTEISR(() -> () -> VehicleSpawnerRenderer.instance)),
+                    new VehicleSpawnerItem("spawn_uaz", LandDriveableEntity.UAZDriveable::new, new Item.Properties().maxStackSize(1).group(PMCItem.ITEMS).setTEISR(() -> () -> ClientManager.instance)),
+                    new VehicleSpawnerItem("spawn_glider", AirDriveableEntity.GliderDriveable::new, new Item.Properties().maxStackSize(1).group(PMCItem.ITEMS).setTEISR(() -> () -> ClientManager.instance)),
                     new FuelCanItem("fuel_can")
             );
             blockItemList.stream().filter(Objects::nonNull).forEach(registry::register);
