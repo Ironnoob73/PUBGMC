@@ -37,7 +37,7 @@ public class Pubgmc {
     public static Logger pubgmcLog = LogManager.getLogger("PUBGMC");
     public static FactoryCraftingRecipes recipeManager = new FactoryCraftingRecipes();
 
-    public static GameRules.RuleKey<GameRules.BooleanValue> WEAPON_GRIEFING = GameRules.register("weaponGriefing", new GameRules.BooleanValue(, true));
+    public static GameRules.RuleKey<GameRules.BooleanValue> WEAPON_GRIEFING = GameRules.register("weaponGriefing", GameRules.BooleanValue.create(true));
 
     public Pubgmc() {
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();

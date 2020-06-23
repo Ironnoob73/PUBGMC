@@ -1,5 +1,6 @@
 package dev.toma.pubgmc.common.entity;
 
+import dev.toma.pubgmc.Pubgmc;
 import dev.toma.pubgmc.Registry;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
@@ -92,9 +93,15 @@ public class BulletEntity extends Entity implements IEntityAdditionalSpawnData {
             if(state.isOpaqueCube(world, pos)) {
                 collided = true;
             } else if(state.getMaterial() == Material.GLASS) {
-                // TODO gamerule
                 if(!world.isRemote) {
-                    world.destroyBlock(pos, false);
+                    if(world.getGameRules().getBoolean(Pubgmc.WEAPON_GRIEFING)) {
+                        world.destroyBlock(pos, false);
+                    } else {
+                        if(checkedList.contains(pos)) {
+                            return;
+                        }
+                        checkedList.add(pos);
+                    }
                     checkForCollisions(checkedList);
                 }
             } else {
@@ -144,11 +151,6 @@ public class BulletEntity extends Entity implements IEntityAdditionalSpawnData {
     }
 
     @Override
-    public boolean canBeCollidedWith() {
-        return false;
-    }
-
-    @Override
     public IPacket<?> createSpawnPacket() {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
@@ -167,6 +169,10 @@ public class BulletEntity extends Entity implements IEntityAdditionalSpawnData {
         }
         source = (LivingEntity) world.getEntityByID(id);
         stack = ItemStack.read(compound.contains("stack") ? compound.getCompound("stack") : new CompoundNBT());
+        ticks = compound.getInt("gravityStart");
+        gravity = compound.getFloat("gravity");
+        damage = compound.getFloat("damage");
+        headshotMultiplier = compound.getFloat("headshotMultiplier");
     }
 
     @Override
@@ -174,6 +180,10 @@ public class BulletEntity extends Entity implements IEntityAdditionalSpawnData {
         compound.putInt("shooterID", source.getEntityId());
         CompoundNBT stackData = stack.write(new CompoundNBT());
         compound.put("stack", stackData);
+        compound.putInt("gravityStart", ticks);
+        compound.putFloat("gravity", gravity);
+        compound.putFloat("damage", damage);
+        compound.putFloat("headshotMultiplier", headshotMultiplier);
     }
 
     @Override
@@ -183,6 +193,6 @@ public class BulletEntity extends Entity implements IEntityAdditionalSpawnData {
 
     @Nullable
     protected EntityRayTraceResult entityRayTrace(Vec3d start, Vec3d end) {
-        return ProjectileHelper.func_221271_a(this.world, this, start, end, this.getBoundingBox().expand(this.getMotion()).grow(1.0D), (entity) -> !entity.isSpectator() && entity.isAlive() && entity.canBeCollidedWith() && entity != source);
+        return ProjectileHelper.rayTraceEntities(this.world, this, start, end, this.getBoundingBox().expand(this.getMotion()).grow(1.0D), (entity) -> !entity.isSpectator() && entity.isAlive() && entity.canBeCollidedWith() && entity != source);
     }
 }
