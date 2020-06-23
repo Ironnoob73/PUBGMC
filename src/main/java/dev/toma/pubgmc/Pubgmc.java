@@ -12,10 +12,10 @@ import dev.toma.pubgmc.util.recipe.FactoryCraftingRecipes;
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.GameRules;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.DeferredWorkQueue;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -36,6 +36,8 @@ public class Pubgmc {
     public static final String MODID = "pubgmc";
     public static Logger pubgmcLog = LogManager.getLogger("PUBGMC");
     public static FactoryCraftingRecipes recipeManager = new FactoryCraftingRecipes();
+
+    public static GameRules.RuleKey<GameRules.BooleanValue> WEAPON_GRIEFING = GameRules.register("weaponGriefing", new GameRules.BooleanValue(, true));
 
     public Pubgmc() {
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();

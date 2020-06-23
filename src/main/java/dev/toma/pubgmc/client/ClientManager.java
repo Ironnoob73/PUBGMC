@@ -1,12 +1,10 @@
 package dev.toma.pubgmc.client;
 
 import dev.toma.pubgmc.Registry;
-import dev.toma.pubgmc.client.render.RenderBullet;
 import dev.toma.pubgmc.client.render.entity.GliderRenderer;
 import dev.toma.pubgmc.client.render.entity.ParachuteRenderer;
 import dev.toma.pubgmc.client.render.entity.ThrowableRenderer;
 import dev.toma.pubgmc.client.render.entity.UAZRenderer;
-import dev.toma.pubgmc.client.render.item.VehicleSpawnerRenderer;
 import dev.toma.pubgmc.common.entity.BulletEntity;
 import dev.toma.pubgmc.common.entity.ParachuteEntity;
 import dev.toma.pubgmc.common.entity.throwable.FlashEntity;
@@ -30,8 +28,6 @@ import java.util.function.Supplier;
 
 public class ClientManager {
 
-    public static VehicleSpawnerRenderer instance = new VehicleSpawnerRenderer();
-
     public static void loadEntityRenderers() {
         RenderingRegistry.registerEntityRenderingHandler(ParachuteEntity.class, ParachuteRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(GrenadeEntity.class, manager -> new ThrowableRenderer<>(manager, () -> Registry.PMCItems.GRENADE));
@@ -40,7 +36,6 @@ public class ClientManager {
         RenderingRegistry.registerEntityRenderingHandler(MolotovEntity.class, manager -> new ThrowableRenderer<>(manager, () -> Registry.PMCItems.MOLOTOV));
         RenderingRegistry.registerEntityRenderingHandler(LandDriveableEntity.UAZDriveable.class, UAZRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(AirDriveableEntity.GliderDriveable.class, GliderRenderer::new);
-        RenderingRegistry.registerEntityRenderingHandler(BulletEntity.class, RenderBullet::new);
     }
 
     public static void run(Supplier<Runnable> supplier) {

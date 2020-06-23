@@ -22,8 +22,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
+@OnlyIn(Dist.CLIENT)
 public class VehicleSpawnerRenderer extends ItemStackTileEntityRenderer {
 
+    public static VehicleSpawnerRenderer renderer = new VehicleSpawnerRenderer();
     public LazyLoader<Map<Item, Class<? extends Entity>>> ITEM_TO_CLASS_MAP_LOADER = new LazyLoader<>(() -> {
         Map<Item, Class<? extends Entity>> map = new HashMap<>();
         map.put(Registry.PMCItems.SPAWN_UAZ, LandDriveableEntity.UAZDriveable.class);

@@ -28,7 +28,7 @@ import java.util.List;
 public class MolotovEntity extends ThrowableEntity {
 
     public static final int FIRE_SPREAD_AMOUNT = 6;
-    public static final int SPREAD_DELAY = 15;
+    public static final int SPREAD_DELAY = 7;
 
     private MolotovFireSpreader fireSpreader;
     private List<MolotovFirePosEntry> burningBlocks;
@@ -177,9 +177,9 @@ public class MolotovEntity extends ThrowableEntity {
         return new MolotovFirePosEntry(pos, y);
     }
 
-    protected class MolotovFireSpreader {
+    protected static class MolotovFireSpreader {
 
-        final Direction[] FACINGS = new Direction[] {Direction.NORTH, Direction.WEST, Direction.SOUTH, Direction.EAST};
+        static final Direction[] FACINGS = new Direction[] {Direction.NORTH, Direction.WEST, Direction.SOUTH, Direction.EAST};
 
         public List<MolotovFirePosEntry> startSpreading(MolotovEntity molotov) {
             if(molotov.isInWater()) {
@@ -190,10 +190,8 @@ public class MolotovEntity extends ThrowableEntity {
             BlockPos initial = molotov.getPosition();
             BlockPos ground = this.findGround(molotov.world, initial);
             VoxelShape shape = molotov.world.getBlockState(ground).getCollisionShape(molotov.world, ground);
-            if(shape.isEmpty()) return Collections.emptyList();
-            AxisAlignedBB alignedBB = shape.getBoundingBox();
             if(molotov.world.isAirBlock(ground.up())) {
-                list.add(new MolotovFirePosEntry(ground, alignedBB));
+                list.add(new MolotovFirePosEntry(ground, shape));
             }
             return list;
         }
@@ -213,12 +211,10 @@ public class MolotovEntity extends ThrowableEntity {
                     }
                     BlockState state = molotov.world.getBlockState(ground);
                     VoxelShape shape = state.getCollisionShape(molotov.world, ground);
-                    if(shape.isEmpty()) continue;
-                    AxisAlignedBB alignedBB = state.getCollisionShape(molotov.world, ground).getBoundingBox();
-                    if(state.getBlock() == Blocks.AIR || state.getMaterial().isLiquid()) {
+                    if(state.getBlock() == Blocks.AIR || state.getMaterial().isLiquid() || !molotov.world.getFluidState(ground).isEmpty()) {
                         continue;
                     }
-                    MolotovFirePosEntry entry1 = new MolotovFirePosEntry(ground, alignedBB);
+                    MolotovFirePosEntry entry1 = new MolotovFirePosEntry(ground, shape);
                     toBeAdded.add(entry1);
                 }
             }
@@ -244,7 +240,7 @@ public class MolotovEntity extends ThrowableEntity {
         }
     }
 
-    protected class MolotovFirePosEntry {
+    protected static class MolotovFirePosEntry {
 
         public BlockPos pos;
         public float y;
@@ -254,9 +250,9 @@ public class MolotovEntity extends ThrowableEntity {
             this.y = pos.getY() + 0.25F;
         }
 
-        public MolotovFirePosEntry(BlockPos pos, AxisAlignedBB collisionBox) {
+        public MolotovFirePosEntry(BlockPos pos, VoxelShape shape) {
             this.pos = pos;
-            this.y = pos.getY() + (collisionBox != null ? (float) collisionBox.maxY : 0.0F);
+            this.y = pos.getY() + (!shape.isEmpty() ? (float) shape.getBoundingBox().maxY : 0.0F);
         }
 
         public MolotovFirePosEntry(BlockPos pos, float y) {
