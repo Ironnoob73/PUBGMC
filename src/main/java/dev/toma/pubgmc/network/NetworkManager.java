@@ -23,6 +23,7 @@ public class NetworkManager {
         register(CPacketSyncEntity.class, new CPacketSyncEntity());
         register(CPacketFlashStatus.class, new CPacketFlashStatus());
         register(CPacketSendRecipes.class, new CPacketSendRecipes());
+        register(CPacketBulletImpactParticle.class, new CPacketBulletImpactParticle());
         register(SPacketControllableInput.class, new SPacketControllableInput());
         register(SPacketCookThrowable.class, new SPacketCookThrowable());
         register(SPacketShoot.class, new SPacketShoot());

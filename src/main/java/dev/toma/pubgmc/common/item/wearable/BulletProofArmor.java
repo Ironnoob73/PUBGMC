@@ -38,11 +38,6 @@ public class BulletProofArmor extends ArmorItem implements IPMCArmor {
         return damageMultiplier;
     }
 
-    @Override
-    public EquipmentSlotType armorSlot() {
-        return slot;
-    }
-
     @OnlyIn(Dist.CLIENT)
     @Override
     public void renderIcon(int x, int y, int x2, int y2, ItemStack stack) {

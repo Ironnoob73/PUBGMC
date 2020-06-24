@@ -24,7 +24,7 @@ public class TestGun extends PMCItem {
     public void shoot(LivingEntity src, World world, ItemStack stack) {
         if(!world.isRemote) {
             if(!this.canShoot(src, world, stack)) return;
-            world.addEntity(new BulletEntity(world, src, stack, 4.0F, 2.5F, 10.0F, 0.0F, 0, 0));
+            world.addEntity(new BulletEntity(world, src, stack, 4.0F, 2.5F, 12.0F, 0.05F, 0, 0));
             world.playSound(null, src.posX, src.posY, src.posZ, SoundEvents.BLOCK_LEVER_CLICK, SoundCategory.MASTER, 1.0F, 1.0F);
         }
     }
