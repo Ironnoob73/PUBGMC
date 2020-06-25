@@ -14,19 +14,25 @@ import net.minecraftforge.fml.common.Mod;
 
 public class PlayerCapFactory implements IPlayerCap {
 
-    protected PlayerEntity owner;
+    private final PlayerEntity owner;
 
     private final BoostStats boostStats;
+    private final AimInfo aimInfo;
+    private final ReloadInfo reloadInfo;
 
     public PlayerCapFactory(PlayerEntity owner) {
         this.owner = owner;
         this.boostStats = new BoostStats(this);
+        this.aimInfo = new AimInfo(this);
+        this.reloadInfo = new ReloadInfo(this);
     }
 
     @Override
     public void onTick() {
         if(owner == null) return;
         boostStats.tick(owner);
+        aimInfo.onUpdate();
+        reloadInfo.onUpdate();
     }
 
     @Override
@@ -35,15 +41,29 @@ public class PlayerCapFactory implements IPlayerCap {
     }
 
     @Override
+    public AimInfo getAimInfo() {
+        return aimInfo;
+    }
+
+    @Override
+    public ReloadInfo getReloadInfo() {
+        return reloadInfo;
+    }
+
+    @Override
     public CompoundNBT saveNetworkData() {
         CompoundNBT nbt = new CompoundNBT();
         nbt.put("boostData", boostStats.save());
+        nbt.put("aimInfo", aimInfo.write());
+        nbt.put("reloadInfo", reloadInfo.write());
         return nbt;
     }
 
     @Override
     public void loadNetworkData(CompoundNBT nbt) {
         boostStats.load(nbt.contains("boostData") ? nbt.getCompound("boostData") : new CompoundNBT());
+        aimInfo.read(nbt.contains("aimInfo") ? nbt.getCompound("aimInfo") : new CompoundNBT());
+        reloadInfo.read(nbt.contains("reloadInfo") ? nbt.getCompound("reloadInfo") : new CompoundNBT());
     }
 
     @Override
@@ -70,6 +90,10 @@ public class PlayerCapFactory implements IPlayerCap {
         if(owner instanceof ServerPlayerEntity) {
             NetworkManager.sendToClient((ServerPlayerEntity) owner, new CPacketSendNBT(serializeNBT(), CPacketSendNBT.PLAYER_CAP_SYNC_FULL));
         }
+    }
+
+    public PlayerEntity getOwner() {
+        return owner;
     }
 
     public static IPlayerCap get(PlayerEntity player) {

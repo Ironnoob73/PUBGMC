@@ -9,7 +9,7 @@ import dev.toma.pubgmc.capability.player.BoostStats;
 import dev.toma.pubgmc.capability.player.PlayerCapFactory;
 import dev.toma.pubgmc.client.animation.AnimationManager;
 import dev.toma.pubgmc.client.animation.HandAnimate;
-import dev.toma.pubgmc.common.item.gun.TestGun;
+import dev.toma.pubgmc.common.item.gun.GunItem;
 import dev.toma.pubgmc.config.Config;
 import dev.toma.pubgmc.network.NetworkManager;
 import dev.toma.pubgmc.network.packet.SPacketControllableInput;
@@ -87,7 +87,7 @@ public class ClientEventHandler {
             }
 
             ItemStack stack = player.getHeldItemMainhand();
-            if(stack.getItem() instanceof TestGun) {
+            if(stack.getItem() instanceof GunItem) {
                 CooldownTracker tracker = player.getCooldownTracker();
                 if(settings.keyBindAttack.isKeyDown() && !tracker.hasCooldown(stack.getItem())) {
                     NetworkManager.sendToServer(new SPacketShoot());

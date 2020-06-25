@@ -6,14 +6,28 @@ import net.minecraft.nbt.CompoundNBT;
 public class DummyImpl implements IPlayerCap {
 
     private final BoostStats stats;
+    private final AimInfo aimInfo;
+    private final ReloadInfo reloadInfo;
 
     public DummyImpl() {
         stats = new BoostStats(this);
+        aimInfo = new AimInfo(this);
+        reloadInfo = new ReloadInfo(this);
     }
 
     @Override
     public void onTick() {
 
+    }
+
+    @Override
+    public AimInfo getAimInfo() {
+        return aimInfo;
+    }
+
+    @Override
+    public ReloadInfo getReloadInfo() {
+        return reloadInfo;
     }
 
     @Override

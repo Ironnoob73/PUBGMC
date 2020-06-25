@@ -1,6 +1,6 @@
 package dev.toma.pubgmc.network.packet;
 
-import dev.toma.pubgmc.common.item.gun.TestGun;
+import dev.toma.pubgmc.common.item.gun.GunItem;
 import dev.toma.pubgmc.network.NetworkPacket;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -26,8 +26,8 @@ public class SPacketShoot implements NetworkPacket<SPacketShoot> {
         ctx.get().enqueueWork(() -> {
             PlayerEntity player = ctx.get().getSender();
             ItemStack stack = player.getHeldItemMainhand();
-            if(stack.getItem() instanceof TestGun) {
-                ((TestGun) stack.getItem()).shoot(player, player.world, stack);
+            if(stack.getItem() instanceof GunItem) {
+                ((GunItem) stack.getItem()).shoot(player, player.world, stack);
             }
         });
         ctx.get().setPacketHandled(true);

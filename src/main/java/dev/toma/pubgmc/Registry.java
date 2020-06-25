@@ -15,12 +15,10 @@ import dev.toma.pubgmc.common.entity.throwable.SmokeEntity;
 import dev.toma.pubgmc.common.entity.vehicle.AirDriveableEntity;
 import dev.toma.pubgmc.common.entity.vehicle.LandDriveableEntity;
 import dev.toma.pubgmc.common.item.PMCItem;
-import dev.toma.pubgmc.common.item.gun.TestGun;
+import dev.toma.pubgmc.common.item.gun.AmmoType;
+import dev.toma.pubgmc.common.item.gun.attachment.AttachmentItem;
 import dev.toma.pubgmc.common.item.healing.*;
-import dev.toma.pubgmc.common.item.utility.FuelCanItem;
-import dev.toma.pubgmc.common.item.utility.ParachuteItem;
-import dev.toma.pubgmc.common.item.utility.ThrowableItem;
-import dev.toma.pubgmc.common.item.utility.VehicleSpawnerItem;
+import dev.toma.pubgmc.common.item.utility.*;
 import dev.toma.pubgmc.common.item.wearable.BulletProofArmor;
 import dev.toma.pubgmc.common.tileentity.TileEntityWeaponFactory;
 import net.minecraft.block.Block;
@@ -61,7 +59,6 @@ public class Registry {
 
     @ObjectHolder(Pubgmc.MODID)
     public static class PMCItems {
-        public static final TestGun TESTGUN = null;
         public static final HealingItem BANDAGE = null;
         public static final HealingItem FIRST_AID_KIT = null;
         public static final HealingItem MEDKIT = null;
@@ -82,6 +79,43 @@ public class Registry {
         public static final VehicleSpawnerItem SPAWN_UAZ = null;
         public static final VehicleSpawnerItem SPAWN_GLIDER = null;
         public static final FuelCanItem FUEL_CAN = null;
+        public static final AmmoItem CROSSBOW_BOLT = null;
+        public static final AmmoItem AMMO_12G = null;
+        public static final AmmoItem AMMO_9MM = null;
+        public static final AmmoItem AMMO_45ACP = null;
+        public static final AmmoItem AMMO_556MM = null;
+        public static final AmmoItem AMMO_762MM = null;
+        public static final AmmoItem AMMO_300M = null;
+        public static final AttachmentItem.Barrel SHOTGUN_CHOKE = null;
+        public static final AttachmentItem.Barrel SUPPRESSOR_SMG = null;
+        public static final AttachmentItem.Barrel COMPENSATOR_SMG = null;
+        public static final AttachmentItem.Barrel SUPPRESSOR_AR = null;
+        public static final AttachmentItem.Barrel COMPENSATOR_AR = null;
+        public static final AttachmentItem.Barrel SUPPRESSOR_SR = null;
+        public static final AttachmentItem.Barrel COMPENSATOR_SR = null;
+        public static final AttachmentItem.Grip ANGLED_GRIP = null;
+        public static final AttachmentItem.Grip VERTICAL_GRIP = null;
+        public static final AttachmentItem.Magazine QUICKDRAW_SMG = null;
+        public static final AttachmentItem.Magazine EXTENDED_SMG = null;
+        public static final AttachmentItem.Magazine QUICKDRAW_EXTENDED_SMG = null;
+        public static final AttachmentItem.Magazine QUICKDRAW_AR = null;
+        public static final AttachmentItem.Magazine EXTENDED_AR = null;
+        public static final AttachmentItem.Magazine QUICKDRAW_EXTENDED_AR = null;
+        public static final AttachmentItem.Magazine QUICKDRAW_SR = null;
+        public static final AttachmentItem.Magazine EXTENDED_SR = null;
+        public static final AttachmentItem.Magazine QUICKDRAW_EXTENDED_SR = null;
+        public static final AttachmentItem.Stock FOLDING_STOCK = null;
+        public static final AttachmentItem.Stock TACTICAL_STOCK = null;
+        public static final AttachmentItem.Stock CHEEKPAD = null;
+        public static final AttachmentItem.Stock BULLET_LOOPS = null;
+        public static final AttachmentItem.Scope RED_DOT = null;
+        public static final AttachmentItem.Scope HOLOGRAPHIC = null;
+        public static final AttachmentItem.Scope X2_SCOPE = null;
+        public static final AttachmentItem.Scope X3_SCOPE = null;
+        public static final AttachmentItem.Scope X4_SCOPE = null;
+        public static final AttachmentItem.Scope X6_SCOPE = null;
+        public static final AttachmentItem.Scope X8_SCOPE = null;
+        public static final AttachmentItem.Scope X15_SCOPE = null;
     }
 
     @ObjectHolder(Pubgmc.MODID)
@@ -127,7 +161,6 @@ public class Registry {
         public static void onItemRegister(RegistryEvent.Register<Item> event) {
             IForgeRegistry<Item> registry = event.getRegistry();
             registry.registerAll(
-                    new TestGun(),
                     new BandageItem("bandage"),
                     new FirstAidKitItem("first_aid_kit"),
                     new MedkitItem("medkit"),
@@ -147,7 +180,45 @@ public class Registry {
                     new ThrowableItem("flash", 100, FlashEntity::new),
                     new VehicleSpawnerItem("spawn_uaz", LandDriveableEntity.UAZDriveable::new, new Item.Properties().maxStackSize(1).group(PMCItem.ITEMS).setTEISR(() -> VehicleSpawnerRenderer::new)),
                     new VehicleSpawnerItem("spawn_glider", AirDriveableEntity.GliderDriveable::new, new Item.Properties().maxStackSize(1).group(PMCItem.ITEMS).setTEISR(() -> VehicleSpawnerRenderer::new)),
-                    new FuelCanItem("fuel_can")
+                    new FuelCanItem("fuel_can"),
+                    //new GunItem.GunBuilder().ister(() -> VehicleSpawnerRenderer::new).build("test"),
+                    new AmmoItem("crossbow_bolt", AmmoType.CROSSBOW_BOLT),
+                    new AmmoItem("ammo_12g", AmmoType.AMMO_12G),
+                    new AmmoItem("ammo_9mm", AmmoType.AMMO_9MM),
+                    new AmmoItem("ammo_45acp", AmmoType.AMMO_45ACP),
+                    new AmmoItem("ammo_556mm", AmmoType.AMMO_556MM),
+                    new AmmoItem("ammo_762mm", AmmoType.AMMO_762MM),
+                    new AmmoItem("ammo_300m", AmmoType.AMMO_300M),
+                    new AttachmentItem.Barrel("shotgun_choke", 1.0F, 1.0F, false, 0.5F),
+                    new AttachmentItem.Barrel("suppressor_smg", true),
+                    new AttachmentItem.Barrel("compensator_smg", 0.7F, 0.7F, false),
+                    new AttachmentItem.Barrel("suppressor_ar", true),
+                    new AttachmentItem.Barrel("compensator_ar", 0.7F, 0.7F, false),
+                    new AttachmentItem.Barrel("suppressor_sr", true),
+                    new AttachmentItem.Barrel("compensator_sr", 0.7F, 0.7F, false),
+                    new AttachmentItem.Grip("angled_grip", 0.95F, 0.7F),
+                    new AttachmentItem.Grip("vertical_grip", 0.7F, 0.95F),
+                    new AttachmentItem.Magazine("quickdraw_smg", true, false),
+                    new AttachmentItem.Magazine("extended_smg", false, true),
+                    new AttachmentItem.Magazine("quickdraw_extended_smg", true, true),
+                    new AttachmentItem.Magazine("quickdraw_ar", true, false),
+                    new AttachmentItem.Magazine("extended_ar", false, true),
+                    new AttachmentItem.Magazine("quickdraw_extended_ar", true, true),
+                    new AttachmentItem.Magazine("quickdraw_sr", true, false),
+                    new AttachmentItem.Magazine("extended_sr", false, true),
+                    new AttachmentItem.Magazine("quickdraw_extended_sr", true, true),
+                    new AttachmentItem.Stock("folding_stock", false),
+                    new AttachmentItem.Stock("tactical_stock", false),
+                    new AttachmentItem.Stock("cheekpad", false),
+                    new AttachmentItem.Stock("bullet_loops", true),
+                    new AttachmentItem.Scope("red_dot", -1),
+                    new AttachmentItem.Scope("holographic", -1),
+                    new AttachmentItem.Scope("x2_scope", 50),
+                    new AttachmentItem.Scope("x3_scope", 45),
+                    new AttachmentItem.Scope("x4_scope", 40),
+                    new AttachmentItem.Scope("x6_scope", 30),
+                    new AttachmentItem.Scope("x8_scope", 20),
+                    new AttachmentItem.Scope("x15_scope", 5)
             );
             blockItemList.stream().filter(Objects::nonNull).forEach(registry::register);
             blockItemList = null;
@@ -222,6 +293,7 @@ public class Registry {
             IBakedModel model = new DriveableSpawnerBakedModel();
             registry.put(get(PMCItems.SPAWN_UAZ), model);
             registry.put(get(PMCItems.SPAWN_GLIDER), model);
+
         }
 
         public static ModelResourceLocation get(Item item) {

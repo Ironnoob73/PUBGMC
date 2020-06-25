@@ -1,0 +1,38 @@
+package dev.toma.pubgmc.common.item.gun.attachment;
+
+import dev.toma.pubgmc.util.UsefulFunctions;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Supplier;
+
+public class GunAttachments {
+
+    private static final AttachmentItem[] EMPTY = new AttachmentItem[0];
+    private Map<AttachmentCategory, Supplier<? extends AttachmentItem[]>> registrate;
+    private Map<AttachmentCategory, AttachmentItem[]> attachments;
+
+    public GunAttachments() {
+        this(new HashMap<>());
+    }
+
+    public GunAttachments(Map<AttachmentCategory, Supplier<? extends AttachmentItem[]>> registrate) {
+        this.registrate = registrate;
+    }
+
+    public boolean canAttach(AttachmentItem item) {
+        return UsefulFunctions.contains(this.get(item.getCategory()), item);
+    }
+
+    private AttachmentItem[] get(AttachmentCategory category) {
+        if(attachments == null) {
+            attachments = new HashMap<>();
+            for(Map.Entry<AttachmentCategory, Supplier<? extends AttachmentItem[]>> entry : registrate.entrySet()) {
+                AttachmentItem[] array = entry.getValue().get();
+                attachments.put(entry.getKey(), array);
+            }
+            registrate = null;
+        }
+        return UsefulFunctions.getNonnullFromMap(attachments, category, EMPTY);
+    }
+}
