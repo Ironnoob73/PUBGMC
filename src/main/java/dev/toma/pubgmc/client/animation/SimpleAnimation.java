@@ -23,27 +23,27 @@ public class SimpleAnimation implements Animation {
     }
 
     @Override
-    public void animateItemAndHands(float partialTicks) {
+    public void animateItemAndHands() {
         itemAndHandAnimation.ifPresent(a -> a.accept(s));
     }
 
     @Override
-    public void animateHands(float partialTicks) {
+    public void animateHands() {
         handAnimation.ifPresent(a -> a.accept(s));
     }
 
     @Override
-    public void animateRightHand(float partialTicks) {
+    public void animateRightHand() {
         rightHandAnimation.ifPresent(a -> a.accept(s));
     }
 
     @Override
-    public void animateLeftHand(float partialTicks) {
+    public void animateLeftHand() {
         leftHandAnimation.ifPresent(a -> a.accept(s));
     }
 
     @Override
-    public void animateItem(float partialTicks) {
+    public void animateItem() {
         itemAnimation.ifPresent(a -> a.accept(s));
     }
 

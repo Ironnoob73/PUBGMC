@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-public class DriveableSpawnerBakedModel implements IBakedModel {
+public class DummyBakedModel implements IBakedModel {
 
     private static final MissingTextureSprite MISSING_TEXTURE_SPRITE = MissingTextureSprite.func_217790_a();
 
@@ -38,12 +38,12 @@ public class DriveableSpawnerBakedModel implements IBakedModel {
     }
 
     @Override
-    public ItemOverrideList getOverrides() {
-        return ItemOverrideList.EMPTY;
+    public TextureAtlasSprite getParticleTexture() {
+        return MISSING_TEXTURE_SPRITE;
     }
 
     @Override
-    public TextureAtlasSprite getParticleTexture() {
-        return MISSING_TEXTURE_SPRITE;
+    public ItemOverrideList getOverrides() {
+        return ItemOverrideList.EMPTY;
     }
 }

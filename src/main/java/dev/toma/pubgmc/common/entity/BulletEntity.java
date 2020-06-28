@@ -2,7 +2,7 @@ package dev.toma.pubgmc.common.entity;
 
 import dev.toma.pubgmc.Pubgmc;
 import dev.toma.pubgmc.Registry;
-import dev.toma.pubgmc.api.IPMCArmor;
+import dev.toma.pubgmc.common.item.wearable.IPMCArmor;
 import dev.toma.pubgmc.network.NetworkManager;
 import dev.toma.pubgmc.network.packet.CPacketBulletImpactParticle;
 import net.minecraft.block.BlockState;

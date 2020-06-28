@@ -1,21 +1,24 @@
-package dev.toma.pubgmc.client.animation;
+package dev.toma.pubgmc.client.animation.gun;
 
+import dev.toma.pubgmc.client.animation.Animation;
+import dev.toma.pubgmc.client.animation.GunPartAnimation;
+import dev.toma.pubgmc.client.animation.MultiStepAnimation;
 import dev.toma.pubgmc.util.object.Pair;
 import net.minecraftforge.event.TickEvent;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class MultiStepAnimation extends TickableAnimation {
+public abstract class GunMultiStepAnimation extends GunTickableAnimation {
 
-    protected final List<Pair<Range, Animation>> stepList;
-    protected Pair<Range, Animation> current;
-    protected int index = 0;
+    protected final List<Pair<MultiStepAnimation.Range, GunPartAnimation>> stepList;
+    protected Pair<MultiStepAnimation.Range, GunPartAnimation> current;
+    protected int index;
 
-    public MultiStepAnimation(int length) {
-        super(length);
-        this.stepList = new ArrayList<>();
-        this.initAnimation();
+    public GunMultiStepAnimation(int lengthInTicks) {
+        super(lengthInTicks);
+        stepList = new ArrayList<>();
+        initAnimation();
         if(stepList.isEmpty()) {
             throw new IllegalArgumentException("Animation step list must contain atleast 1 step!");
         }
@@ -24,11 +27,11 @@ public abstract class MultiStepAnimation extends TickableAnimation {
 
     public abstract void initAnimation();
 
-    public void addStep(float min, float max, Animation animation) {
-        this.addStep(new Range(min, max), animation);
+    public void addStep(float min, float max, GunPartAnimation animation) {
+        this.addStep(new MultiStepAnimation.Range(min, max), animation);
     }
 
-    public void addStep(Range range, Animation animation) {
+    public void addStep(MultiStepAnimation.Range range, GunPartAnimation animation) {
         this.stepList.add(Pair.of(range, animation));
     }
 
@@ -39,7 +42,7 @@ public abstract class MultiStepAnimation extends TickableAnimation {
         return index == stepList.size() - 1;
     }
 
-    public List<Pair<Range, Animation>> getStepList() {
+    public List<Pair<MultiStepAnimation.Range, GunPartAnimation>> getStepList() {
         return stepList;
     }
 
@@ -69,6 +72,11 @@ public abstract class MultiStepAnimation extends TickableAnimation {
     }
 
     @Override
+    public void animateModel(int path) {
+        current.getRight().animateModel(path);
+    }
+
+    @Override
     public void renderTick(float partialTicks, TickEvent.Phase phase) {
         current.getRight().renderTick(partialTicks, phase);
     }
@@ -77,7 +85,7 @@ public abstract class MultiStepAnimation extends TickableAnimation {
     public void tick() {
         super.tick();
         float progress = 1.0F - getAnimationProgress();
-        Range range = current.getLeft();
+        MultiStepAnimation.Range range = current.getLeft();
         Animation animation = current.getRight();
         if(range.isInRange(progress)) {
             animation.clientTick();
@@ -92,42 +100,7 @@ public abstract class MultiStepAnimation extends TickableAnimation {
         }
     }
 
-    @Override
-    public boolean shouldCancelItemRendering() {
-        return current.getRight().shouldCancelItemRendering();
-    }
-
     public int getIndex() {
         return index;
-    }
-
-    public static class Range {
-
-        protected final float min, max;
-
-        public Range(float min, float max) {
-            this.min = min;
-            this.max = max;
-        }
-
-        public float getProgress(float value) {
-            return (value - min) / (max - min);
-        }
-
-        public boolean isInRange(float value) {
-            return value > min && value <= max;
-        }
-
-        public boolean isOutsideRange(float value) {
-            return value >= max;
-        }
-
-        @Override
-        public String toString() {
-            return "Range{" +
-                    "min=" + min +
-                    ", max=" + max +
-                    '}';
-        }
     }
 }

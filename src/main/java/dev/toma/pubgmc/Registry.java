@@ -1,7 +1,11 @@
 package dev.toma.pubgmc;
 
 import com.mojang.datafixers.types.Type;
-import dev.toma.pubgmc.client.model.baked.DriveableSpawnerBakedModel;
+import dev.toma.pubgmc.client.animation.Animations;
+import dev.toma.pubgmc.client.animation.types.AimingAnimation;
+import dev.toma.pubgmc.client.model.baked.DummyBakedModel;
+import dev.toma.pubgmc.client.model.baked.DummyGunBakedModel;
+import dev.toma.pubgmc.client.render.item.GunRenderer;
 import dev.toma.pubgmc.client.render.item.VehicleSpawnerRenderer;
 import dev.toma.pubgmc.common.block.PMCHorizontalBlock;
 import dev.toma.pubgmc.common.block.crafting.AmmoFactoryBlock;
@@ -16,6 +20,9 @@ import dev.toma.pubgmc.common.entity.vehicle.AirDriveableEntity;
 import dev.toma.pubgmc.common.entity.vehicle.LandDriveableEntity;
 import dev.toma.pubgmc.common.item.PMCItem;
 import dev.toma.pubgmc.common.item.gun.AmmoType;
+import dev.toma.pubgmc.common.item.gun.Firemode;
+import dev.toma.pubgmc.common.item.gun.GunItem;
+import dev.toma.pubgmc.common.item.gun.attachment.AttachmentCategory;
 import dev.toma.pubgmc.common.item.gun.attachment.AttachmentItem;
 import dev.toma.pubgmc.common.item.healing.*;
 import dev.toma.pubgmc.common.item.utility.*;
@@ -116,6 +123,7 @@ public class Registry {
         public static final AttachmentItem.Scope X6_SCOPE = null;
         public static final AttachmentItem.Scope X8_SCOPE = null;
         public static final AttachmentItem.Scope X15_SCOPE = null;
+        public static final GunItem P92 = null;
     }
 
     @ObjectHolder(Pubgmc.MODID)
@@ -207,10 +215,10 @@ public class Registry {
                     new AttachmentItem.Magazine("quickdraw_sr", true, false),
                     new AttachmentItem.Magazine("extended_sr", false, true),
                     new AttachmentItem.Magazine("quickdraw_extended_sr", true, true),
-                    new AttachmentItem.Stock("folding_stock", false),
-                    new AttachmentItem.Stock("tactical_stock", false),
-                    new AttachmentItem.Stock("cheekpad", false),
-                    new AttachmentItem.Stock("bullet_loops", true),
+                    new AttachmentItem.Stock("folding_stock", false, 1.25F),
+                    new AttachmentItem.Stock("tactical_stock", false, 1.25F),
+                    new AttachmentItem.Stock("cheekpad", false, 1.25F),
+                    new AttachmentItem.Stock("bullet_loops", true, 1.0F),
                     new AttachmentItem.Scope("red_dot", -1),
                     new AttachmentItem.Scope("holographic", -1),
                     new AttachmentItem.Scope("x2_scope", 50),
@@ -218,7 +226,21 @@ public class Registry {
                     new AttachmentItem.Scope("x4_scope", 40),
                     new AttachmentItem.Scope("x6_scope", 30),
                     new AttachmentItem.Scope("x8_scope", 20),
-                    new AttachmentItem.Scope("x15_scope", 5)
+                    new AttachmentItem.Scope("x15_scope", 5),
+                    new GunItem.GunBuilder()
+                            .gunProperties(4.0F, 2.5F, 11.0F, 0.05F, 3)
+                            .firerate(2)
+                            .firemodes(Firemode.SINGLE, Firemode::singleMode)
+                            .ammo(AmmoType.AMMO_9MM, (p92, stack) -> p92.getAttachment(AttachmentCategory.MAGAZINE, stack).isExtended() ? 20 : 15)
+                            .ister(() -> GunRenderer.P92Renderer::new)
+                            .attachments()
+                                .barrel(() -> new AttachmentItem.Barrel[] {PMCItems.SUPPRESSOR_SMG})
+                                .scope(() -> new AttachmentItem.Scope[] {PMCItems.RED_DOT, PMCItems.HOLOGRAPHIC})
+                                .magazine(() -> new AttachmentItem.Magazine[] {PMCItems.QUICKDRAW_SMG, PMCItems.EXTENDED_SMG, PMCItems.QUICKDRAW_EXTENDED_SMG})
+                            .build()
+                            .animateHands(Animations::standartPistolHeldAnimation)
+                            .aimAnimation(() -> AimingAnimation::defaultPistol)
+                            .build("p92")
             );
             blockItemList.stream().filter(Objects::nonNull).forEach(registry::register);
             blockItemList = null;
@@ -290,10 +312,15 @@ public class Registry {
         @SubscribeEvent
         public static void bake(ModelBakeEvent event) {
             Map<ResourceLocation, IBakedModel> registry = event.getModelRegistry();
-            IBakedModel model = new DriveableSpawnerBakedModel();
+            IBakedModel model = new DummyBakedModel();
             registry.put(get(PMCItems.SPAWN_UAZ), model);
             registry.put(get(PMCItems.SPAWN_GLIDER), model);
 
+            DummyGunBakedModel gunBakedModel = new DummyGunBakedModel();
+            ForgeRegistries.ITEMS.getValues()
+                    .stream()
+                    .filter(item -> item instanceof GunItem)
+                    .forEach(item -> registry.put(get(item), gunBakedModel));
         }
 
         public static ModelResourceLocation get(Item item) {

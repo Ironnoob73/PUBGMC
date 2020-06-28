@@ -1,6 +1,5 @@
 package dev.toma.pubgmc.common.entity.vehicle;
 
-import dev.toma.pubgmc.api.entity.AbstractControllableEntity;
 import dev.toma.pubgmc.util.UsefulFunctions;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;

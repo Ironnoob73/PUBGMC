@@ -1,6 +1,6 @@
 package dev.toma.pubgmc.network.packet;
 
-import dev.toma.pubgmc.api.entity.IControllableEntity;
+import dev.toma.pubgmc.common.entity.IControllableEntity;
 import dev.toma.pubgmc.network.NetworkPacket;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;

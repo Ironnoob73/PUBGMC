@@ -1,12 +1,11 @@
-package dev.toma.pubgmc.client.animation;
+package dev.toma.pubgmc.client.animation.gun;
 
+import dev.toma.pubgmc.client.animation.GunPartAnimation;
 import net.minecraftforge.event.TickEvent;
 
-public abstract class AnimationFactory implements Animation {
+public abstract class GunAnimationFactory implements GunPartAnimation {
 
-    protected float currentValue;
-    protected float previousValue;
-    protected float interpolatedValue;
+    protected float current, prev, interpolated;
 
     public abstract float getAnimationProgress();
 
@@ -14,25 +13,25 @@ public abstract class AnimationFactory implements Animation {
 
     @Override
     public final void clientTick() {
-        this.previousValue = this.currentValue;
-        this.tick();
+        prev = current;
+        tick();
     }
 
     @Override
     public void renderTick(float partialTicks, TickEvent.Phase phase) {
         if(phase == TickEvent.Phase.END) return;
-        this.currentValue = this.getAnimationProgress();
-        this.interpolatedValue = this.previousValue + (this.currentValue - this.previousValue) * partialTicks;
+        current = getAnimationProgress();
+        interpolated = prev + (current - prev) * partialTicks;
     }
 
     @Override
-    public boolean shouldCancelItemRendering() {
+    public final boolean shouldCancelItemRendering() {
         return false;
     }
 
     @Override
     public void setAnimationProgress(float value) {
-        this.currentValue = value;
+        this.current = value;
     }
 
     @Override
@@ -57,6 +56,11 @@ public abstract class AnimationFactory implements Animation {
 
     @Override
     public void animateItem() {
+
+    }
+
+    @Override
+    public void animateModel(int path) {
 
     }
 }

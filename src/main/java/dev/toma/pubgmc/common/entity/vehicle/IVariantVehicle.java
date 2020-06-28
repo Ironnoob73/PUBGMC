@@ -1,4 +1,4 @@
-package dev.toma.pubgmc.api.entity;
+package dev.toma.pubgmc.common.entity.vehicle;
 
 import net.minecraft.util.ResourceLocation;
 

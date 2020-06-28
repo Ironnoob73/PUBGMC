@@ -2,8 +2,12 @@ package dev.toma.pubgmc.client;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import dev.toma.pubgmc.Pubgmc;
-import dev.toma.pubgmc.api.IPMCArmor;
-import dev.toma.pubgmc.api.entity.IControllableEntity;
+import dev.toma.pubgmc.client.animation.Animations;
+import dev.toma.pubgmc.client.animation.types.SprintAnimation;
+import dev.toma.pubgmc.common.item.gun.Firemode;
+import dev.toma.pubgmc.common.item.gun.attachment.AttachmentCategory;
+import dev.toma.pubgmc.common.item.wearable.IPMCArmor;
+import dev.toma.pubgmc.common.entity.IControllableEntity;
 import dev.toma.pubgmc.capability.IPlayerCap;
 import dev.toma.pubgmc.capability.player.BoostStats;
 import dev.toma.pubgmc.capability.player.PlayerCapFactory;
@@ -13,6 +17,7 @@ import dev.toma.pubgmc.common.item.gun.GunItem;
 import dev.toma.pubgmc.config.Config;
 import dev.toma.pubgmc.network.NetworkManager;
 import dev.toma.pubgmc.network.packet.SPacketControllableInput;
+import dev.toma.pubgmc.network.packet.SPacketSetAiming;
 import dev.toma.pubgmc.network.packet.SPacketShoot;
 import dev.toma.pubgmc.util.RenderHelper;
 import net.minecraft.client.GameSettings;
@@ -27,25 +32,33 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.CooldownTracker;
 import net.minecraft.util.Hand;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderSpecificHandEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import java.util.function.Consumer;
+import java.util.function.Function;
+
 @Mod.EventBusSubscriber(modid = Pubgmc.MODID, value = Dist.CLIENT)
 public class ClientEventHandler {
+
+    private static final StateListener runningAnimationFactory = new StateListener(PlayerEntity::isSprinting, player -> {
+        ItemStack stack = player.getHeldItemMainhand();
+        if(stack.getItem() instanceof GunItem && Animations.SPRINTING.canPlay()) {
+            AnimationManager.playNewAnimation(Animations.SPRINTING, new SprintAnimation());
+        }
+    });
 
     @SubscribeEvent
     public static void cancelOverlayRenders(RenderGameOverlayEvent.Pre event) {
         if(Config.specialHUDRenderer.get()) {
-            if(event.getType() == RenderGameOverlayEvent.ElementType.ARMOR
-                    || event.getType() == RenderGameOverlayEvent.ElementType.HEALTH
-                    || event.getType() == RenderGameOverlayEvent.ElementType.FOOD
-                    || event.getType() == RenderGameOverlayEvent.ElementType.AIR
-                    || event.getType() == RenderGameOverlayEvent.ElementType.EXPERIENCE
-            ) {
+            if(event.getType() == RenderGameOverlayEvent.ElementType.ARMOR || event.getType() == RenderGameOverlayEvent.ElementType.HEALTH || event.getType() == RenderGameOverlayEvent.ElementType.FOOD || event.getType() == RenderGameOverlayEvent.ElementType.AIR || event.getType() == RenderGameOverlayEvent.ElementType.EXPERIENCE) {
                 event.setCanceled(true);
+            } else if(event.getType() == RenderGameOverlayEvent.ElementType.CROSSHAIRS && Minecraft.getInstance().player.getHeldItemMainhand().getItem() instanceof GunItem) {
+                //event.setCanceled(true);
             }
         }
     }
@@ -66,12 +79,37 @@ public class ClientEventHandler {
     }
 
     @SubscribeEvent
+    public static void handleMouseInput(InputEvent.MouseInputEvent event) {
+        PlayerEntity player = Minecraft.getInstance().player;
+        GameSettings settings = Minecraft.getInstance().gameSettings;
+        if(player != null && event.getAction() == 1) {
+            ItemStack stack = player.getHeldItemMainhand();
+            if(stack.getItem() instanceof GunItem) {
+                GunItem gun = (GunItem) stack.getItem();
+                Firemode firemode = gun.getFiremode(stack);
+                CooldownTracker tracker = player.getCooldownTracker();
+                IPlayerCap cap = PlayerCapFactory.get(player);
+                if(settings.keyBindAttack.isPressed() && firemode == Firemode.SINGLE && !tracker.hasCooldown(gun) && !player.isSprinting() && !cap.getReloadInfo().isReloading()) {
+                    shoot(gun, stack);
+                } else if(settings.keyBindUseItem.isPressed() && Animations.AIMING.canPlay()) {
+                    boolean aiming = !PlayerCapFactory.get(player).getAimInfo().isActualAim();
+                    NetworkManager.sendToServer(new SPacketSetAiming(aiming, 0.2F * gun.getAttachment(AttachmentCategory.STOCK, stack).getAimSpeedMultiplier()));
+                    if(aiming) AnimationManager.playNewAnimation(Animations.AIMING, gun.getAimAnimation());
+                }
+            }
+        }
+    }
+
+    @SubscribeEvent
     public static void clientTick(TickEvent.ClientTickEvent event) {
         Minecraft mc = Minecraft.getInstance();
         PlayerEntity player = mc.player;
         if(event.phase == TickEvent.Phase.START) return;
         if(player != null) {
+
             AnimationManager.clientTick();
+            runningAnimationFactory.update(player);
+
             GameSettings settings = mc.gameSettings;
             Entity entity = player.getRidingEntity();
             if(entity instanceof IControllableEntity && entity.getControllingPassenger() == player) {
@@ -88,9 +126,10 @@ public class ClientEventHandler {
 
             ItemStack stack = player.getHeldItemMainhand();
             if(stack.getItem() instanceof GunItem) {
+                GunItem gun = (GunItem) stack.getItem();
                 CooldownTracker tracker = player.getCooldownTracker();
-                if(settings.keyBindAttack.isKeyDown() && !tracker.hasCooldown(stack.getItem())) {
-                    NetworkManager.sendToServer(new SPacketShoot());
+                if(settings.keyBindAttack.isKeyDown() && !tracker.hasCooldown(stack.getItem()) && gun.getFiremode(stack) == Firemode.FULL_AUTO && !player.isSprinting()) {
+                    shoot(gun, stack);
                 }
             }
         }
@@ -149,13 +188,18 @@ public class ClientEventHandler {
         AnimationManager.renderTick(event.renderTickTime, event.phase);
     }
 
+    private static void shoot(GunItem item, ItemStack stack) {
+        // TODO recoil
+        NetworkManager.sendToServer(new SPacketShoot());
+    }
+
     private static void renderHUD(Minecraft mc, MainWindow window, BoostStats stats, boolean specialRenderer) {
         int level = stats.getValue();
         float f = stats.getSaturation();
         PlayerEntity player = mc.player;
+        int left = window.getScaledWidth() / 2 - 91;
+        int top = window.getScaledHeight() - 35;
         if(specialRenderer) {
-            int left = window.getScaledWidth() / 2 - 91;
-            int top = window.getScaledHeight() - 35;
             int width = 183 ;
             // health background
             RenderHelper.x16Blit(left, top, left + width, top + 10, 0, 0, 10, 1);
@@ -183,12 +227,30 @@ public class ClientEventHandler {
             // TODO backpack if custom inventory is enabled
 
         } else {
-            int left = window.getScaledWidth() / 2 - 91;
-            int top = window.getScaledHeight() - 35;
             FontRenderer renderer = mc.fontRenderer;
             if(level == 0 && f == 0f) return;
             String text = (int)((1f * f + level) / 20F * 100) + "%";
             renderer.drawStringWithShadow(text, left + 183, top + 5, 0xffffff);
+        }
+    }
+
+    private static class StateListener {
+
+        private boolean lastState;
+        private final Function<PlayerEntity, Boolean> stateGetter;
+        private final Consumer<PlayerEntity> onStateChange;
+
+        private StateListener(Function<PlayerEntity, Boolean> stateGetter, Consumer<PlayerEntity> onStateChange) {
+            this.stateGetter = stateGetter;
+            this.onStateChange = onStateChange;
+        }
+
+        private void update(PlayerEntity player) {
+            boolean actual = stateGetter.apply(player);
+            if(!lastState && actual) {
+                onStateChange.accept(player);
+            }
+            lastState = actual;
         }
     }
 }

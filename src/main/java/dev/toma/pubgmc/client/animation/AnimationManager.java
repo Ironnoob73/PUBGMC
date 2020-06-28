@@ -1,5 +1,6 @@
 package dev.toma.pubgmc.client.animation;
 
+import dev.toma.pubgmc.Pubgmc;
 import dev.toma.pubgmc.client.animation.builder.AnimationType;
 import dev.toma.pubgmc.util.object.Optional;
 import net.minecraftforge.event.TickEvent;
@@ -16,7 +17,12 @@ public class AnimationManager {
     private static final Map<AnimationType, Animation> ACTIVE_ANIMATIONS = new HashMap<>();
 
     public static void playNewAnimation(AnimationType type, @Nonnull Animation animation) {
-        ACTIVE_ANIMATIONS.put(type, Objects.requireNonNull(animation, "Cannot play null animation!"));
+        if(animation == null) {
+            Pubgmc.pubgmcLog.fatal("Attempted to play 'null' animation with id {}, canceling...", type.index);
+            return;
+        }
+        type.apply();
+        ACTIVE_ANIMATIONS.put(type, animation);
     }
 
     public static void stopAnimation(AnimationType type) {
@@ -37,23 +43,23 @@ public class AnimationManager {
     }
 
     public static void animateItemAndHands(float partialTicks) {
-        ACTIVE_ANIMATIONS.values().forEach(a -> a.animateItemAndHands(partialTicks));
+        ACTIVE_ANIMATIONS.values().forEach(Animation::animateItemAndHands);
     }
 
     public static void animateHands(float partialTicks) {
-        ACTIVE_ANIMATIONS.values().forEach(a -> a.animateHands(partialTicks));
+        ACTIVE_ANIMATIONS.values().forEach(Animation::animateHands);
     }
 
     public static void animateRightHand(float partialTicks) {
-        ACTIVE_ANIMATIONS.values().forEach(a -> a.animateRightHand(partialTicks));
+        ACTIVE_ANIMATIONS.values().forEach(Animation::animateRightHand);
     }
 
     public static void animateLeftHand(float partialTicks) {
-        ACTIVE_ANIMATIONS.values().forEach(a -> a.animateLeftHand(partialTicks));
+        ACTIVE_ANIMATIONS.values().forEach(Animation::animateLeftHand);
     }
 
     public static void animateItem(float partialTicks) {
-        ACTIVE_ANIMATIONS.values().forEach(a -> a.animateItem(partialTicks));
+        ACTIVE_ANIMATIONS.values().forEach(Animation::animateItem);
     }
 
     public static boolean isItemRenderCanceled() {

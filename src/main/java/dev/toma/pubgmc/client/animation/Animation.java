@@ -4,15 +4,15 @@ import net.minecraftforge.event.TickEvent;
 
 public interface Animation {
 
-    void animateItemAndHands(float partialTicks);
+    void animateItemAndHands();
 
-    void animateHands(float partialTicks);
+    void animateHands();
 
-    void animateRightHand(float partialTicks);
+    void animateRightHand();
 
-    void animateLeftHand(float partialTicks);
+    void animateLeftHand();
 
-    void animateItem(float partialTicks);
+    void animateItem();
 
     void clientTick();
 

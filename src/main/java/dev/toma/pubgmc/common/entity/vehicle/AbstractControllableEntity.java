@@ -1,5 +1,6 @@
-package dev.toma.pubgmc.api.entity;
+package dev.toma.pubgmc.common.entity.vehicle;
 
+import dev.toma.pubgmc.common.entity.IControllableEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.world.World;

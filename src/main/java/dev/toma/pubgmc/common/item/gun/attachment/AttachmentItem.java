@@ -44,6 +44,10 @@ public class AttachmentItem extends PMCItem {
         return -1;
     }
 
+    public float getAimSpeedMultiplier() {
+        return 1.0F;
+    }
+
     public AttachmentCategory getCategory() {
         return category;
     }
@@ -135,10 +139,17 @@ public class AttachmentItem extends PMCItem {
     public static class Stock extends AttachmentItem {
 
         private final boolean quickdraw;
+        private final float aimSpeedMultiplier;
 
-        public Stock(String name, boolean quickdraw) {
+        public Stock(String name, boolean quickdraw, float aimSpeedMultiplier) {
             super(name, AttachmentCategory.STOCK);
             this.quickdraw = quickdraw;
+            this.aimSpeedMultiplier = aimSpeedMultiplier;
+        }
+
+        @Override
+        public float getAimSpeedMultiplier() {
+            return aimSpeedMultiplier;
         }
 
         @Override

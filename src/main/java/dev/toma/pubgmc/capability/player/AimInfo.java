@@ -19,8 +19,7 @@ public class AimInfo {
         PlayerEntity player = factory.getOwner();
         boolean server = !player.world.isRemote;
         int equippedSlot = player.inventory.currentItem;
-        // TODO reload check
-        if(server && (this.slotIn != equippedSlot || player.isSprinting())) {
+        if(server && (this.slotIn != equippedSlot || player.isSprinting() || factory.getReloadInfo().isReloading())) {
             factory.syncNetworkData();
             setAiming(false, 0.3F);
         }
@@ -29,6 +28,10 @@ public class AimInfo {
         } else if(!aiming && progress > 0.0F) {
             progress = Math.max(0.0F, progress - speed);
         }
+    }
+
+    public boolean isActualAim() {
+        return aiming;
     }
 
     public boolean isAiming() {
@@ -62,6 +65,4 @@ public class AimInfo {
         this.aiming = aiming;
         this.speed = speed;
     }
-
-
 }

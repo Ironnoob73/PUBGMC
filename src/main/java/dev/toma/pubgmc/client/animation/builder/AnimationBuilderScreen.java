@@ -2,15 +2,21 @@ package dev.toma.pubgmc.client.animation.builder;
 
 import dev.toma.pubgmc.client.animation.AnimationManager;
 import dev.toma.pubgmc.client.animation.Animations;
+import dev.toma.pubgmc.client.model.gun.AbstractGunModel;
+import dev.toma.pubgmc.client.render.item.GunRenderer;
 import dev.toma.pubgmc.util.RenderHelper;
 import dev.toma.pubgmc.util.object.Optional;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.renderer.entity.model.RendererModel;
+import net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer;
+import net.minecraft.item.Item;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class AnimationBuilderScreen extends Screen {
 
@@ -96,6 +102,18 @@ public class AnimationBuilderScreen extends Screen {
             BuilderData.part = BuilderData.Part.ITEM;
             init();
         }).setState(BuilderData.part == BuilderData.Part.ITEM));
+
+        Item item = minecraft.player.getHeldItemMainhand().getItem();
+        ItemStackTileEntityRenderer ister = item.getTileEntityItemStackRenderer();
+        if(ister instanceof GunRenderer) {
+            AbstractGunModel gunModel = ((GunRenderer) ister).getModel();
+            Map<Integer, RendererModel> map = gunModel.getAnimatedPartMap();
+            int j = 0;
+            for(int path : map.keySet()) {
+                addComponent(new UIComponent(center + 40, 195 + j * 25, 80, 20, j + ""));
+                ++j;
+            }
+        }
     }
 
     @Override

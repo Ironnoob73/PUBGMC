@@ -1,4 +1,4 @@
-package dev.toma.pubgmc.api.entity;
+package dev.toma.pubgmc.common.entity;
 
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;

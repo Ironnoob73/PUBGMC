@@ -3,6 +3,7 @@ package dev.toma.pubgmc.client.animation.builder;
 import com.mojang.blaze3d.platform.GlStateManager;
 import dev.toma.pubgmc.client.animation.AnimationManager;
 import dev.toma.pubgmc.client.animation.Animations;
+import dev.toma.pubgmc.client.animation.HandAnimate;
 import dev.toma.pubgmc.util.RenderHelper;
 import dev.toma.pubgmc.util.object.Pair;
 import net.minecraft.client.Minecraft;
@@ -58,7 +59,7 @@ public class BuilderMain {
     }
 
     public static void renderInfoOnScreen(RenderGameOverlayEvent.Post event) {
-        if (event.getType() == RenderGameOverlayEvent.ElementType.ALL && Minecraft.getInstance().currentScreen == null) {
+        if (event.getType() == RenderGameOverlayEvent.ElementType.ALL && Minecraft.getInstance().currentScreen == null && Minecraft.getInstance().player.getHeldItemMainhand().getItem() instanceof HandAnimate) {
             FontRenderer renderer = Minecraft.getInstance().fontRenderer;
             BuilderAnimationStep step = BuilderData.current;
             int totalLength = BuilderData.animationLength;

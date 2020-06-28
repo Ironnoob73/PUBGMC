@@ -1,4 +1,4 @@
-package dev.toma.pubgmc.api;
+package dev.toma.pubgmc.common.item.wearable;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;

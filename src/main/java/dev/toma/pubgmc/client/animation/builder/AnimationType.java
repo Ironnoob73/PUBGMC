@@ -12,37 +12,35 @@ import java.util.function.Supplier;
 public final class AnimationType {
 
     public final int index;
-    private LazyLoader<Condition[]> blockedBy = new LazyLoader<>(() -> new Condition[0]);
-    private LazyLoader<Condition[]> overrides = new LazyLoader<>(() -> new Condition[0]);
+    private LazyLoader<AnimationType[]> blockedBy = new LazyLoader<>(() -> new AnimationType[0]);
+    private LazyLoader<AnimationType[]> overrides = new LazyLoader<>(() -> new AnimationType[0]);
 
     public AnimationType(int id) {
         this.index = id;
     }
 
-    public AnimationType blockedBy(Supplier<Condition[]> conditions) {
+    public AnimationType blockedBy(Supplier<AnimationType[]> conditions) {
         this.blockedBy = new LazyLoader<>(conditions);
         return this;
     }
 
-    public AnimationType override(Supplier<Condition[]> overrides) {
+    public AnimationType override(Supplier<AnimationType[]> overrides) {
         this.overrides = new LazyLoader<>(overrides);
         return this;
     }
 
     public void apply() {
         if(this.canPlay()) {
-            for(Condition condition : overrides.get()) {
-                AnimationManager.stopAnimation(condition.type);
+            for(AnimationType type : overrides.get()) {
+                AnimationManager.stopAnimation(type);
             }
         }
     }
 
     public boolean canPlay() {
-        for(Condition condition : blockedBy.get()) {
-            Optional<Animation> optional = AnimationManager.getAnimationFromID(condition.type);
-            if(!optional.isPresent()) continue;
-            Animation animation = optional.get();
-            if(!condition.predicate.test(animation)) {
+        for(AnimationType type : blockedBy.get()) {
+            Optional<Animation> optional = AnimationManager.getAnimationFromID(type);
+            if (optional.isPresent()) {
                 return false;
             }
         }
@@ -60,19 +58,5 @@ public final class AnimationType {
     @Override
     public int hashCode() {
         return Objects.hash(index);
-    }
-
-    public static class Condition {
-        private final AnimationType type;
-        private final Predicate<Animation> predicate;
-
-        public Condition(AnimationType type) {
-            this(type, animation -> false);
-        }
-
-        public Condition(AnimationType type, Predicate<Animation> predicate) {
-            this.type = type;
-            this.predicate = predicate;
-        }
     }
 }

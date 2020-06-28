@@ -5,6 +5,7 @@ import dev.toma.pubgmc.capability.player.PlayerCapFactory;
 import dev.toma.pubgmc.capability.player.PlayerCapStorage;
 import dev.toma.pubgmc.client.ClientManager;
 import dev.toma.pubgmc.client.ModKeybinds;
+import dev.toma.pubgmc.client.animation.Animations;
 import dev.toma.pubgmc.client.animation.builder.BuilderMain;
 import dev.toma.pubgmc.config.Config;
 import dev.toma.pubgmc.network.NetworkManager;
@@ -61,6 +62,7 @@ public class Pubgmc {
         /*DeferredWorkQueue.runLater(() -> {
             ScreenManager.registerFactory(Registry.PMCContainers.WEAPON_FACTORY.get(), null);
         });*/
+        Animations.init();
         if(Config.animationTool.get()) BuilderMain.init();
     }
 

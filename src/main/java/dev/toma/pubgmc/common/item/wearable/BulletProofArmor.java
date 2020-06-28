@@ -1,7 +1,6 @@
 package dev.toma.pubgmc.common.item.wearable;
 
 import dev.toma.pubgmc.Pubgmc;
-import dev.toma.pubgmc.api.IPMCArmor;
 import dev.toma.pubgmc.common.item.PMCItem;
 import dev.toma.pubgmc.util.RenderHelper;
 import net.minecraft.inventory.EquipmentSlotType;

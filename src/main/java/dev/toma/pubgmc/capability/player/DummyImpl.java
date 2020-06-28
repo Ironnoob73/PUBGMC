@@ -11,8 +11,8 @@ public class DummyImpl implements IPlayerCap {
 
     public DummyImpl() {
         stats = new BoostStats(this);
-        aimInfo = new AimInfo(this);
-        reloadInfo = new ReloadInfo(this);
+        aimInfo = new AimInfo(null);
+        reloadInfo = new ReloadInfo(null);
     }
 
     @Override

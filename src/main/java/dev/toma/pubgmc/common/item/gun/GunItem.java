@@ -1,34 +1,44 @@
 package dev.toma.pubgmc.common.item.gun;
 
+import dev.toma.pubgmc.capability.IPlayerCap;
+import dev.toma.pubgmc.capability.player.PlayerCapFactory;
+import dev.toma.pubgmc.client.animation.HandAnimate;
+import dev.toma.pubgmc.client.animation.types.AimingAnimation;
 import dev.toma.pubgmc.common.entity.BulletEntity;
 import dev.toma.pubgmc.common.item.PMCItem;
 import dev.toma.pubgmc.common.item.gun.attachment.AttachmentCategory;
 import dev.toma.pubgmc.common.item.gun.attachment.AttachmentItem;
 import dev.toma.pubgmc.common.item.gun.attachment.GunAttachments;
-import dev.toma.pubgmc.util.UsefulFunctions;
+import dev.toma.pubgmc.network.NetworkManager;
+import dev.toma.pubgmc.network.packet.CPacketCreateAnimation;
+import dev.toma.pubgmc.util.object.Pair;
 import net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.CooldownTracker;
+import net.minecraft.util.HandSide;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class GunItem extends PMCItem {
+public class GunItem extends PMCItem implements HandAnimate {
 
     protected final float damage;
     protected final float headshotMultiplier;
@@ -42,6 +52,8 @@ public class GunItem extends PMCItem {
     protected final ShootManager shootManager;
     protected final BiFunction<GunItem, ItemStack, Integer> ammoLimit;
     protected final AmmoType ammoType;
+    protected final Pair<Runnable, Runnable> leftRightHandAnimations;
+    protected final Supplier<AimingAnimation> aimingAnimationSupplier;
 
     protected GunItem(String name, Properties properties, GunBuilder builder) {
         super(name, properties);
@@ -57,6 +69,8 @@ public class GunItem extends PMCItem {
         this.shootManager = builder.shootManager;
         this.ammoLimit = builder.ammoLimit;
         this.ammoType = builder.ammoType;
+        this.leftRightHandAnimations = DistExecutor.callWhenOn(Dist.CLIENT, builder.handAnimations);
+        this.aimingAnimationSupplier = DistExecutor.callWhenOn(Dist.CLIENT, builder.aimingAnimation);
     }
 
     public void doReload(PlayerEntity player, World world, ItemStack stack) {
@@ -75,12 +89,13 @@ public class GunItem extends PMCItem {
         if(source instanceof PlayerEntity) {
             PlayerEntity player = (PlayerEntity) source;
             CooldownTracker tracker = player.getCooldownTracker();
-            // TODO not reloading etc - maybe handle from client
-            if((ammo > 0 || player.isCreative()) && !tracker.hasCooldown(stack.getItem())) {
+            IPlayerCap cap = PlayerCapFactory.get(player);
+            if((ammo > 0 || player.isCreative()) && !tracker.hasCooldown(stack.getItem()) && !cap.getReloadInfo().isReloading()) {
                 shootManager.shoot(source, world, stack);
                 if(!player.isCreative()) addAmmo(stack, -1);
                 // TODO sound
                 tracker.setCooldown(stack.getItem(), this.firerate);
+                NetworkManager.sendToClient((ServerPlayerEntity) player, new CPacketCreateAnimation(5));
             }
         } else {
             if(ammo > 0) {
@@ -137,6 +152,25 @@ public class GunItem extends PMCItem {
         return ammoLimit.apply(this, stack);
     }
 
+    @OnlyIn(Dist.CLIENT)
+    @Override
+    public void renderRightArm() {
+        leftRightHandAnimations.getRight().run();
+        renderHand(HandSide.RIGHT);
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    @Override
+    public void renderLeftArm() {
+        leftRightHandAnimations.getLeft().run();
+        renderHand(HandSide.LEFT);
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public AimingAnimation getAimAnimation() {
+        return aimingAnimationSupplier.get();
+    }
+
     private CompoundNBT getOrCreateTag(ItemStack stack) {
         if(!stack.hasTag()) {
             CompoundNBT nbt = new CompoundNBT();
@@ -151,6 +185,11 @@ public class GunItem extends PMCItem {
     @Override
     public boolean onEntitySwing(ItemStack stack, LivingEntity entity) {
         return true;
+    }
+
+    @Override
+    public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+        return false;
     }
 
     public static class GunBuilder {
@@ -168,15 +207,18 @@ public class GunItem extends PMCItem {
         private ShootManager shootManager = (source, world, stack) -> {
             GunItem gun = (GunItem) stack.getItem();
             int inaccuracy = 18;
-            // TODO improve accuracy when aiming
+            if(source instanceof PlayerEntity && PlayerCapFactory.get((PlayerEntity) source).getAimInfo().isAiming()) {
+                inaccuracy = 0;
+            }
             world.addEntity(new BulletEntity(world, source, stack, gun.damage, gun.headshotMultiplier, gun.initialVelocity, gun.gravityEffect, gun.gravityResistantTime, inaccuracy));
         };
         private GunAttachments attachments = new GunAttachments();
         private BiFunction<GunItem, ItemStack, Integer> ammoLimit;
         private AmmoType ammoType;
         private Item.Properties properties = new Properties().group(GUNS).maxStackSize(1);
-        // TODO accept only specific renderers
         private Supplier<Callable<ItemStackTileEntityRenderer>> ister;
+        private Supplier<Callable<Pair<Runnable, Runnable>>> handAnimations;
+        private Supplier<Callable<Supplier<AimingAnimation>>> aimingAnimation;
 
         public GunBuilder gunProperties(float damage, float headshotMultiplier, float initialVelocity, float gravity, int gravityResistance) {
             this.damage = damage;
@@ -228,24 +270,73 @@ public class GunItem extends PMCItem {
             return this;
         }
 
+        public GunBuilder animateHands(Supplier<Callable<Pair<Runnable, Runnable>>> supplier) {
+            this.handAnimations = supplier;
+            return this;
+        }
+
+        public GunBuilder aimAnimation(Supplier<Callable<Supplier<AimingAnimation>>> supplier) {
+            this.aimingAnimation = supplier;
+            return this;
+        }
+
         public GunItem build(String name) {
-            damage = UsefulFunctions.correctAndLog(damage, 1.0F, 100.0F, log);
-            headshotMultiplier = UsefulFunctions.correctAndLog(headshotMultiplier, 1.0F, 5.0F, log);
-            initialVelocity = UsefulFunctions.correctAndLog(initialVelocity, 2.0F, 50.0F, log);
-            gravity = UsefulFunctions.correctAndLog(gravity, 0.0F, 2.0F, log);
-            gravityResistance = UsefulFunctions.correctAndLog(gravityResistance, 0, Integer.MAX_VALUE, log);
-            firerate = UsefulFunctions.correctAndLog(firerate, 1, 500, log);
-            defaultFiremode = UsefulFunctions.nonnullOrThrow(defaultFiremode, () -> new NullPointerException("Default firemode cannot be null!"));
-            firemodeSwitchFunction = UsefulFunctions.nonnullOrThrow(firemodeSwitchFunction, () -> new NullPointerException("No function defined for switching firemodes. This is bad"));
-            shootManager = UsefulFunctions.nonnullOrThrow(shootManager, () -> new NullPointerException("Undefined shoot action!"));
-            reloadManager = UsefulFunctions.correctAndLog(reloadManager, Objects::nonNull, ReloadManager.Magazine.instance, "Cannot use invalid reload manager", log);
-            ammoType = UsefulFunctions.nonnullOrThrow(ammoType, () -> new NullPointerException("Ammo type is undefined!"));
-            ammoLimit = UsefulFunctions.nonnullOrThrow(ammoLimit, () -> new NullPointerException("Unknown max ammo amount"));
+            damage = validOrCorrectAndLog(damage, 1.0F, 100.0F, name, "damage");
+            headshotMultiplier = validOrCorrectAndLog(headshotMultiplier, 1.0F, 5.0F, name, "headShotmultiplier");
+            initialVelocity = validOrCorrectAndLog(initialVelocity, 2.0F, 50.0F, name, "initialVelocity");
+            gravity = validOrCorrectAndLog(gravity, 0.0F, 2.0F, name, "gravity");
+            gravityResistance = validOrCorrectAndLog(gravityResistance, 0, Integer.MAX_VALUE, name, "gravityResistantTime");
+            firerate = validOrCorrectAndLog(firerate, 1, 500, name, "firerate");
+            defaultFiremode = nonnullOrThrow(defaultFiremode, "Default firemode cannot be null!", name);
+            firemodeSwitchFunction = nonnullOrThrow(firemodeSwitchFunction, "No function defined for switching firemodes. This is bad", name);
+            shootManager = nonnullOrThrow(shootManager, "Undefined shoot action!", name);
+            reloadManager = nonullOrCorrectAndLog(reloadManager, ReloadManager.Magazine.instance, "Cannot use invalid reload manager", name);
+            ammoType = nonnullOrThrow(ammoType, "Ammo type is undefined!", name);
+            ammoLimit = nonnullOrThrow(ammoLimit, "Unknown max ammo amount", name);
             return new GunItem(
                     name,
-                    UsefulFunctions.validateOrThrow(properties, Objects::nonNull, () -> new NullPointerException("Item properties cannot be null!")).setTEISR(UsefulFunctions.validateOrThrow(ister, Objects::nonNull, () -> new NullPointerException("Gun renderer cannot be null!"))),
+                    nonnullOrThrow(properties, "Item properties cannot be null!", name).setTEISR(nonnullOrThrow(ister, "Gun renderer cannot be null!", name)),
                     this
             );
+        }
+
+        private static <T> T nonullOrCorrectAndLog(T t, T other, String message, String name) {
+            if(t == null) {
+                log.warn("{} - Corrected {} -> {}: {}", name, t, other, message);
+                return other;
+            }
+            return t;
+        }
+
+        private static int validOrCorrectAndLog(int input, int min, int max, String name, String property) {
+            if(input >= min && input <= max) {
+                return input;
+            } else {
+                int corrected = Math.min(max, Math.max(min, input));
+                log.warn("{} - Corrected value {}: {} -> {}", name, property, input, corrected);
+                return corrected;
+            }
+        }
+
+        private static float validOrCorrectAndLog(float input, float min, float max, String name, String property) {
+            if(input >= min && input <= max) {
+                return input;
+            } else {
+                float corrected = Math.min(max, Math.max(min, input));
+                log.warn("{} - Corrected value {}: {} -> {}", name, property, input, corrected);
+                return corrected;
+            }
+        }
+
+        private static <T> T nonnullOrThrow(T object, String message, String name) {
+            return nonnullOrThrow(object, () -> new NullPointerException(name + " - " + message));
+        }
+
+        private static <T, E extends RuntimeException> T nonnullOrThrow(T object, Supplier<E> supplier) {
+            if(object == null) {
+                throw supplier.get();
+            }
+            return object;
         }
     }
 

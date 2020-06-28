@@ -1,7 +1,7 @@
 package dev.toma.pubgmc.common.entity;
 
 import dev.toma.pubgmc.Registry;
-import dev.toma.pubgmc.api.entity.AbstractControllableEntity;
+import dev.toma.pubgmc.common.entity.vehicle.AbstractControllableEntity;
 import dev.toma.pubgmc.util.UsefulFunctions;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;

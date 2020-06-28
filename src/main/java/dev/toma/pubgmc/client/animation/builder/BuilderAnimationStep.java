@@ -54,27 +54,27 @@ public class BuilderAnimationStep implements Animation {
     }
 
     @Override
-    public void animateItemAndHands(float partialTicks) {
+    public void animateItemAndHands() {
         map.get(BuilderData.Part.ITEM_AND_HANDS).apply(smooth);
     }
 
     @Override
-    public void animateHands(float partialTicks) {
+    public void animateHands() {
         map.get(BuilderData.Part.HANDS).apply(smooth);
     }
 
     @Override
-    public void animateRightHand(float partialTicks) {
+    public void animateRightHand() {
         map.get(BuilderData.Part.RIGHT_HAND).apply(smooth);
     }
 
     @Override
-    public void animateLeftHand(float partialTicks) {
+    public void animateLeftHand() {
         map.get(BuilderData.Part.LEFT_HAND).apply(smooth);
     }
 
     @Override
-    public void animateItem(float partialTicks) {
+    public void animateItem() {
         map.get(BuilderData.Part.ITEM).apply(smooth);
     }
 
