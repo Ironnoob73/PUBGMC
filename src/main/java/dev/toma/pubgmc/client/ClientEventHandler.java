@@ -39,12 +39,14 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import java.util.Random;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 @Mod.EventBusSubscriber(modid = Pubgmc.MODID, value = Dist.CLIENT)
 public class ClientEventHandler {
 
+    private static Random rand = new Random();
     private static final StateListener runningAnimationFactory = new StateListener(PlayerEntity::isSprinting, player -> {
         ItemStack stack = player.getHeldItemMainhand();
         if(stack.getItem() instanceof GunItem && Animations.SPRINTING.canPlay()) {
@@ -90,7 +92,7 @@ public class ClientEventHandler {
                 CooldownTracker tracker = player.getCooldownTracker();
                 IPlayerCap cap = PlayerCapFactory.get(player);
                 if(settings.keyBindAttack.isPressed() && firemode == Firemode.SINGLE && !tracker.hasCooldown(gun) && !player.isSprinting() && !cap.getReloadInfo().isReloading()) {
-                    shoot(gun, stack);
+                    shoot(gun, stack, player);
                 } else if(settings.keyBindUseItem.isPressed() && Animations.AIMING.canPlay()) {
                     boolean aiming = !PlayerCapFactory.get(player).getAimInfo().isActualAim();
                     NetworkManager.sendToServer(new SPacketSetAiming(aiming, 0.2F * gun.getAttachment(AttachmentCategory.STOCK, stack).getAimSpeedMultiplier()));
@@ -129,7 +131,7 @@ public class ClientEventHandler {
                 GunItem gun = (GunItem) stack.getItem();
                 CooldownTracker tracker = player.getCooldownTracker();
                 if(settings.keyBindAttack.isKeyDown() && !tracker.hasCooldown(stack.getItem()) && gun.getFiremode(stack) == Firemode.FULL_AUTO && !player.isSprinting()) {
-                    shoot(gun, stack);
+                    shoot(gun, stack, player);
                 }
             }
         }
@@ -188,8 +190,12 @@ public class ClientEventHandler {
         AnimationManager.renderTick(event.renderTickTime, event.phase);
     }
 
-    private static void shoot(GunItem item, ItemStack stack) {
-        // TODO recoil
+    private static void shoot(GunItem item, ItemStack stack, PlayerEntity player) {
+        float vertical = item.getVerticalRecoil(player, stack);
+        float horizontalUnmodified = item.getHorizontalRecoil(stack);
+        float horizontal = rand.nextBoolean() ? horizontalUnmodified : -horizontalUnmodified;
+        player.rotationPitch -= vertical;
+        player.rotationYaw += horizontal;
         NetworkManager.sendToServer(new SPacketShoot());
     }
 
@@ -225,6 +231,7 @@ public class ClientEventHandler {
                 ++id;
             }
             // TODO backpack if custom inventory is enabled
+            // TODO gun icons
 
         } else {
             FontRenderer renderer = mc.fontRenderer;
