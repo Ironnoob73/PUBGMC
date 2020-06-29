@@ -22,6 +22,7 @@ import dev.toma.pubgmc.common.item.PMCItem;
 import dev.toma.pubgmc.common.item.gun.AmmoType;
 import dev.toma.pubgmc.common.item.gun.Firemode;
 import dev.toma.pubgmc.common.item.gun.GunItem;
+import dev.toma.pubgmc.common.item.gun.ShootManager;
 import dev.toma.pubgmc.common.item.gun.attachment.AttachmentCategory;
 import dev.toma.pubgmc.common.item.gun.attachment.AttachmentItem;
 import dev.toma.pubgmc.common.item.healing.*;
@@ -229,6 +230,7 @@ public class Registry {
                     new AttachmentItem.Scope("x15_scope", 5),
                     new GunItem.GunBuilder()
                             .gunProperties(4.0F, 2.5F, 11.0F, 0.05F, 3)
+                            .recoil(1.5F, 0.75F)
                             .firerate(2)
                             .firemodes(Firemode.SINGLE, Firemode::singleMode)
                             .ammo(AmmoType.AMMO_9MM, (p92, stack) -> p92.getAttachment(AttachmentCategory.MAGAZINE, stack).isExtended() ? 20 : 15)

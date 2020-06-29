@@ -54,6 +54,8 @@ public class GunItem extends PMCItem implements HandAnimate {
     protected final AmmoType ammoType;
     protected final Pair<Runnable, Runnable> leftRightHandAnimations;
     protected final Supplier<AimingAnimation> aimingAnimationSupplier;
+    protected final float verticalRecoil;
+    protected final float horizontalRecoil;
 
     protected GunItem(String name, Properties properties, GunBuilder builder) {
         super(name, properties);
@@ -71,6 +73,8 @@ public class GunItem extends PMCItem implements HandAnimate {
         this.ammoType = builder.ammoType;
         this.leftRightHandAnimations = DistExecutor.callWhenOn(Dist.CLIENT, builder.handAnimations);
         this.aimingAnimationSupplier = DistExecutor.callWhenOn(Dist.CLIENT, builder.aimingAnimation);
+        this.verticalRecoil = builder.verticalRecoil;
+        this.horizontalRecoil = builder.horizontalRecoil;
     }
 
     public void doReload(PlayerEntity player, World world, ItemStack stack) {
@@ -129,6 +133,20 @@ public class GunItem extends PMCItem implements HandAnimate {
             }
         }
         return AttachmentItem.EMPTY;
+    }
+
+    public float getVerticalRecoil(PlayerEntity player, ItemStack stack) {
+        float playerStateMultiplier = player.isSneaking() ? 0.7F : 1.0F;
+        float barrelMultiplier = getAttachment(AttachmentCategory.BARREL, stack).getVerticalRecoilMultiplier();
+        float gripMultiplier = getAttachment(AttachmentCategory.GRIP, stack).getVerticalRecoilMultiplier();
+        float totalMultiplier = playerStateMultiplier * barrelMultiplier * gripMultiplier;
+        return verticalRecoil * totalMultiplier;
+    }
+
+    public float getHorizontalRecoil(ItemStack stack) {
+        float barrelMultiplier = getAttachment(AttachmentCategory.BARREL, stack).getHorizontalRecoilMultiplier();
+        float gripMultiplier = getAttachment(AttachmentCategory.GRIP, stack).getHorizontalRecoilMultiplier();
+        return horizontalRecoil * barrelMultiplier * gripMultiplier;
     }
 
     public void addAmmo(ItemStack stack, int amount) {
@@ -204,14 +222,7 @@ public class GunItem extends PMCItem implements HandAnimate {
         private Firemode defaultFiremode = Firemode.SINGLE;
         private Function<Firemode, Firemode> firemodeSwitchFunction = Firemode::allModes;
         private ReloadManager reloadManager = ReloadManager.Magazine.instance;
-        private ShootManager shootManager = (source, world, stack) -> {
-            GunItem gun = (GunItem) stack.getItem();
-            int inaccuracy = 18;
-            if(source instanceof PlayerEntity && PlayerCapFactory.get((PlayerEntity) source).getAimInfo().isAiming()) {
-                inaccuracy = 0;
-            }
-            world.addEntity(new BulletEntity(world, source, stack, gun.damage, gun.headshotMultiplier, gun.initialVelocity, gun.gravityEffect, gun.gravityResistantTime, inaccuracy));
-        };
+        private ShootManager shootManager = ShootManager::handleNormal;;
         private GunAttachments attachments = new GunAttachments();
         private BiFunction<GunItem, ItemStack, Integer> ammoLimit;
         private AmmoType ammoType;
@@ -219,6 +230,7 @@ public class GunItem extends PMCItem implements HandAnimate {
         private Supplier<Callable<ItemStackTileEntityRenderer>> ister;
         private Supplier<Callable<Pair<Runnable, Runnable>>> handAnimations;
         private Supplier<Callable<Supplier<AimingAnimation>>> aimingAnimation;
+        private float verticalRecoil, horizontalRecoil;
 
         public GunBuilder gunProperties(float damage, float headshotMultiplier, float initialVelocity, float gravity, int gravityResistance) {
             this.damage = damage;
@@ -280,6 +292,12 @@ public class GunItem extends PMCItem implements HandAnimate {
             return this;
         }
 
+        public GunBuilder recoil(float verticalRecoil, float horizontalRecoil) {
+            this.verticalRecoil = verticalRecoil;
+            this.horizontalRecoil = horizontalRecoil;
+            return this;
+        }
+
         public GunItem build(String name) {
             damage = validOrCorrectAndLog(damage, 1.0F, 100.0F, name, "damage");
             headshotMultiplier = validOrCorrectAndLog(headshotMultiplier, 1.0F, 5.0F, name, "headShotmultiplier");
@@ -293,6 +311,10 @@ public class GunItem extends PMCItem implements HandAnimate {
             reloadManager = nonullOrCorrectAndLog(reloadManager, ReloadManager.Magazine.instance, "Cannot use invalid reload manager", name);
             ammoType = nonnullOrThrow(ammoType, "Ammo type is undefined!", name);
             ammoLimit = nonnullOrThrow(ammoLimit, "Unknown max ammo amount", name);
+            handAnimations = nonnullOrThrow(handAnimations, "Undefined hand animation", name);
+            aimingAnimation = nonnullOrThrow(aimingAnimation, "Undefined aim animation", name);
+            verticalRecoil = validOrCorrectAndLog(verticalRecoil, 0.0F, 5.0F, name, "verticalRecoil");
+            horizontalRecoil = validOrCorrectAndLog(horizontalRecoil, 0.0F, 5.0F, name, "horizontalRecoil");
             return new GunItem(
                     name,
                     nonnullOrThrow(properties, "Item properties cannot be null!", name).setTEISR(nonnullOrThrow(ister, "Gun renderer cannot be null!", name)),

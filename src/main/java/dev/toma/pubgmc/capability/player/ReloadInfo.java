@@ -33,8 +33,7 @@ public class ReloadInfo {
                 PlayerEntity player = factory.getOwner();
                 ItemStack stack = player.getHeldItemMainhand();
                 if(stack.getItem() instanceof GunItem) {
-                    ReloadManager manager = ((GunItem) stack.getItem()).getReloadManager();
-                    manager.doReload(player, player.world, stack);
+                    ((GunItem) stack.getItem()).doReload(player, player.world, stack);
                 }
             }
         }
