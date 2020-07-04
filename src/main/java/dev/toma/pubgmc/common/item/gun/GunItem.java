@@ -210,6 +210,10 @@ public class GunItem extends PMCItem implements HandAnimate {
         return false;
     }
 
+    public AmmoType getAmmoType() {
+        return ammoType;
+    }
+
     public static class GunBuilder {
 
         protected static Logger log = LogManager.getLogger("pubgmc-gunbuilder");

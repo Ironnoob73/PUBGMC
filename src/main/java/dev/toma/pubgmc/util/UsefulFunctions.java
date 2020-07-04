@@ -1,5 +1,8 @@
 package dev.toma.pubgmc.util;
 
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 import org.apache.logging.log4j.Logger;
@@ -12,6 +15,17 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public class UsefulFunctions {
+
+    public static int totalItemCountInInventory(Item item, IInventory inventory) {
+        int c = 0;
+        for(int i = 0; i < inventory.getSizeInventory(); i++) {
+            ItemStack stack = inventory.getStackInSlot(i);
+            if(stack.getItem() == item) {
+                c += stack.getCount();
+            }
+        }
+        return c;
+    }
 
     public static <T> Predicate<T> alwaysTruePredicate() {
         return p -> true;

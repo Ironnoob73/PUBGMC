@@ -2,24 +2,25 @@ package dev.toma.pubgmc.client;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import dev.toma.pubgmc.Pubgmc;
-import dev.toma.pubgmc.client.animation.Animations;
-import dev.toma.pubgmc.client.animation.types.SprintAnimation;
-import dev.toma.pubgmc.common.item.gun.Firemode;
-import dev.toma.pubgmc.common.item.gun.attachment.AttachmentCategory;
-import dev.toma.pubgmc.common.item.wearable.IPMCArmor;
-import dev.toma.pubgmc.common.entity.IControllableEntity;
 import dev.toma.pubgmc.capability.IPlayerCap;
 import dev.toma.pubgmc.capability.player.BoostStats;
 import dev.toma.pubgmc.capability.player.PlayerCapFactory;
 import dev.toma.pubgmc.client.animation.AnimationManager;
+import dev.toma.pubgmc.client.animation.Animations;
 import dev.toma.pubgmc.client.animation.HandAnimate;
+import dev.toma.pubgmc.client.animation.types.SprintAnimation;
+import dev.toma.pubgmc.common.entity.IControllableEntity;
+import dev.toma.pubgmc.common.item.gun.Firemode;
 import dev.toma.pubgmc.common.item.gun.GunItem;
+import dev.toma.pubgmc.common.item.gun.attachment.AttachmentCategory;
+import dev.toma.pubgmc.common.item.wearable.IPMCArmor;
 import dev.toma.pubgmc.config.Config;
 import dev.toma.pubgmc.network.NetworkManager;
 import dev.toma.pubgmc.network.packet.SPacketControllableInput;
 import dev.toma.pubgmc.network.packet.SPacketSetAiming;
 import dev.toma.pubgmc.network.packet.SPacketShoot;
 import dev.toma.pubgmc.util.RenderHelper;
+import dev.toma.pubgmc.util.UsefulFunctions;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
@@ -206,7 +207,7 @@ public class ClientEventHandler {
         int left = window.getScaledWidth() / 2 - 91;
         int top = window.getScaledHeight() - 35;
         if(specialRenderer) {
-            int width = 183 ;
+            int width = 183;
             // health background
             RenderHelper.x16Blit(left, top, left + width, top + 10, 0, 0, 10, 1);
             float healthMod = player.getHealth() / 20f;
@@ -232,6 +233,17 @@ public class ClientEventHandler {
             }
             // TODO backpack if custom inventory is enabled
             // TODO gun icons
+            ItemStack stack = player.getHeldItemMainhand();
+            if(stack.getItem() instanceof GunItem) {
+                GunItem gun = (GunItem) stack.getItem();
+                int ammo = gun.getAmmo(stack);
+                int total = UsefulFunctions.totalItemCountInInventory(gun.getAmmoType().getAmmo(), player.inventory);
+                FontRenderer renderer = mc.fontRenderer;
+                String info = ammo + " / " + total;
+                renderer.drawStringWithShadow(info, left + 100 - renderer.getStringWidth(info) / 2.0F, top - 14, 0xFFFFFF);
+                int firemode = gun.getFiremode(stack).ordinal();
+                RenderHelper.x32Blit(left + 65, top - 18, left + 81, top - 2, 0, 2 + firemode, 1, 1);
+            }
 
         } else {
             FontRenderer renderer = mc.fontRenderer;
