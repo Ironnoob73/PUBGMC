@@ -26,6 +26,7 @@ import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.screen.inventory.InventoryScreen;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -33,6 +34,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.CooldownTracker;
 import net.minecraft.util.Hand;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderSpecificHandEvent;
@@ -47,7 +49,7 @@ import java.util.function.Function;
 @Mod.EventBusSubscriber(modid = Pubgmc.MODID, value = Dist.CLIENT)
 public class ClientEventHandler {
 
-    private static Random rand = new Random();
+    private static final Random rand = new Random();
     private static final StateListener runningAnimationFactory = new StateListener(PlayerEntity::isSprinting, player -> {
         ItemStack stack = player.getHeldItemMainhand();
         if(stack.getItem() instanceof GunItem && Animations.SPRINTING.canPlay()) {
@@ -97,7 +99,7 @@ public class ClientEventHandler {
                 } else if(settings.keyBindUseItem.isPressed() && Animations.AIMING.canPlay()) {
                     boolean aiming = !PlayerCapFactory.get(player).getAimInfo().isActualAim();
                     NetworkManager.sendToServer(new SPacketSetAiming(aiming, 0.2F * gun.getAttachment(AttachmentCategory.STOCK, stack).getAimSpeedMultiplier()));
-                    if(aiming) AnimationManager.playNewAnimation(Animations.AIMING, gun.getAimAnimation());
+                    if(aiming) AnimationManager.playNewAnimation(Animations.AIMING, gun.getAnimations().getAimingAnimation());
                 }
             }
         }
@@ -191,13 +193,22 @@ public class ClientEventHandler {
         AnimationManager.renderTick(event.renderTickTime, event.phase);
     }
 
+    @SubscribeEvent
+    public static void openGUI(GuiOpenEvent event) {
+        if(event.getGui() instanceof InventoryScreen) {
+            // TODO display our own
+        }
+    }
+
     private static void shoot(GunItem item, ItemStack stack, PlayerEntity player) {
-        float vertical = item.getVerticalRecoil(player, stack);
-        float horizontalUnmodified = item.getHorizontalRecoil(stack);
-        float horizontal = rand.nextBoolean() ? horizontalUnmodified : -horizontalUnmodified;
-        player.rotationPitch -= vertical;
-        player.rotationYaw += horizontal;
-        NetworkManager.sendToServer(new SPacketShoot());
+        if(item.getAmmo(stack) > 0) {
+            float vertical = item.getVerticalRecoil(player, stack);
+            float horizontalUnmodified = item.getHorizontalRecoil(stack);
+            float horizontal = rand.nextBoolean() ? horizontalUnmodified : -horizontalUnmodified;
+            player.rotationPitch -= vertical;
+            player.rotationYaw += horizontal;
+            NetworkManager.sendToServer(new SPacketShoot());
+        }
     }
 
     private static void renderHUD(Minecraft mc, MainWindow window, BoostStats stats, boolean specialRenderer) {
@@ -222,27 +233,23 @@ public class ClientEventHandler {
             // armor icons
             ItemStack helmet = player.getItemStackFromSlot(EquipmentSlotType.HEAD);
             ItemStack vest = player.getItemStackFromSlot(EquipmentSlotType.CHEST);
-            int id = 0;
             if(helmet.getItem() instanceof IPMCArmor) {
-                ((IPMCArmor) helmet.getItem()).renderIcon(left + id * 18, top - 20, left + id * 18 + 16, top - 4, helmet);
-                ++id;
+                ((IPMCArmor) helmet.getItem()).renderIcon(left, top - 18, left + 16, top - 2, helmet);
             }
             if(vest.getItem() instanceof IPMCArmor) {
-                ((IPMCArmor) vest.getItem()).renderIcon(left + id * 18, top - 20, left + id * 18 + 16, top - 4, vest);
-                ++id;
+                ((IPMCArmor) vest.getItem()).renderIcon(left + 18, top - 18, left + 34, top - 2, vest);
             }
-            // TODO backpack if custom inventory is enabled
-            // TODO gun icons
+            // TODO backpack
             ItemStack stack = player.getHeldItemMainhand();
             if(stack.getItem() instanceof GunItem) {
                 GunItem gun = (GunItem) stack.getItem();
                 int ammo = gun.getAmmo(stack);
                 int total = UsefulFunctions.totalItemCountInInventory(gun.getAmmoType().getAmmo(), player.inventory);
                 FontRenderer renderer = mc.fontRenderer;
-                String info = ammo + " / " + total;
+                String info = ammo + "/" + total;
                 renderer.drawStringWithShadow(info, left + 100 - renderer.getStringWidth(info) / 2.0F, top - 14, 0xFFFFFF);
                 int firemode = gun.getFiremode(stack).ordinal();
-                RenderHelper.x32Blit(left + 65, top - 18, left + 81, top - 2, 0, 2 + firemode, 1, 1);
+                RenderHelper.x32Blit(left + 62, top - 18, left + 78, top - 2, 0, 2 + firemode, 1, 1);
             }
 
         } else {

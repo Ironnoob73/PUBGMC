@@ -3,15 +3,13 @@ package dev.toma.pubgmc.common.item.gun;
 import dev.toma.pubgmc.capability.IPlayerCap;
 import dev.toma.pubgmc.capability.player.PlayerCapFactory;
 import dev.toma.pubgmc.client.animation.HandAnimate;
-import dev.toma.pubgmc.client.animation.types.AimingAnimation;
-import dev.toma.pubgmc.common.entity.BulletEntity;
+import dev.toma.pubgmc.client.animation.gun.GunAnimations;
 import dev.toma.pubgmc.common.item.PMCItem;
 import dev.toma.pubgmc.common.item.gun.attachment.AttachmentCategory;
 import dev.toma.pubgmc.common.item.gun.attachment.AttachmentItem;
 import dev.toma.pubgmc.common.item.gun.attachment.GunAttachments;
 import dev.toma.pubgmc.network.NetworkManager;
 import dev.toma.pubgmc.network.packet.CPacketCreateAnimation;
-import dev.toma.pubgmc.util.object.Pair;
 import net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -52,10 +50,9 @@ public class GunItem extends PMCItem implements HandAnimate {
     protected final ShootManager shootManager;
     protected final BiFunction<GunItem, ItemStack, Integer> ammoLimit;
     protected final AmmoType ammoType;
-    protected final Pair<Runnable, Runnable> leftRightHandAnimations;
-    protected final Supplier<AimingAnimation> aimingAnimationSupplier;
     protected final float verticalRecoil;
     protected final float horizontalRecoil;
+    protected final GunAnimations animations;
 
     protected GunItem(String name, Properties properties, GunBuilder builder) {
         super(name, properties);
@@ -71,10 +68,12 @@ public class GunItem extends PMCItem implements HandAnimate {
         this.shootManager = builder.shootManager;
         this.ammoLimit = builder.ammoLimit;
         this.ammoType = builder.ammoType;
-        this.leftRightHandAnimations = DistExecutor.callWhenOn(Dist.CLIENT, builder.handAnimations);
-        this.aimingAnimationSupplier = DistExecutor.callWhenOn(Dist.CLIENT, builder.aimingAnimation);
         this.verticalRecoil = builder.verticalRecoil;
         this.horizontalRecoil = builder.horizontalRecoil;
+        Supplier<GunAnimations> tmp = DistExecutor.callWhenOn(Dist.CLIENT, builder.animations);
+        if(tmp != null) {
+            this.animations = tmp.get();
+        } else animations = null;
     }
 
     public void doReload(PlayerEntity player, World world, ItemStack stack) {
@@ -173,20 +172,20 @@ public class GunItem extends PMCItem implements HandAnimate {
     @OnlyIn(Dist.CLIENT)
     @Override
     public void renderRightArm() {
-        leftRightHandAnimations.getRight().run();
+        animations.applyOnRightArm();
         renderHand(HandSide.RIGHT);
     }
 
     @OnlyIn(Dist.CLIENT)
     @Override
     public void renderLeftArm() {
-        leftRightHandAnimations.getLeft().run();
+        animations.applyOnLeftArm();
         renderHand(HandSide.LEFT);
     }
 
     @OnlyIn(Dist.CLIENT)
-    public AimingAnimation getAimAnimation() {
-        return aimingAnimationSupplier.get();
+    public GunAnimations getAnimations() {
+        return animations;
     }
 
     private CompoundNBT getOrCreateTag(ItemStack stack) {
@@ -232,8 +231,7 @@ public class GunItem extends PMCItem implements HandAnimate {
         private AmmoType ammoType;
         private Item.Properties properties = new Properties().group(GUNS).maxStackSize(1);
         private Supplier<Callable<ItemStackTileEntityRenderer>> ister;
-        private Supplier<Callable<Pair<Runnable, Runnable>>> handAnimations;
-        private Supplier<Callable<Supplier<AimingAnimation>>> aimingAnimation;
+        private Supplier<Callable<Supplier<GunAnimations>>> animations;
         private float verticalRecoil, horizontalRecoil;
 
         public GunBuilder gunProperties(float damage, float headshotMultiplier, float initialVelocity, float gravity, int gravityResistance) {
@@ -286,13 +284,8 @@ public class GunItem extends PMCItem implements HandAnimate {
             return this;
         }
 
-        public GunBuilder animateHands(Supplier<Callable<Pair<Runnable, Runnable>>> supplier) {
-            this.handAnimations = supplier;
-            return this;
-        }
-
-        public GunBuilder aimAnimation(Supplier<Callable<Supplier<AimingAnimation>>> supplier) {
-            this.aimingAnimation = supplier;
+        public GunBuilder animations(Supplier<Callable<Supplier<GunAnimations>>> animations) {
+            this.animations = animations;
             return this;
         }
 
@@ -315,8 +308,7 @@ public class GunItem extends PMCItem implements HandAnimate {
             reloadManager = nonullOrCorrectAndLog(reloadManager, ReloadManager.Magazine.instance, "Cannot use invalid reload manager", name);
             ammoType = nonnullOrThrow(ammoType, "Ammo type is undefined!", name);
             ammoLimit = nonnullOrThrow(ammoLimit, "Unknown max ammo amount", name);
-            handAnimations = nonnullOrThrow(handAnimations, "Undefined hand animation", name);
-            aimingAnimation = nonnullOrThrow(aimingAnimation, "Undefined aim animation", name);
+            animations = nonnullOrThrow(animations, "Undefined gun animations", name);
             verticalRecoil = validOrCorrectAndLog(verticalRecoil, 0.0F, 5.0F, name, "verticalRecoil");
             horizontalRecoil = validOrCorrectAndLog(horizontalRecoil, 0.0F, 5.0F, name, "horizontalRecoil");
             return new GunItem(

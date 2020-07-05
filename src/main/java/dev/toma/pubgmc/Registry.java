@@ -1,8 +1,7 @@
 package dev.toma.pubgmc;
 
 import com.mojang.datafixers.types.Type;
-import dev.toma.pubgmc.client.animation.Animations;
-import dev.toma.pubgmc.client.animation.types.AimingAnimation;
+import dev.toma.pubgmc.client.animation.gun.GunAnimations;
 import dev.toma.pubgmc.client.model.baked.DummyBakedModel;
 import dev.toma.pubgmc.client.model.baked.DummyGunBakedModel;
 import dev.toma.pubgmc.client.render.item.GunRenderer;
@@ -22,7 +21,6 @@ import dev.toma.pubgmc.common.item.PMCItem;
 import dev.toma.pubgmc.common.item.gun.AmmoType;
 import dev.toma.pubgmc.common.item.gun.Firemode;
 import dev.toma.pubgmc.common.item.gun.GunItem;
-import dev.toma.pubgmc.common.item.gun.ShootManager;
 import dev.toma.pubgmc.common.item.gun.attachment.AttachmentCategory;
 import dev.toma.pubgmc.common.item.gun.attachment.AttachmentItem;
 import dev.toma.pubgmc.common.item.healing.*;
@@ -240,8 +238,7 @@ public class Registry {
                                 .scope(() -> new AttachmentItem.Scope[] {PMCItems.RED_DOT, PMCItems.HOLOGRAPHIC})
                                 .magazine(() -> new AttachmentItem.Magazine[] {PMCItems.QUICKDRAW_SMG, PMCItems.EXTENDED_SMG, PMCItems.QUICKDRAW_EXTENDED_SMG})
                             .build()
-                            .animateHands(Animations::standartPistolHeldAnimation)
-                            .aimAnimation(() -> AimingAnimation::defaultPistol)
+                            .animations(() -> () -> GunAnimations.PistolAnimations::new)
                             .build("p92")
             );
             blockItemList.stream().filter(Objects::nonNull).forEach(registry::register);

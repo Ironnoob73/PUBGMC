@@ -9,7 +9,6 @@ import net.minecraft.client.Minecraft;
 
 import javax.vecmath.Vector3f;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 public class AimingAnimation extends AnimationFactory {
 
@@ -18,16 +17,6 @@ public class AimingAnimation extends AnimationFactory {
     private final Vector3f itemVec;
     private Consumer<Float> leftHandRender = f -> {};
     private Consumer<Float> rightHandRender = f -> {};
-
-    public static Supplier<AimingAnimation> defaultPistol() {
-        return () -> new AimingAnimation(-0.56F, 0.1F, 0.0F).right(f -> {
-            GlStateManager.translatef(-0.4F * f, 0.125F * f, 0.1F * f);
-            GlStateManager.rotatef(10.0F * f, 0.0F, 1.0F, 0.0F);
-        }).left(f -> {
-            GlStateManager.translatef(-0.35F * f, 0.125F * f, 0.2F * f);
-            GlStateManager.rotatef(15.0F * f, 0.0F, 1.0F, 0.0F);
-        });
-    }
 
     public AimingAnimation(float x, float y, float z) {
         this(new Vector3f(x, y, z));

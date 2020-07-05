@@ -1,10 +1,6 @@
 package dev.toma.pubgmc.client.animation;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import dev.toma.pubgmc.client.animation.builder.AnimationType;
-import dev.toma.pubgmc.util.object.Pair;
-
-import java.util.concurrent.Callable;
 
 public class Animations {
 
@@ -28,17 +24,5 @@ public class Animations {
 
     private static AnimationType register(int id) {
         return new AnimationType(id);
-    }
-
-    public static Callable<Pair<Runnable, Runnable>> standartPistolHeldAnimation() {
-        return () -> Pair.of(() -> {
-            GlStateManager.translatef(0.45F, -0.2F, 0.1F);
-            GlStateManager.rotatef(-30.0F, 0.0F, 1.0F, 0.0F);
-            GlStateManager.rotatef(10.0F, 1.0F, 0.0F, 0.0F);
-        }, () -> {
-            GlStateManager.translatef(0.35F, -0.15F, 0.3F);
-            GlStateManager.rotatef(10.0F, 0.0F, 1.0F, 0.0F);
-            GlStateManager.rotatef(10.0F, 1.0F, 0.0F, 0.0F);
-        });
     }
 }
