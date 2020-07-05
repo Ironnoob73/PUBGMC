@@ -43,6 +43,7 @@ import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.event.RegistryEvent;
@@ -152,6 +153,13 @@ public class Registry {
         public static final TileEntityType<TileEntityWeaponFactory> WEAPON_FACTORY = null;
     }
 
+    @ObjectHolder(Pubgmc.MODID)
+    public static class PMCSounds {
+        public static final SoundEvent P92_SHOOT = null;
+        public static final SoundEvent P92_SHOOT_SILENT = null;
+        public static final SoundEvent P92_RELOAD = null;
+    }
+
     public static class PMCContainers {
         public static final DeferredRegister<ContainerType<?>> CONTAINER_TYPES = new DeferredRegister<>(ForgeRegistries.CONTAINERS, Pubgmc.MODID);
         //public static final RegistryObject<ContainerType<WeaponFactoryContainer>> WEAPON_FACTORY = register("name", WeaponFactoryContainer::new);
@@ -188,7 +196,6 @@ public class Registry {
                     new VehicleSpawnerItem("spawn_uaz", LandDriveableEntity.UAZDriveable::new, new Item.Properties().maxStackSize(1).group(PMCItem.ITEMS).setTEISR(() -> VehicleSpawnerRenderer::new)),
                     new VehicleSpawnerItem("spawn_glider", AirDriveableEntity.GliderDriveable::new, new Item.Properties().maxStackSize(1).group(PMCItem.ITEMS).setTEISR(() -> VehicleSpawnerRenderer::new)),
                     new FuelCanItem("fuel_can"),
-                    //new GunItem.GunBuilder().ister(() -> VehicleSpawnerRenderer::new).build("test"),
                     new AmmoItem("crossbow_bolt", AmmoType.CROSSBOW_BOLT),
                     new AmmoItem("ammo_12g", AmmoType.AMMO_12G),
                     new AmmoItem("ammo_9mm", AmmoType.AMMO_9MM),
@@ -280,6 +287,20 @@ public class Registry {
             );
         }
 
+        @SubscribeEvent
+        public static void onSoundRegister(RegistryEvent.Register<SoundEvent> event) {
+            event.getRegistry().registerAll(
+                sound("p92_shoot"),
+                sound("p92_shoot_silent"),
+                sound("p92_reload")
+            );
+        }
+
+        private static SoundEvent sound(String key) {
+            ResourceLocation location = Pubgmc.makeResource(key);
+            return new SoundEvent(location).setRegistryName(location);
+        }
+
         private static <T extends TileEntity> TileEntityType<T> registerTileEntity(String name, Supplier<T> factory, Block... blocks) {
             return registerTileEntity(name, factory, null, blocks);
         }
@@ -323,7 +344,8 @@ public class Registry {
         }
 
         public static ModelResourceLocation get(Item item) {
-            return new ModelResourceLocation(item.getRegistryName(), "inventory");
+            // debug purposes
+            return new ModelResourceLocation(item == null ? new ResourceLocation("unknown", "null") : item.getRegistryName(), "inventory");
         }
     }
 }

@@ -1,7 +1,6 @@
 package dev.toma.pubgmc.capability.player;
 
 import dev.toma.pubgmc.common.item.gun.GunItem;
-import dev.toma.pubgmc.common.item.gun.ReloadManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;

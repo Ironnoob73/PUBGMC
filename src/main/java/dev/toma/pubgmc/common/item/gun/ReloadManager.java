@@ -98,8 +98,7 @@ public interface ReloadManager {
             ReloadInfo reloadInfo = cap.getReloadInfo();
             ItemStack stack = player.getHeldItemMainhand();
             if(stack.getItem() instanceof GunItem) {
-                // TODO reload time
-                int time = 50;
+                int time = ((GunItem) stack.getItem()).getReloadTime(stack);
                 reloadInfo.startReloading(player.inventory.currentItem, time);
                 cap.syncNetworkData();
             }
@@ -140,8 +139,7 @@ public interface ReloadManager {
             ReloadInfo reloadInfo = cap.getReloadInfo();
             ItemStack stack = player.getHeldItemMainhand();
             if(stack.getItem() instanceof GunItem) {
-                // TODO reload time
-                int time = 50;
+                int time = ((GunItem) stack.getItem()).getReloadTime(stack);
                 reloadInfo.startReloading(player.inventory.currentItem, time);
                 cap.syncNetworkData();
             }

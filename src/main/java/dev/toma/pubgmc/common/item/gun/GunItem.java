@@ -10,6 +10,9 @@ import dev.toma.pubgmc.common.item.gun.attachment.AttachmentItem;
 import dev.toma.pubgmc.common.item.gun.attachment.GunAttachments;
 import dev.toma.pubgmc.network.NetworkManager;
 import dev.toma.pubgmc.network.packet.CPacketCreateAnimation;
+import dev.toma.pubgmc.util.function.Bool2FloatFunction;
+import dev.toma.pubgmc.util.function.Bool2IntFunction;
+import dev.toma.pubgmc.util.function.Bool2ObjFunction;
 import net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -17,9 +20,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.CooldownTracker;
-import net.minecraft.util.HandSide;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.*;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -47,11 +48,15 @@ public class GunItem extends PMCItem implements HandAnimate {
     protected final Firemode defaultFiremode;
     protected final Function<Firemode, Firemode> firemodeSwitchFunction;
     protected final ReloadManager reloadManager;
+    protected final Bool2IntFunction reloadTime;
     protected final ShootManager shootManager;
     protected final BiFunction<GunItem, ItemStack, Integer> ammoLimit;
     protected final AmmoType ammoType;
     protected final float verticalRecoil;
     protected final float horizontalRecoil;
+    protected final Bool2ObjFunction<SoundEvent> shootSound;
+    protected final Bool2FloatFunction shootVolume;
+    protected final Bool2ObjFunction<SoundEvent> reloadSound;
     protected final GunAnimations animations;
 
     protected GunItem(String name, Properties properties, GunBuilder builder) {
@@ -70,6 +75,10 @@ public class GunItem extends PMCItem implements HandAnimate {
         this.ammoType = builder.ammoType;
         this.verticalRecoil = builder.verticalRecoil;
         this.horizontalRecoil = builder.horizontalRecoil;
+        this.reloadTime = builder.reloadTime;
+        this.shootSound = builder.shootSound;
+        this.shootVolume = builder.shootVolumeFunction;
+        this.reloadSound = builder.reloadSound;
         Supplier<GunAnimations> tmp = DistExecutor.callWhenOn(Dist.CLIENT, builder.animations);
         if(tmp != null) {
             this.animations = tmp.get();
@@ -88,7 +97,7 @@ public class GunItem extends PMCItem implements HandAnimate {
      */
     public void shoot(LivingEntity source, World world, ItemStack stack) {
         int ammo = getAmmo(stack);
-        // TODO all the basic logic
+        boolean silent = getAttachment(AttachmentCategory.BARREL, stack).isSilent();
         if(source instanceof PlayerEntity) {
             PlayerEntity player = (PlayerEntity) source;
             CooldownTracker tracker = player.getCooldownTracker();
@@ -96,17 +105,37 @@ public class GunItem extends PMCItem implements HandAnimate {
             if((ammo > 0 || player.isCreative()) && !tracker.hasCooldown(stack.getItem()) && !cap.getReloadInfo().isReloading()) {
                 shootManager.shoot(source, world, stack);
                 if(!player.isCreative()) addAmmo(stack, -1);
-                // TODO sound
+                world.playSound(null, source.posX, source.posY, source.posZ, getShootSound(silent), SoundCategory.MASTER, getVolume(silent), 1.0F);
                 tracker.setCooldown(stack.getItem(), this.firerate);
                 NetworkManager.sendToClient((ServerPlayerEntity) player, new CPacketCreateAnimation(5));
             }
         } else {
             if(ammo > 0) {
-                // TODO sound
+                world.playSound(null, source.posX, source.posY, source.posZ, getShootSound(silent), SoundCategory.MASTER, getVolume(silent), 1.0F);
                 shootManager.shoot(source, world, stack);
                 addAmmo(stack, -1);
             }
         }
+    }
+
+    public float getVolume(boolean silent) {
+        return shootVolume.apply(silent);
+    }
+
+    public SoundEvent getShootSound(boolean silent) {
+        return shootSound.apply(silent);
+    }
+
+    public SoundEvent getShootSound(ItemStack stack) {
+        return shootSound.apply(getAttachment(AttachmentCategory.BARREL, stack).isSilent());
+    }
+
+    public SoundEvent getReloadSound(ItemStack stack) {
+        return reloadSound.apply(getAttachment(AttachmentCategory.MAGAZINE, stack).isQuickdraw());
+    }
+
+    public int getReloadTime(ItemStack stack) {
+        return reloadTime.apply(getAttachment(AttachmentCategory.MAGAZINE, stack).isQuickdraw());
     }
 
     public void switchFiremode(PlayerEntity player, ItemStack stack) {
@@ -225,6 +254,7 @@ public class GunItem extends PMCItem implements HandAnimate {
         private Firemode defaultFiremode = Firemode.SINGLE;
         private Function<Firemode, Firemode> firemodeSwitchFunction = Firemode::allModes;
         private ReloadManager reloadManager = ReloadManager.Magazine.instance;
+        private Bool2IntFunction reloadTime;
         private ShootManager shootManager = ShootManager::handleNormal;;
         private GunAttachments attachments = new GunAttachments();
         private BiFunction<GunItem, ItemStack, Integer> ammoLimit;
@@ -233,6 +263,9 @@ public class GunItem extends PMCItem implements HandAnimate {
         private Supplier<Callable<ItemStackTileEntityRenderer>> ister;
         private Supplier<Callable<Supplier<GunAnimations>>> animations;
         private float verticalRecoil, horizontalRecoil;
+        private Bool2ObjFunction<SoundEvent> shootSound;
+        private Bool2ObjFunction<SoundEvent> reloadSound;
+        private Bool2FloatFunction shootVolumeFunction = silent -> silent ? 6.0F : 12.0F;
 
         public GunBuilder gunProperties(float damage, float headshotMultiplier, float initialVelocity, float gravity, int gravityResistance) {
             this.damage = damage;
@@ -254,8 +287,9 @@ public class GunItem extends PMCItem implements HandAnimate {
             return this;
         }
 
-        public GunBuilder reload(ReloadManager manager) {
+        public GunBuilder reload(ReloadManager manager, Bool2IntFunction reloadTime) {
             this.reloadManager = manager;
+            this.reloadTime = reloadTime;
             return this;
         }
 
@@ -271,6 +305,21 @@ public class GunItem extends PMCItem implements HandAnimate {
         public GunBuilder ammo(AmmoType type, BiFunction<GunItem, ItemStack, Integer> ammoLimit) {
             this.ammoType = type;
             this.ammoLimit = ammoLimit;
+            return this;
+        }
+
+        public GunBuilder shootingSound(Bool2ObjFunction<SoundEvent> shootSound) {
+            this.shootSound = shootSound;
+            return this;
+        }
+
+        public GunBuilder shootingVolume(Bool2FloatFunction volumeFunction) {
+            this.shootVolumeFunction = volumeFunction;
+            return this;
+        }
+
+        public GunBuilder reloadingSound(Bool2ObjFunction<SoundEvent> reloadSound) {
+            this.reloadSound = reloadSound;
             return this;
         }
 
@@ -306,11 +355,15 @@ public class GunItem extends PMCItem implements HandAnimate {
             firemodeSwitchFunction = nonnullOrThrow(firemodeSwitchFunction, "No function defined for switching firemodes. This is bad", name);
             shootManager = nonnullOrThrow(shootManager, "Undefined shoot action!", name);
             reloadManager = nonullOrCorrectAndLog(reloadManager, ReloadManager.Magazine.instance, "Cannot use invalid reload manager", name);
+            reloadTime = nonnullOrThrow(reloadTime, "Undefined reload time", name);
             ammoType = nonnullOrThrow(ammoType, "Ammo type is undefined!", name);
             ammoLimit = nonnullOrThrow(ammoLimit, "Unknown max ammo amount", name);
             animations = nonnullOrThrow(animations, "Undefined gun animations", name);
             verticalRecoil = validOrCorrectAndLog(verticalRecoil, 0.0F, 5.0F, name, "verticalRecoil");
             horizontalRecoil = validOrCorrectAndLog(horizontalRecoil, 0.0F, 5.0F, name, "horizontalRecoil");
+            shootSound = nonnullOrThrow(shootSound, "Undefined shooting sounds", name);
+            reloadSound = nonnullOrThrow(reloadSound, "Undefined reloading sounds", name);
+            shootVolumeFunction = nonnullOrThrow(shootVolumeFunction, "Undefined shooting volume", name);
             return new GunItem(
                     name,
                     nonnullOrThrow(properties, "Item properties cannot be null!", name).setTEISR(nonnullOrThrow(ister, "Gun renderer cannot be null!", name)),

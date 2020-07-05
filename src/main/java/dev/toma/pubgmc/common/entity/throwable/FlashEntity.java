@@ -106,7 +106,7 @@ public class FlashEntity extends ThrowableEntity {
                     }
                 }
             } else if (getFlashAmountFor(player, from) > 0) {
-                // TODO
+                // TODO - ???? why is this here
                 //player.playSound(PMCSounds.flash_short, 10f, 1f);
             }
         }
