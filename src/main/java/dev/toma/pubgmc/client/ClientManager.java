@@ -14,9 +14,11 @@ import dev.toma.pubgmc.common.entity.throwable.SmokeEntity;
 import dev.toma.pubgmc.common.entity.vehicle.AirDriveableEntity;
 import dev.toma.pubgmc.common.entity.vehicle.LandDriveableEntity;
 import dev.toma.pubgmc.util.UsefulFunctions;
+import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.audio.SoundHandler;
+import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
@@ -27,6 +29,29 @@ import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import java.util.function.Supplier;
 
 public class ClientManager {
+
+    private static Framebuffer framebuffer;
+    public static boolean isRenderingPiP;
+    public static boolean shouldRenderScopeOverlay;
+
+    public static void setScopeRendering(boolean rendering) {
+        shouldRenderScopeOverlay = rendering;
+    }
+
+    public static void updateFramebufferSize(MainWindow window) {
+        if(window.getFramebufferWidth() != framebuffer.framebufferTextureWidth || window.getFramebufferHeight() != framebuffer.framebufferTextureHeight) {
+            framebuffer.func_216491_a(window.getFramebufferWidth(), window.getFramebufferHeight(), Minecraft.IS_RUNNING_ON_MAC);
+        }
+    }
+
+    public static Framebuffer getFramebuffer() {
+        if(framebuffer == null) {
+            MainWindow window = Minecraft.getInstance().mainWindow;
+            framebuffer = new Framebuffer(window.getFramebufferWidth(), window.getFramebufferHeight(), true, Minecraft.IS_RUNNING_ON_MAC);
+            framebuffer.func_216491_a(window.getFramebufferWidth(), window.getFramebufferHeight(), Minecraft.IS_RUNNING_ON_MAC);
+        }
+        return framebuffer;
+    }
 
     public static void loadEntityRenderers() {
         RenderingRegistry.registerEntityRenderingHandler(ParachuteEntity.class, ParachuteRenderer::new);

@@ -27,12 +27,18 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.inventory.InventoryScreen;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.CooldownTracker;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Util;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.InputEvent;
@@ -41,6 +47,7 @@ import net.minecraftforge.client.event.RenderSpecificHandEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.lwjgl.opengl.GL11;
 
 import java.util.Random;
 import java.util.function.Consumer;
@@ -73,6 +80,14 @@ public class ClientEventHandler {
         if(event.getType() == RenderGameOverlayEvent.ElementType.ALL) {
             Minecraft mc = Minecraft.getInstance();
             PlayerEntity player = mc.player;
+            ClientManager.setScopeRendering(true);
+            ClientManager.getFramebuffer().bindFramebufferTexture();
+            MainWindow window = event.getWindow();
+            RenderHelper.drawColoredShape(0, 0, window.getScaledWidth(), window.getScaledHeight(), 0.0F, 0.0F, 0.0F, 0.6F);
+            int left = window.getScaledWidth() / 2 - 45;
+            int top = window.getScaledHeight() / 2 - 45;
+            RenderHelper.drawColoredShape(left - 2, top - 2, left + 92, top + 92, 0.0F, 0.0F, 0.0F, 1.0F);
+            renderBoundTexture(left, top, left + 90, top + 90);
             if(player.getRidingEntity() instanceof IControllableEntity) {
                 ((IControllableEntity) player.getRidingEntity()).drawOnScreen(mc, event.getWindow());
             }
@@ -190,6 +205,28 @@ public class ClientEventHandler {
 
     @SubscribeEvent
     public static void onRenderTick(TickEvent.RenderTickEvent event) {
+        if(event.phase == TickEvent.Phase.START) {
+            if(ClientManager.shouldRenderScopeOverlay) {
+                Minecraft mc = Minecraft.getInstance();
+                ClientManager.updateFramebufferSize(mc.mainWindow);
+                Framebuffer main = mc.getFramebuffer();
+                ClientManager.isRenderingPiP = true;
+                Framebuffer overlay = ClientManager.getFramebuffer();
+                overlay.bindFramebuffer(true);
+                double backup = mc.gameSettings.fov;
+                mc.gameSettings.fov = 5.0;
+                // TODO fov
+                GameRenderer renderer = mc.gameRenderer;
+                GlStateManager.enableDepthTest();
+                GlStateManager.enableAlphaTest();
+                GlStateManager.alphaFunc(516, 0.5F);
+                renderer.updateCameraAndRender(event.renderTickTime, Util.nanoTime());
+                mc.gameSettings.fov = backup;
+                main.bindFramebuffer(true);
+                ClientManager.isRenderingPiP = false;
+                ClientManager.setScopeRendering(false);
+            }
+        }
         AnimationManager.renderTick(event.renderTickTime, event.phase);
     }
 
@@ -258,6 +295,17 @@ public class ClientEventHandler {
             String text = (int)((1f * f + level) / 20F * 100) + "%";
             renderer.drawStringWithShadow(text, left + 183, top + 5, 0xffffff);
         }
+    }
+
+    private static void renderBoundTexture(int x1, int y1, int x2, int y2) {
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder builder = tessellator.getBuffer();
+        builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+        builder.pos(x1, y2, 0).tex(0.35, 0.3).endVertex();
+        builder.pos(x2, y2, 0).tex(0.65, 0.3).endVertex();
+        builder.pos(x2, y1, 0).tex(0.65, 0.7).endVertex();
+        builder.pos(x1, y1, 0).tex(0.35, 0.7).endVertex();
+        tessellator.draw();
     }
 
     private static class StateListener {

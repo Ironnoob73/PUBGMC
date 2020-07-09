@@ -7,9 +7,12 @@ import dev.toma.pubgmc.client.ClientManager;
 import dev.toma.pubgmc.client.ModKeybinds;
 import dev.toma.pubgmc.client.animation.Animations;
 import dev.toma.pubgmc.client.animation.builder.BuilderMain;
+import dev.toma.pubgmc.client.render.ExtendedGameRenderer;
 import dev.toma.pubgmc.config.Config;
 import dev.toma.pubgmc.network.NetworkManager;
 import dev.toma.pubgmc.util.recipe.FactoryCraftingRecipes;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
@@ -17,6 +20,7 @@ import net.minecraft.world.GameRules;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.DeferredWorkQueue;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -59,9 +63,11 @@ public class Pubgmc {
     private void setupClient(FMLClientSetupEvent event) {
         ClientManager.loadEntityRenderers();
         ModKeybinds.init();
-        /*DeferredWorkQueue.runLater(() -> {
-            ScreenManager.registerFactory(Registry.PMCContainers.WEAPON_FACTORY.get(), null);
-        });*/
+        DeferredWorkQueue.runLater(() -> {
+            Minecraft mc = Minecraft.getInstance();
+            mc.gameRenderer = new ExtendedGameRenderer(mc, mc.getResourceManager());
+            //ScreenManager.registerFactory(Registry.PMCContainers.WEAPON_FACTORY.get(), null);
+        });
         Animations.init();
         if(Config.animationTool.get()) BuilderMain.init();
     }

@@ -21,6 +21,7 @@ import dev.toma.pubgmc.common.item.PMCItem;
 import dev.toma.pubgmc.common.item.gun.AmmoType;
 import dev.toma.pubgmc.common.item.gun.Firemode;
 import dev.toma.pubgmc.common.item.gun.GunItem;
+import dev.toma.pubgmc.common.item.gun.ReloadManager;
 import dev.toma.pubgmc.common.item.gun.attachment.AttachmentCategory;
 import dev.toma.pubgmc.common.item.gun.attachment.AttachmentItem;
 import dev.toma.pubgmc.common.item.healing.*;
@@ -158,6 +159,7 @@ public class Registry {
         public static final SoundEvent P92_SHOOT = null;
         public static final SoundEvent P92_SHOOT_SILENT = null;
         public static final SoundEvent P92_RELOAD = null;
+        public static final SoundEvent P92_RELOAD_FAST = null;
     }
 
     public static class PMCContainers {
@@ -239,6 +241,7 @@ public class Registry {
                             .firerate(2)
                             .firemodes(Firemode.SINGLE, Firemode::singleMode)
                             .ammo(AmmoType.AMMO_9MM, (p92, stack) -> p92.getAttachment(AttachmentCategory.MAGAZINE, stack).isExtended() ? 20 : 15)
+                            .reload(ReloadManager.Magazine.instance, isQuickdraw -> isQuickdraw ? 30 : 40)
                             .ister(() -> GunRenderer.P92Renderer::new)
                             .attachments()
                                 .barrel(() -> new AttachmentItem.Barrel[] {PMCItems.SUPPRESSOR_SMG})
@@ -246,6 +249,9 @@ public class Registry {
                                 .magazine(() -> new AttachmentItem.Magazine[] {PMCItems.QUICKDRAW_SMG, PMCItems.EXTENDED_SMG, PMCItems.QUICKDRAW_EXTENDED_SMG})
                             .build()
                             .animations(() -> () -> GunAnimations.PistolAnimations::new)
+                            .shootingSound(silenced -> silenced ? PMCSounds.P92_SHOOT_SILENT : PMCSounds.P92_SHOOT)
+                            .reloadingSound(quickdraw -> quickdraw ? PMCSounds.P92_RELOAD_FAST : PMCSounds.P92_RELOAD)
+                            .shootingVolume(silenced -> silenced ? 5.0F : 9.0F)
                             .build("p92")
             );
             blockItemList.stream().filter(Objects::nonNull).forEach(registry::register);
