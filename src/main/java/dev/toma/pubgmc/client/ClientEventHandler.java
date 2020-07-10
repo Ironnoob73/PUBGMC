@@ -21,6 +21,7 @@ import dev.toma.pubgmc.network.packet.SPacketSetAiming;
 import dev.toma.pubgmc.network.packet.SPacketShoot;
 import dev.toma.pubgmc.util.RenderHelper;
 import dev.toma.pubgmc.util.UsefulFunctions;
+import net.minecraft.block.LeavesBlock;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
@@ -28,6 +29,7 @@ import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.inventory.InventoryScreen;
 import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.FogRenderer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -39,6 +41,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.CooldownTracker;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Util;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.InputEvent;
@@ -81,12 +84,15 @@ public class ClientEventHandler {
             Minecraft mc = Minecraft.getInstance();
             PlayerEntity player = mc.player;
             ClientManager.setScopeRendering(true);
-            ClientManager.getFramebuffer().bindFramebufferTexture();
             MainWindow window = event.getWindow();
             RenderHelper.drawColoredShape(0, 0, window.getScaledWidth(), window.getScaledHeight(), 0.0F, 0.0F, 0.0F, 0.6F);
             int left = window.getScaledWidth() / 2 - 45;
             int top = window.getScaledHeight() / 2 - 45;
-            RenderHelper.drawColoredShape(left - 2, top - 2, left + 92, top + 92, 0.0F, 0.0F, 0.0F, 1.0F);
+            GameRenderer renderer = mc.gameRenderer;
+            FogRenderer fogRenderer = renderer.fogRenderer;
+            RenderHelper.drawColoredShape(left - 2, top - 2, left + 92, top + 92, 0.0F, 1.0F, 0.0F, 1.0F);
+            RenderHelper.drawColoredShape(left, top, left + 90, top + 90, fogRenderer.red, fogRenderer.green, fogRenderer.blue, 1.0F);
+            ClientManager.getFramebuffer().bindFramebufferTexture();
             renderBoundTexture(left, top, left + 90, top + 90);
             if(player.getRidingEntity() instanceof IControllableEntity) {
                 ((IControllableEntity) player.getRidingEntity()).drawOnScreen(mc, event.getWindow());
@@ -214,8 +220,10 @@ public class ClientEventHandler {
                 Framebuffer overlay = ClientManager.getFramebuffer();
                 overlay.bindFramebuffer(true);
                 double backup = mc.gameSettings.fov;
-                mc.gameSettings.fov = 5.0;
-                // TODO fov
+                // fixes leaves render
+                LeavesBlock.setRenderTranslucent(true);
+                // TODO fov based on scope
+                mc.gameSettings.fov = 25.0;
                 GameRenderer renderer = mc.gameRenderer;
                 GlStateManager.enableDepthTest();
                 GlStateManager.enableAlphaTest();
