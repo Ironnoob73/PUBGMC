@@ -65,6 +65,7 @@ public class Pubgmc {
         ModKeybinds.init();
         DeferredWorkQueue.runLater(() -> {
             Minecraft mc = Minecraft.getInstance();
+            // TODO do not replace vanilla renderer
             mc.gameRenderer = new ExtendedGameRenderer(mc, mc.getResourceManager());
             //ScreenManager.registerFactory(Registry.PMCContainers.WEAPON_FACTORY.get(), null);
         });

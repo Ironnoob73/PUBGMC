@@ -27,9 +27,9 @@ public class CommonEventHandler {
             PlayerExtendedContainer container = new PlayerExtendedContainer(extendedInventory, !event.getWorld().isRemote, player);
             // TODO improve for saving data from added slots
             ListNBT nbt = player.inventory.write(new ListNBT());
-            player.inventory = extendedInventory;
-            player.inventory.read(nbt);
-            player.container = container;
+            //player.inventory = extendedInventory;
+            //player.inventory.read(nbt);
+            //player.container = container;
         }
     }
 

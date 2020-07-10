@@ -90,7 +90,7 @@ public class ClientEventHandler {
             int top = window.getScaledHeight() / 2 - 45;
             GameRenderer renderer = mc.gameRenderer;
             FogRenderer fogRenderer = renderer.fogRenderer;
-            RenderHelper.drawColoredShape(left - 2, top - 2, left + 92, top + 92, 0.0F, 1.0F, 0.0F, 1.0F);
+            RenderHelper.drawColoredShape(left - 2, top - 2, left + 92, top + 92, 0.0F, 0.0F, 0.0F, 1.0F);
             RenderHelper.drawColoredShape(left, top, left + 90, top + 90, fogRenderer.red, fogRenderer.green, fogRenderer.blue, 1.0F);
             ClientManager.getFramebuffer().bindFramebufferTexture();
             renderBoundTexture(left, top, left + 90, top + 90);
@@ -222,6 +222,7 @@ public class ClientEventHandler {
                 double backup = mc.gameSettings.fov;
                 // fixes leaves render
                 LeavesBlock.setRenderTranslucent(true);
+                mc.gameSettings.fancyGraphics = true;
                 // TODO fov based on scope
                 mc.gameSettings.fov = 25.0;
                 GameRenderer renderer = mc.gameRenderer;
@@ -246,7 +247,7 @@ public class ClientEventHandler {
     }
 
     private static void shoot(GunItem item, ItemStack stack, PlayerEntity player) {
-        if(item.getAmmo(stack) > 0) {
+        if(player.isCreative() || item.getAmmo(stack) > 0) {
             float vertical = item.getVerticalRecoil(player, stack);
             float horizontalUnmodified = item.getHorizontalRecoil(stack);
             float horizontal = rand.nextBoolean() ? horizontalUnmodified : -horizontalUnmodified;
