@@ -1,6 +1,7 @@
 package dev.toma.pubgmc;
 
 import com.mojang.datafixers.types.Type;
+import dev.toma.pubgmc.client.ScopeInfo;
 import dev.toma.pubgmc.client.animation.gun.GunAnimations;
 import dev.toma.pubgmc.client.model.baked.DummyBakedModel;
 import dev.toma.pubgmc.client.model.baked.DummyGunBakedModel;
@@ -227,14 +228,14 @@ public class Registry {
                     new AttachmentItem.Stock("tactical_stock", false, 1.25F),
                     new AttachmentItem.Stock("cheekpad", false, 1.25F),
                     new AttachmentItem.Stock("bullet_loops", true, 1.0F),
-                    new AttachmentItem.Scope("red_dot", -1),
-                    new AttachmentItem.Scope("holographic", -1),
-                    new AttachmentItem.Scope("x2_scope", 50),
-                    new AttachmentItem.Scope("x3_scope", 45),
-                    new AttachmentItem.Scope("x4_scope", 40),
-                    new AttachmentItem.Scope("x6_scope", 30),
-                    new AttachmentItem.Scope("x8_scope", 20),
-                    new AttachmentItem.Scope("x15_scope", 5),
+                    new AttachmentItem.Scope("red_dot", new ScopeInfo(ScopeInfo.OVERLAY_RED_DOT)),
+                    new AttachmentItem.Scope("holographic", new ScopeInfo(ScopeInfo.OVERLAY_HOLOGRAPHIC)),
+                    new AttachmentItem.Scope("x2_scope", new ScopeInfo(ScopeInfo.OVERLAY_2X, 40)),
+                    new AttachmentItem.Scope("x3_scope", new ScopeInfo(ScopeInfo.OVERLAY_3X, 35)),
+                    new AttachmentItem.Scope("x4_scope", new ScopeInfo(ScopeInfo.OVERLAY_4X, 30)),
+                    new AttachmentItem.Scope("x6_scope", new ScopeInfo(ScopeInfo.OVERLAY_6X, 20)),
+                    new AttachmentItem.Scope("x8_scope", new ScopeInfo(ScopeInfo.OVERLAY_8X, 12)),
+                    new AttachmentItem.Scope("x15_scope", new ScopeInfo(ScopeInfo.OVERLAY_15X, 5)),
                     new GunItem.GunBuilder()
                             .gunProperties(4.0F, 2.5F, 11.0F, 0.05F, 3)
                             .recoil(1.5F, 0.75F)

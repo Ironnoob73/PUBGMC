@@ -41,10 +41,6 @@ public class AttachmentItem extends PMCItem {
         return false;
     }
 
-    public int getAimModifier() {
-        return -1;
-    }
-
     public float getAimSpeedMultiplier() {
         return 1.0F;
     }
@@ -165,16 +161,16 @@ public class AttachmentItem extends PMCItem {
 
     public static class Scope extends AttachmentItem {
 
-        private final int modifier;
+        private final ScopeInfo info;
 
-        public Scope(String name, int modifier) {
+        public Scope(String name, ScopeInfo info) {
             super(name, AttachmentCategory.SCOPE);
-            this.modifier = modifier;
+            this.info = info;
         }
 
         @Override
-        public int getAimModifier() {
-            return modifier;
+        public ScopeInfo getScopeInfo() {
+            return this.info;
         }
     }
 }

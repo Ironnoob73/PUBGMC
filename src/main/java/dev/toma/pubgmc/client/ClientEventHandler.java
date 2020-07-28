@@ -83,17 +83,24 @@ public class ClientEventHandler {
         if(event.getType() == RenderGameOverlayEvent.ElementType.ALL) {
             Minecraft mc = Minecraft.getInstance();
             PlayerEntity player = mc.player;
-            ClientManager.setScopeRendering(true);
-            MainWindow window = event.getWindow();
-            RenderHelper.drawColoredShape(0, 0, window.getScaledWidth(), window.getScaledHeight(), 0.0F, 0.0F, 0.0F, 0.6F);
-            int left = window.getScaledWidth() / 2 - 45;
-            int top = window.getScaledHeight() / 2 - 45;
-            GameRenderer renderer = mc.gameRenderer;
-            FogRenderer fogRenderer = renderer.fogRenderer;
-            RenderHelper.drawColoredShape(left - 2, top - 2, left + 92, top + 92, 0.0F, 0.0F, 0.0F, 1.0F);
-            RenderHelper.drawColoredShape(left, top, left + 90, top + 90, fogRenderer.red, fogRenderer.green, fogRenderer.blue, 1.0F);
-            ClientManager.getFramebuffer().bindFramebufferTexture();
-            renderBoundTexture(left, top, left + 90, top + 90);
+            IPlayerCap data = PlayerCapFactory.get(player);
+            if(data.getAimInfo().isAiming() && scopeInfo != null) {
+                MainWindow window = event.getWindow();
+                int left = window.getScaledWidth() / 2 - 45;
+                int top = window.getScaledHeight() / 2 - 45;
+                if(scopeInfo.shouldRenderPiP()) {
+                    ClientManager.setScopeRendering(true);
+                    RenderHelper.drawColoredShape(0, 0, window.getScaledWidth(), window.getScaledHeight(), 0.0F, 0.0F, 0.0F, 0.6F);
+                    GameRenderer renderer = mc.gameRenderer;
+                    FogRenderer fogRenderer = renderer.fogRenderer;
+                    RenderHelper.drawColoredShape(left - 2, top - 2, left + 92, top + 92, 0.0F, 0.0F, 0.0F, 1.0F);
+                    RenderHelper.drawColoredShape(left, top, left + 90, top + 90, fogRenderer.red, fogRenderer.green, fogRenderer.blue, 1.0F);
+                    ClientManager.getFramebuffer().bindFramebufferTexture();
+                    renderBoundTexture(left, top, left + 90, top + 90);
+                }
+                RenderHelper.drawTexturedShape(left, top, left + 90, top + 90, scopeInfo.getTextureOverlay());
+            }
+
             if(player.getRidingEntity() instanceof IControllableEntity) {
                 ((IControllableEntity) player.getRidingEntity()).drawOnScreen(mc, event.getWindow());
             }
@@ -212,7 +219,7 @@ public class ClientEventHandler {
     @SubscribeEvent
     public static void onRenderTick(TickEvent.RenderTickEvent event) {
         if(event.phase == TickEvent.Phase.START) {
-            if(ClientManager.shouldRenderScopeOverlay && scopeInfo != null && scopeInfo.shouldRenderPiP()) {
+            if(ClientManager.shouldRenderScopeOverlay) {
                 Minecraft mc = Minecraft.getInstance();
                 ClientManager.updateFramebufferSize(mc.mainWindow);
                 Framebuffer main = mc.getFramebuffer();
@@ -309,10 +316,10 @@ public class ClientEventHandler {
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder builder = tessellator.getBuffer();
         builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-        builder.pos(x1, y2, 0).tex(0.35, 0.3).endVertex();
-        builder.pos(x2, y2, 0).tex(0.65, 0.3).endVertex();
-        builder.pos(x2, y1, 0).tex(0.65, 0.7).endVertex();
-        builder.pos(x1, y1, 0).tex(0.35, 0.7).endVertex();
+        builder.pos(x1, y2, 0).tex(0.4, 0.35).endVertex();
+        builder.pos(x2, y2, 0).tex(0.6, 0.35).endVertex();
+        builder.pos(x2, y1, 0).tex(0.6, 0.65).endVertex();
+        builder.pos(x1, y1, 0).tex(0.4, 0.65).endVertex();
         tessellator.draw();
     }
 
