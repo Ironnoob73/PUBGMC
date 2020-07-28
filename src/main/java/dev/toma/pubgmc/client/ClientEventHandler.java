@@ -41,7 +41,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.CooldownTracker;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Util;
-import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.InputEvent;
@@ -66,6 +65,7 @@ public class ClientEventHandler {
             AnimationManager.playNewAnimation(Animations.SPRINTING, new SprintAnimation());
         }
     });
+    public static ScopeInfo scopeInfo;
 
     @SubscribeEvent
     public static void cancelOverlayRenders(RenderGameOverlayEvent.Pre event) {
@@ -120,7 +120,10 @@ public class ClientEventHandler {
                 } else if(settings.keyBindUseItem.isPressed() && Animations.AIMING.canPlay()) {
                     boolean aiming = !PlayerCapFactory.get(player).getAimInfo().isActualAim();
                     NetworkManager.sendToServer(new SPacketSetAiming(aiming, 0.2F * gun.getAttachment(AttachmentCategory.STOCK, stack).getAimSpeedMultiplier()));
-                    if(aiming) AnimationManager.playNewAnimation(Animations.AIMING, gun.getAnimations().getAimingAnimation());
+                    if(aiming) {
+                        AnimationManager.playNewAnimation(Animations.AIMING, gun.getAnimations().getAimingAnimation());
+                        scopeInfo = gun.getScopeData(stack);
+                    }
                 }
             }
         }
@@ -132,10 +135,8 @@ public class ClientEventHandler {
         PlayerEntity player = mc.player;
         if(event.phase == TickEvent.Phase.START) return;
         if(player != null) {
-
             AnimationManager.clientTick();
             runningAnimationFactory.update(player);
-
             GameSettings settings = mc.gameSettings;
             Entity entity = player.getRidingEntity();
             if(entity instanceof IControllableEntity && entity.getControllingPassenger() == player) {
@@ -149,7 +150,6 @@ public class ClientEventHandler {
                 controllableEntity.onInputUpdate(fwd, bwd, right, left, ptUp, ptDown);
                 NetworkManager.sendToServer(new SPacketControllableInput(fwd, bwd, right, left, ptUp, ptDown));
             }
-
             ItemStack stack = player.getHeldItemMainhand();
             if(stack.getItem() instanceof GunItem) {
                 GunItem gun = (GunItem) stack.getItem();
@@ -212,7 +212,7 @@ public class ClientEventHandler {
     @SubscribeEvent
     public static void onRenderTick(TickEvent.RenderTickEvent event) {
         if(event.phase == TickEvent.Phase.START) {
-            if(ClientManager.shouldRenderScopeOverlay) {
+            if(ClientManager.shouldRenderScopeOverlay && scopeInfo != null && scopeInfo.shouldRenderPiP()) {
                 Minecraft mc = Minecraft.getInstance();
                 ClientManager.updateFramebufferSize(mc.mainWindow);
                 Framebuffer main = mc.getFramebuffer();
@@ -223,8 +223,7 @@ public class ClientEventHandler {
                 // fixes leaves render
                 LeavesBlock.setRenderTranslucent(true);
                 mc.gameSettings.fancyGraphics = true;
-                // TODO fov based on scope
-                mc.gameSettings.fov = 25.0;
+                mc.gameSettings.fov = scopeInfo.getZoom();
                 GameRenderer renderer = mc.gameRenderer;
                 GlStateManager.enableDepthTest();
                 GlStateManager.enableAlphaTest();

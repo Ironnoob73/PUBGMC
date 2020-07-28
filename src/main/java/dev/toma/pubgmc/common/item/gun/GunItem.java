@@ -2,6 +2,7 @@ package dev.toma.pubgmc.common.item.gun;
 
 import dev.toma.pubgmc.capability.IPlayerCap;
 import dev.toma.pubgmc.capability.player.PlayerCapFactory;
+import dev.toma.pubgmc.client.ScopeInfo;
 import dev.toma.pubgmc.client.animation.HandAnimate;
 import dev.toma.pubgmc.client.animation.gun.GunAnimations;
 import dev.toma.pubgmc.common.item.PMCItem;
@@ -30,6 +31,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -58,6 +60,8 @@ public class GunItem extends PMCItem implements HandAnimate {
     protected final Bool2FloatFunction shootVolume;
     protected final Bool2ObjFunction<SoundEvent> reloadSound;
     protected final GunAnimations animations;
+    @Nullable
+    protected final ScopeInfo customScopeFactory;
 
     protected GunItem(String name, Properties properties, GunBuilder builder) {
         super(name, properties);
@@ -80,9 +84,10 @@ public class GunItem extends PMCItem implements HandAnimate {
         this.shootVolume = builder.shootVolumeFunction;
         this.reloadSound = builder.reloadSound;
         Supplier<GunAnimations> tmp = DistExecutor.callWhenOn(Dist.CLIENT, builder.animations);
-        if(tmp != null) {
+        if (tmp != null) {
             this.animations = tmp.get();
         } else animations = null;
+        this.customScopeFactory = builder.customScopeFactory;
     }
 
     public void doReload(PlayerEntity player, World world, ItemStack stack) {
@@ -91,26 +96,27 @@ public class GunItem extends PMCItem implements HandAnimate {
 
     /**
      * Called server-side only
+     *
      * @param source - the shooter
-     * @param world - the world
-     * @param stack - the gun itemstack object
+     * @param world  - the world
+     * @param stack  - the gun itemstack object
      */
     public void shoot(LivingEntity source, World world, ItemStack stack) {
         int ammo = getAmmo(stack);
         boolean silent = getAttachment(AttachmentCategory.BARREL, stack).isSilent();
-        if(source instanceof PlayerEntity) {
+        if (source instanceof PlayerEntity) {
             PlayerEntity player = (PlayerEntity) source;
             CooldownTracker tracker = player.getCooldownTracker();
             IPlayerCap cap = PlayerCapFactory.get(player);
-            if((ammo > 0 || player.isCreative()) && !tracker.hasCooldown(stack.getItem()) && !cap.getReloadInfo().isReloading()) {
+            if ((ammo > 0 || player.isCreative()) && !tracker.hasCooldown(stack.getItem()) && !cap.getReloadInfo().isReloading()) {
                 shootManager.shoot(source, world, stack);
-                if(!player.isCreative()) addAmmo(stack, -1);
+                if (!player.isCreative()) addAmmo(stack, -1);
                 world.playSound(null, source.posX, source.posY, source.posZ, getShootSound(silent), SoundCategory.MASTER, getVolume(silent), 1.0F);
                 tracker.setCooldown(stack.getItem(), this.firerate);
                 NetworkManager.sendToClient((ServerPlayerEntity) player, new CPacketCreateAnimation(5));
             }
         } else {
-            if(ammo > 0) {
+            if (ammo > 0) {
                 world.playSound(null, source.posX, source.posY, source.posZ, getShootSound(silent), SoundCategory.MASTER, getVolume(silent), 1.0F);
                 shootManager.shoot(source, world, stack);
                 addAmmo(stack, -1);
@@ -141,7 +147,7 @@ public class GunItem extends PMCItem implements HandAnimate {
     public void switchFiremode(PlayerEntity player, ItemStack stack) {
         Firemode current = getFiremode(stack);
         Firemode next = firemodeSwitchFunction.apply(current);
-        if(!player.world.isRemote && next != current) {
+        if (!player.world.isRemote && next != current) {
             getOrCreateTag(stack).putInt("firemode", next.ordinal());
             player.sendStatusMessage(new TranslationTextComponent("firemode.switch." + next.name().toLowerCase()), true);
         }
@@ -151,12 +157,16 @@ public class GunItem extends PMCItem implements HandAnimate {
         return Firemode.from(getOrCreateTag(stack).getInt("firemode"));
     }
 
+    public ScopeInfo getScopeData(ItemStack stack) {
+        return customScopeFactory != null ? customScopeFactory : this.getAttachment(AttachmentCategory.SCOPE, stack).getScopeInfo();
+    }
+
     public AttachmentItem getAttachment(AttachmentCategory category, ItemStack stack) {
         CompoundNBT nbt = getOrCreateTag(stack).getCompound("attachments");
         String key = category.ordinal() + "";
-        if(nbt.contains(key)) {
+        if (nbt.contains(key)) {
             Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(nbt.getString(key)));
-            if(item instanceof AttachmentItem) {
+            if (item instanceof AttachmentItem) {
                 return (AttachmentItem) item;
             }
         }
@@ -218,7 +228,7 @@ public class GunItem extends PMCItem implements HandAnimate {
     }
 
     private CompoundNBT getOrCreateTag(ItemStack stack) {
-        if(!stack.hasTag()) {
+        if (!stack.hasTag()) {
             CompoundNBT nbt = new CompoundNBT();
             nbt.putInt("ammo", 0);
             nbt.putInt("firemode", defaultFiremode.ordinal());
@@ -251,21 +261,62 @@ public class GunItem extends PMCItem implements HandAnimate {
         private float gravity;
         private int gravityResistance;
         private int firerate;
+        private float verticalRecoil;
+        private float horizontalRecoil;
         private Firemode defaultFiremode = Firemode.SINGLE;
         private Function<Firemode, Firemode> firemodeSwitchFunction = Firemode::allModes;
         private ReloadManager reloadManager = ReloadManager.Magazine.instance;
         private Bool2IntFunction reloadTime;
-        private ShootManager shootManager = ShootManager::handleNormal;;
+        private ShootManager shootManager = ShootManager::handleNormal;
         private GunAttachments attachments = new GunAttachments();
         private BiFunction<GunItem, ItemStack, Integer> ammoLimit;
         private AmmoType ammoType;
         private Item.Properties properties = new Properties().group(GUNS).maxStackSize(1);
         private Supplier<Callable<ItemStackTileEntityRenderer>> ister;
         private Supplier<Callable<Supplier<GunAnimations>>> animations;
-        private float verticalRecoil, horizontalRecoil;
         private Bool2ObjFunction<SoundEvent> shootSound;
         private Bool2ObjFunction<SoundEvent> reloadSound;
         private Bool2FloatFunction shootVolumeFunction = silent -> silent ? 6.0F : 12.0F;
+        private ScopeInfo customScopeFactory;
+
+        private static <T> T nonullOrCorrectAndLog(T t, T other, String message, String name) {
+            if (t == null) {
+                log.warn("{} - Corrected {} -> {}: {}", name, t, other, message);
+                return other;
+            }
+            return t;
+        }
+
+        private static int validOrCorrectAndLog(int input, int min, int max, String name, String property) {
+            if (input >= min && input <= max) {
+                return input;
+            } else {
+                int corrected = Math.min(max, Math.max(min, input));
+                log.warn("{} - Corrected value {}: {} -> {}", name, property, input, corrected);
+                return corrected;
+            }
+        }
+
+        private static float validOrCorrectAndLog(float input, float min, float max, String name, String property) {
+            if (input >= min && input <= max) {
+                return input;
+            } else {
+                float corrected = Math.min(max, Math.max(min, input));
+                log.warn("{} - Corrected value {}: {} -> {}", name, property, input, corrected);
+                return corrected;
+            }
+        }
+
+        private static <T> T nonnullOrThrow(T object, String message, String name) {
+            return nonnullOrThrow(object, () -> new NullPointerException(name + " - " + message));
+        }
+
+        private static <T, E extends RuntimeException> T nonnullOrThrow(T object, Supplier<E> supplier) {
+            if (object == null) {
+                throw supplier.get();
+            }
+            return object;
+        }
 
         public GunBuilder gunProperties(float damage, float headshotMultiplier, float initialVelocity, float gravity, int gravityResistance) {
             this.damage = damage;
@@ -344,6 +395,11 @@ public class GunItem extends PMCItem implements HandAnimate {
             return this;
         }
 
+        public GunBuilder scope(ScopeInfo scopeInfo) {
+            this.customScopeFactory = scopeInfo;
+            return this;
+        }
+
         public GunItem build(String name) {
             damage = validOrCorrectAndLog(damage, 1.0F, 100.0F, name, "damage");
             headshotMultiplier = validOrCorrectAndLog(headshotMultiplier, 1.0F, 5.0F, name, "headShotmultiplier");
@@ -369,45 +425,6 @@ public class GunItem extends PMCItem implements HandAnimate {
                     nonnullOrThrow(properties, "Item properties cannot be null!", name).setTEISR(nonnullOrThrow(ister, "Gun renderer cannot be null!", name)),
                     this
             );
-        }
-
-        private static <T> T nonullOrCorrectAndLog(T t, T other, String message, String name) {
-            if(t == null) {
-                log.warn("{} - Corrected {} -> {}: {}", name, t, other, message);
-                return other;
-            }
-            return t;
-        }
-
-        private static int validOrCorrectAndLog(int input, int min, int max, String name, String property) {
-            if(input >= min && input <= max) {
-                return input;
-            } else {
-                int corrected = Math.min(max, Math.max(min, input));
-                log.warn("{} - Corrected value {}: {} -> {}", name, property, input, corrected);
-                return corrected;
-            }
-        }
-
-        private static float validOrCorrectAndLog(float input, float min, float max, String name, String property) {
-            if(input >= min && input <= max) {
-                return input;
-            } else {
-                float corrected = Math.min(max, Math.max(min, input));
-                log.warn("{} - Corrected value {}: {} -> {}", name, property, input, corrected);
-                return corrected;
-            }
-        }
-
-        private static <T> T nonnullOrThrow(T object, String message, String name) {
-            return nonnullOrThrow(object, () -> new NullPointerException(name + " - " + message));
-        }
-
-        private static <T, E extends RuntimeException> T nonnullOrThrow(T object, Supplier<E> supplier) {
-            if(object == null) {
-                throw supplier.get();
-            }
-            return object;
         }
     }
 

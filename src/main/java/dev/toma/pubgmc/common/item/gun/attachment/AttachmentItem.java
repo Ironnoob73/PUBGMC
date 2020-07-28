@@ -1,5 +1,6 @@
 package dev.toma.pubgmc.common.item.gun.attachment;
 
+import dev.toma.pubgmc.client.ScopeInfo;
 import dev.toma.pubgmc.common.item.PMCItem;
 
 public class AttachmentItem extends PMCItem {
@@ -46,6 +47,10 @@ public class AttachmentItem extends PMCItem {
 
     public float getAimSpeedMultiplier() {
         return 1.0F;
+    }
+
+    public ScopeInfo getScopeInfo() {
+        return null;
     }
 
     public AttachmentCategory getCategory() {
