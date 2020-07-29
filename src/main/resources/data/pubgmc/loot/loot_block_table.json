@@ -1,0 +1,24 @@
+{
+    "content": [
+        {
+            "weight": 15,
+            "pool": "small_meds"
+        },
+        {
+            "weight": 5,
+            "pool": "meds"
+        }
+    ],
+    "pools": {
+        "small_meds": [
+            { "item": "pubgmc:bandage", "count": 5 },
+            { "item": "pubgmc:energy_drink" },
+            { "item": "pubgmc:painkillers" }
+        ],
+        "meds": [
+            { "item": "pubgmc:first_aid_kit" },
+            { "item": "pubgmc:medkit" },
+            { "item": "pubgmc:adrenaline_syringe" }
+        ]
+    }
+}

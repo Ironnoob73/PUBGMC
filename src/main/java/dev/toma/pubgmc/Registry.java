@@ -28,6 +28,7 @@ import dev.toma.pubgmc.common.item.gun.attachment.AttachmentItem;
 import dev.toma.pubgmc.common.item.healing.*;
 import dev.toma.pubgmc.common.item.utility.*;
 import dev.toma.pubgmc.common.item.wearable.BulletProofArmor;
+import dev.toma.pubgmc.common.tileentity.LootSpawnerTileEntity;
 import dev.toma.pubgmc.common.tileentity.TileEntityWeaponFactory;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
@@ -150,9 +151,10 @@ public class Registry {
         public static final EntityType<BulletEntity> BULLET = null;
     }
 
-    @ObjectHolder(Pubgmc.MODID)
     public static class PMCTileEntities {
-        public static final TileEntityType<TileEntityWeaponFactory> WEAPON_FACTORY = null;
+        public static final DeferredRegister<TileEntityType<?>> TE_TYPES = new DeferredRegister<>(ForgeRegistries.TILE_ENTITIES, Pubgmc.MODID);
+        public static final RegistryObject<TileEntityType<TileEntityWeaponFactory>> WEAPON_FACTORY = TE_TYPES.register("weapon_factory", () -> TileEntityType.Builder.create(TileEntityWeaponFactory::new, PMCBlocks.WEAPON_FACTORY).build(null));
+        public static final RegistryObject<TileEntityType<LootSpawnerTileEntity>> LOOT_SPAWNER = TE_TYPES.register("loot_spawner", () -> TileEntityType.Builder.create(LootSpawnerTileEntity::new).build(null));
     }
 
     @ObjectHolder(Pubgmc.MODID)
@@ -284,13 +286,6 @@ public class Registry {
                     registerEntity("uaz", track_builder(LandDriveableEntity.UAZDriveable::new, EntityClassification.MISC, 64).size(2.25F, 2.0F)),
                     registerEntity("glider", track_builder(AirDriveableEntity.GliderDriveable::new, EntityClassification.MISC, 64).size(2.5F, 2.0F)),
                     registerEntity("bullet", track_builder(BulletEntity::new, EntityClassification.MISC, 64).size(0.1F, 0.1F))
-            );
-        }
-
-        @SubscribeEvent
-        public static void onTileEntityRegister(RegistryEvent.Register<TileEntityType<?>> event) {
-            event.getRegistry().registerAll(
-                registerTileEntity("weapon_factory", TileEntityWeaponFactory::new, PMCBlocks.WEAPON_FACTORY)
             );
         }
 

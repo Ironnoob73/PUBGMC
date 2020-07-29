@@ -3,12 +3,12 @@ package dev.toma.pubgmc.common.tileentity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 
-import static dev.toma.pubgmc.Registry.PMCTileEntities.WEAPON_FACTORY;
+import static dev.toma.pubgmc.Registry.PMCTileEntities.LOOT_SPAWNER;
 
-public class TileEntityWeaponFactory extends InventoryTileEntity {
+public class LootSpawnerTileEntity extends InventoryTileEntity {
 
-    public TileEntityWeaponFactory() {
-        super(WEAPON_FACTORY.get());
+    public LootSpawnerTileEntity() {
+        super(LOOT_SPAWNER.get());
     }
 
     @Override

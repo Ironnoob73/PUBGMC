@@ -9,6 +9,7 @@ import dev.toma.pubgmc.client.animation.Animations;
 import dev.toma.pubgmc.client.animation.builder.BuilderMain;
 import dev.toma.pubgmc.client.render.ExtendedGameRenderer;
 import dev.toma.pubgmc.config.Config;
+import dev.toma.pubgmc.data.loot.LootListener;
 import dev.toma.pubgmc.network.NetworkManager;
 import dev.toma.pubgmc.util.recipe.FactoryCraftingRecipes;
 import net.minecraft.client.Minecraft;
@@ -33,27 +34,31 @@ import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Random;
+
 import static dev.toma.pubgmc.Registry.PMCContainers.CONTAINER_TYPES;
+import static dev.toma.pubgmc.Registry.PMCTileEntities.TE_TYPES;
 
 @Mod(Pubgmc.MODID)
 public class Pubgmc {
 
     public static final String MODID = "pubgmc";
     public static Logger pubgmcLog = LogManager.getLogger("PUBGMC");
+    public static final Random rand = new Random();
+
     public static FactoryCraftingRecipes recipeManager = new FactoryCraftingRecipes();
+    public static LootListener lootListener = new LootListener();
 
     public static GameRules.RuleKey<GameRules.BooleanValue> WEAPON_GRIEFING = GameRules.register("weaponGriefing", GameRules.BooleanValue.create(true));
 
     public Pubgmc() {
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
         IEventBus forge = MinecraftForge.EVENT_BUS;
-
         CONTAINER_TYPES.register(modBus);
-
+        TE_TYPES.register(modBus);
         modBus.addListener(this::setupClient);
         modBus.addListener(this::setupCommon);
         forge.addListener(this::serverInit);
-
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Config.CLIENT);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.COMMON);
         Config.load(Config.CLIENT, FMLPaths.CONFIGDIR.get().resolve("pubgmc-client.toml"));
@@ -65,7 +70,7 @@ public class Pubgmc {
         ModKeybinds.init();
         DeferredWorkQueue.runLater(() -> {
             Minecraft mc = Minecraft.getInstance();
-            // TODO do not replace vanilla renderer
+            // TODO do not replace vanilla renderer just patch it
             mc.gameRenderer = new ExtendedGameRenderer(mc, mc.getResourceManager());
             //ScreenManager.registerFactory(Registry.PMCContainers.WEAPON_FACTORY.get(), null);
         });
@@ -82,6 +87,7 @@ public class Pubgmc {
         MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
         IReloadableResourceManager manager = server.getResourceManager();
         manager.addReloadListener(recipeManager);
+        manager.addReloadListener(lootListener);
     }
 
     public static ResourceLocation makeResource(String path) {
