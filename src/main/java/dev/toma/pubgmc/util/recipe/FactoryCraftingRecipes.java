@@ -9,6 +9,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -25,6 +27,7 @@ public class FactoryCraftingRecipes extends JsonReloadListener {
             .registerTypeAdapter(new TypeToken<List<ItemStack>>(){}.getType(), new PMCRecipe.ListDeserializer())
             .create();
     public Map<String, List<PMCRecipe>> recipeMap = new HashMap<>();
+    private static Logger log = LogManager.getLogger("pubgmc/FactoryCraftingRecipes");
 
     public FactoryCraftingRecipes() {
         super(gson, "factory");
@@ -38,14 +41,14 @@ public class FactoryCraftingRecipes extends JsonReloadListener {
                 DeserializationOutput output = gson.fromJson(entry.getValue(), DeserializationOutput.class);
                 if(!recipeMap.containsKey(output.factory)) {
                     recipeMap.put(output.factory, new ArrayList<>());
-                    Pubgmc.pubgmcLog.info("Created new factory category with key '{}'", output.factory);
+                    log.info("Created new factory category with key '{}'", output.factory);
                 }
                 recipeMap.get(output.factory).add(output.recipe);
             } catch (JsonParseException e) {
-                Pubgmc.pubgmcLog.error("Invalid factory recipe file {}: {}", entry.getKey(), e.getMessage());
+                log.error("Invalid factory recipe file {}: {}", entry.getKey(), e.getMessage());
             }
         }
-        Pubgmc.pubgmcLog.info("Registered {} recipe categories with total of {} recipes", recipeMap.size(), UsefulFunctions.getElementCount(recipeMap));
+        log.info("Registered {} recipe categories with total of {} recipes", recipeMap.size(), UsefulFunctions.getElementCount(recipeMap));
     }
 
     private static class DeserializationOutput {

@@ -86,19 +86,19 @@ public class ClientEventHandler {
             IPlayerCap data = PlayerCapFactory.get(player);
             if(data.getAimInfo().isAiming() && scopeInfo != null) {
                 MainWindow window = event.getWindow();
-                int left = window.getScaledWidth() / 2 - 45;
-                int top = window.getScaledHeight() / 2 - 45;
+                int left = window.getScaledWidth() / 2 - 60;
+                int top = window.getScaledHeight() / 2 - 60;
                 if(scopeInfo.shouldRenderPiP()) {
                     ClientManager.setScopeRendering(true);
                     RenderHelper.drawColoredShape(0, 0, window.getScaledWidth(), window.getScaledHeight(), 0.0F, 0.0F, 0.0F, 0.6F);
                     GameRenderer renderer = mc.gameRenderer;
                     FogRenderer fogRenderer = renderer.fogRenderer;
-                    RenderHelper.drawColoredShape(left - 2, top - 2, left + 92, top + 92, 0.0F, 0.0F, 0.0F, 1.0F);
-                    RenderHelper.drawColoredShape(left, top, left + 90, top + 90, fogRenderer.red, fogRenderer.green, fogRenderer.blue, 1.0F);
+                    RenderHelper.drawColoredShape(left - 2, top - 2, left + 122, top + 122, 0.0F, 0.0F, 0.0F, 1.0F);
+                    RenderHelper.drawColoredShape(left, top, left + 120, top + 120, fogRenderer.red, fogRenderer.green, fogRenderer.blue, 1.0F);
                     ClientManager.getFramebuffer().bindFramebufferTexture();
-                    renderBoundTexture(left, top, left + 90, top + 90);
+                    renderBoundTexture(left, top, left + 120, top + 120);
                 }
-                RenderHelper.drawTexturedShape(left, top, left + 90, top + 90, scopeInfo.getTextureOverlay());
+                RenderHelper.drawTexturedShape(left, top, left + 120, top + 120, scopeInfo.getTextureOverlay());
             }
 
             if(player.getRidingEntity() instanceof IControllableEntity) {

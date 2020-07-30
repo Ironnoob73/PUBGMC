@@ -9,11 +9,10 @@ import dev.toma.pubgmc.client.animation.Animations;
 import dev.toma.pubgmc.client.animation.builder.BuilderMain;
 import dev.toma.pubgmc.client.render.ExtendedGameRenderer;
 import dev.toma.pubgmc.config.Config;
-import dev.toma.pubgmc.data.loot.LootListener;
+import dev.toma.pubgmc.data.loot.LootManager;
 import dev.toma.pubgmc.network.NetworkManager;
 import dev.toma.pubgmc.util.recipe.FactoryCraftingRecipes;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
@@ -43,11 +42,11 @@ import static dev.toma.pubgmc.Registry.PMCTileEntities.TE_TYPES;
 public class Pubgmc {
 
     public static final String MODID = "pubgmc";
-    public static Logger pubgmcLog = LogManager.getLogger("PUBGMC");
+    public static Logger pubgmcLog = LogManager.getLogger();
     public static final Random rand = new Random();
 
     public static FactoryCraftingRecipes recipeManager = new FactoryCraftingRecipes();
-    public static LootListener lootListener = new LootListener();
+    public static LootManager lootManager = new LootManager();
 
     public static GameRules.RuleKey<GameRules.BooleanValue> WEAPON_GRIEFING = GameRules.register("weaponGriefing", GameRules.BooleanValue.create(true));
 
@@ -87,7 +86,7 @@ public class Pubgmc {
         MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
         IReloadableResourceManager manager = server.getResourceManager();
         manager.addReloadListener(recipeManager);
-        manager.addReloadListener(lootListener);
+        manager.addReloadListener(lootManager);
     }
 
     public static ResourceLocation makeResource(String path) {
