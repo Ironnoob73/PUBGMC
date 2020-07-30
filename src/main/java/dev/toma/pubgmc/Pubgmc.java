@@ -7,12 +7,10 @@ import dev.toma.pubgmc.client.ClientManager;
 import dev.toma.pubgmc.client.ModKeybinds;
 import dev.toma.pubgmc.client.animation.Animations;
 import dev.toma.pubgmc.client.animation.builder.BuilderMain;
-import dev.toma.pubgmc.client.render.OverlayGameRenderer;
 import dev.toma.pubgmc.config.Config;
 import dev.toma.pubgmc.data.loot.LootManager;
 import dev.toma.pubgmc.network.NetworkManager;
 import dev.toma.pubgmc.util.recipe.FactoryCraftingRecipes;
-import net.minecraft.client.Minecraft;
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
@@ -42,7 +40,7 @@ import static dev.toma.pubgmc.Registry.PMCTileEntities.TE_TYPES;
 public class Pubgmc {
 
     public static final String MODID = "pubgmc";
-    public static Logger pubgmcLog = LogManager.getLogger();
+    public static Logger pubgmcLog = LogManager.getLogger("pubgmc");
     public static final Random rand = new Random();
 
     public static FactoryCraftingRecipes recipeManager = new FactoryCraftingRecipes();

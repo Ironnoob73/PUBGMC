@@ -9,8 +9,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -27,7 +27,7 @@ public class FactoryCraftingRecipes extends JsonReloadListener {
             .registerTypeAdapter(new TypeToken<List<ItemStack>>(){}.getType(), new PMCRecipe.ListDeserializer())
             .create();
     public Map<String, List<PMCRecipe>> recipeMap = new HashMap<>();
-    private static Logger log = LogManager.getLogger("pubgmc/FactoryCraftingRecipes");
+    private static final Marker MARKER = MarkerManager.getMarker("FactoryCraftingRecipes");
 
     public FactoryCraftingRecipes() {
         super(gson, "factory");
@@ -41,20 +41,20 @@ public class FactoryCraftingRecipes extends JsonReloadListener {
                 DeserializationOutput output = gson.fromJson(entry.getValue(), DeserializationOutput.class);
                 if(!recipeMap.containsKey(output.factory)) {
                     recipeMap.put(output.factory, new ArrayList<>());
-                    log.info("Created new factory category with key '{}'", output.factory);
+                    Pubgmc.pubgmcLog.info(MARKER, "Created new factory category with key '{}'", output.factory);
                 }
                 recipeMap.get(output.factory).add(output.recipe);
             } catch (JsonParseException e) {
-                log.error("Invalid factory recipe file {}: {}", entry.getKey(), e.getMessage());
+                Pubgmc.pubgmcLog.error(MARKER, "Invalid factory recipe file {}: {}", entry.getKey(), e.getMessage());
             }
         }
-        log.info("Registered {} recipe categories with total of {} recipes", recipeMap.size(), UsefulFunctions.getElementCount(recipeMap));
+        Pubgmc.pubgmcLog.info(MARKER, "Registered {} recipe categories with total of {} recipes", recipeMap.size(), UsefulFunctions.getElementCount(recipeMap));
     }
 
     private static class DeserializationOutput {
 
-        private String factory;
-        private PMCRecipe recipe;
+        private final String factory;
+        private final PMCRecipe recipe;
 
         private DeserializationOutput(String factory, PMCRecipe recipe) {
             this.factory = factory;
