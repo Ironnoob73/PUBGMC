@@ -1,7 +1,6 @@
 package dev.toma.pubgmc.client.render;
 
 import com.mojang.blaze3d.platform.GlStateManager;
-import dev.toma.pubgmc.client.ClientManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.ParticleManager;
 import net.minecraft.client.renderer.*;
@@ -17,9 +16,9 @@ public class OverlayGameRenderer {
 
     public static void updateCameraAndRender(GameRenderer renderer, float partialTicks, long nanoTime) {
         Minecraft mc = Minecraft.getInstance();
+        mc.getProfiler().startSection("pubgmc_scoperender");
         WorldRenderer worldrenderer = mc.worldRenderer;
         ParticleManager particlemanager = mc.particles;
-        boolean flag = renderer.isDrawBlockOutline();
         GlStateManager.enableCull();
         mc.getProfiler().endStartSection("camera");
         renderer.setupCameraTransform(partialTicks);
@@ -59,18 +58,13 @@ public class OverlayGameRenderer {
         renderer.fogRenderer.setupFog(activerenderinfo, 0, partialTicks);
         mc.getTextureManager().bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
         RenderHelper.disableStandardItemLighting();
-        mc.getProfiler().endStartSection("terrain_setup");
-        mc.world.getChunkProvider().func_212863_j_().tick(Integer.MAX_VALUE, true, true);
-        //if(!ClientManager.isRenderingPiP) worldrenderer.setupTerrain(activerenderinfo, icamera, renderer.frameCount++, mc.player.isSpectator());
-        mc.getProfiler().endStartSection("updatechunks");
-        mc.worldRenderer.updateChunks(nanoTime);
         mc.getProfiler().endStartSection("terrain");
         GlStateManager.matrixMode(5888);
         GlStateManager.pushMatrix();
         GlStateManager.disableAlphaTest();
         worldrenderer.renderBlockLayer(BlockRenderLayer.SOLID, activerenderinfo);
         GlStateManager.enableAlphaTest();
-        mc.getTextureManager().getTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, mc.gameSettings.mipmapLevels > 0); // FORGE: fix flickering leaves when mods mess up the blurMipmap settings
+        mc.getTextureManager().getTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, mc.gameSettings.mipmapLevels > 0);
         worldrenderer.renderBlockLayer(BlockRenderLayer.CUTOUT_MIPPED, activerenderinfo);
         mc.getTextureManager().getTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
         mc.getTextureManager().getTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false);
@@ -88,16 +82,6 @@ public class OverlayGameRenderer {
         renderer.disableLightmap();
         GlStateManager.matrixMode(5888);
         GlStateManager.popMatrix();
-        if (flag && mc.objectMouseOver != null) {
-            GlStateManager.disableAlphaTest();
-            mc.getProfiler().endStartSection("outline");
-            if (!net.minecraftforge.client.ForgeHooksClient.onDrawBlockHighlight(worldrenderer, activerenderinfo, mc.objectMouseOver, 0, partialTicks))
-                worldrenderer.drawSelectionBox(activerenderinfo, mc.objectMouseOver, 0);
-            GlStateManager.enableAlphaTest();
-        }
-        if (mc.debugRenderer.shouldRender()) {
-            mc.debugRenderer.renderDebug(nanoTime);
-        }
         mc.getProfiler().endStartSection("destroyProgress");
         GlStateManager.enableBlend();
         GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
@@ -138,10 +122,6 @@ public class OverlayGameRenderer {
         }
         mc.getProfiler().endStartSection("forge_render_last");
         net.minecraftforge.client.ForgeHooksClient.dispatchRenderLast(worldrenderer, partialTicks);
-        mc.getProfiler().endStartSection("hand");
-        /*if (this.renderHand && !ClientManager.isRenderingPiP) {
-            GlStateManager.clear(256, Minecraft.IS_RUNNING_ON_MAC);
-            this.renderHand(activerenderinfo, partialTicks);
-        }*/
+        mc.getProfiler().endSection();
     }
 }
