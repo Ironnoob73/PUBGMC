@@ -7,7 +7,7 @@ import dev.toma.pubgmc.client.ClientManager;
 import dev.toma.pubgmc.client.ModKeybinds;
 import dev.toma.pubgmc.client.animation.Animations;
 import dev.toma.pubgmc.client.animation.builder.BuilderMain;
-import dev.toma.pubgmc.client.render.ExtendedGameRenderer;
+import dev.toma.pubgmc.client.render.OverlayGameRenderer;
 import dev.toma.pubgmc.config.Config;
 import dev.toma.pubgmc.data.loot.LootManager;
 import dev.toma.pubgmc.network.NetworkManager;
@@ -68,9 +68,6 @@ public class Pubgmc {
         ClientManager.loadEntityRenderers();
         ModKeybinds.init();
         DeferredWorkQueue.runLater(() -> {
-            Minecraft mc = Minecraft.getInstance();
-            // TODO do not replace vanilla renderer just patch it
-            mc.gameRenderer = new ExtendedGameRenderer(mc, mc.getResourceManager());
             //ScreenManager.registerFactory(Registry.PMCContainers.WEAPON_FACTORY.get(), null);
         });
         Animations.init();

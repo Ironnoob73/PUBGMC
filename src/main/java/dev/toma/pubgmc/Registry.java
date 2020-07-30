@@ -237,7 +237,7 @@ public class Registry {
                     new AttachmentItem.Scope("x4_scope", new ScopeInfo(ScopeInfo.OVERLAY_4X, 20)),
                     new AttachmentItem.Scope("x6_scope", new ScopeInfo(ScopeInfo.OVERLAY_6X, 16)),
                     new AttachmentItem.Scope("x8_scope", new ScopeInfo(ScopeInfo.OVERLAY_8X, 12)),
-                    new AttachmentItem.Scope("x15_scope", new ScopeInfo(ScopeInfo.OVERLAY_15X, 5)),
+                    new AttachmentItem.Scope("x15_scope", new ScopeInfo(ScopeInfo.OVERLAY_15X, 8)),
                     new GunItem.GunBuilder()
                             .gunProperties(4.0F, 2.5F, 11.0F, 0.05F, 3)
                             .recoil(1.5F, 0.75F)
@@ -294,7 +294,8 @@ public class Registry {
             event.getRegistry().registerAll(
                 sound("p92_shoot"),
                 sound("p92_shoot_silent"),
-                sound("p92_reload")
+                sound("p92_reload"),
+                sound("p92_reload_fast")
             );
         }
 

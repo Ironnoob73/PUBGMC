@@ -10,32 +10,26 @@ import net.minecraft.client.renderer.culling.ClippingHelperImpl;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.culling.ICamera;
 import net.minecraft.client.renderer.texture.AtlasTexture;
-import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.math.MathHelper;
 
-public class ExtendedGameRenderer extends GameRenderer {
+public class OverlayGameRenderer {
 
-    public ExtendedGameRenderer(Minecraft mc, IResourceManager resourceManager) {
-        super(mc, resourceManager);
-    }
-
-    @Override
-    public void updateCameraAndRender(float partialTicks, long nanoTime) {
+    public static void updateCameraAndRender(GameRenderer renderer, float partialTicks, long nanoTime) {
         Minecraft mc = Minecraft.getInstance();
         WorldRenderer worldrenderer = mc.worldRenderer;
         ParticleManager particlemanager = mc.particles;
-        boolean flag = this.isDrawBlockOutline();
+        boolean flag = renderer.isDrawBlockOutline();
         GlStateManager.enableCull();
         mc.getProfiler().endStartSection("camera");
-        this.setupCameraTransform(partialTicks);
-        ActiveRenderInfo activerenderinfo = this.activeRender;
+        renderer.setupCameraTransform(partialTicks);
+        ActiveRenderInfo activerenderinfo = renderer.activeRender;
         activerenderinfo.update(mc.world, mc.getRenderViewEntity() == null ? mc.player : mc.getRenderViewEntity(), mc.gameSettings.thirdPersonView > 0, mc.gameSettings.thirdPersonView == 2, partialTicks);
         ClippingHelper clippinghelper = ClippingHelperImpl.getInstance();
         worldrenderer.func_224745_a(activerenderinfo);
         mc.getProfiler().endStartSection("clear");
         GlStateManager.viewport(0, 0, mc.mainWindow.getFramebufferWidth(), mc.mainWindow.getFramebufferHeight());
-        this.fogRenderer.updateFogColor(activerenderinfo, partialTicks);
+        renderer.fogRenderer.updateFogColor(activerenderinfo, partialTicks);
         GlStateManager.clear(16640, Minecraft.IS_RUNNING_ON_MAC);
         mc.getProfiler().endStartSection("culling");
         ICamera icamera = new Frustum(clippinghelper);
@@ -44,30 +38,30 @@ public class ExtendedGameRenderer extends GameRenderer {
         double d2 = activerenderinfo.getProjectedView().z;
         icamera.setPosition(d0, d1, d2);
         if (mc.gameSettings.renderDistanceChunks >= 4) {
-            this.fogRenderer.setupFog(activerenderinfo, -1, partialTicks);
+            renderer.fogRenderer.setupFog(activerenderinfo, -1, partialTicks);
             mc.getProfiler().endStartSection("sky");
             GlStateManager.matrixMode(5889);
             GlStateManager.loadIdentity();
-            GlStateManager.multMatrix(Matrix4f.perspective(this.getFOVModifier(activerenderinfo, partialTicks, true), (float) mc.mainWindow.getFramebufferWidth() / (float) mc.mainWindow.getFramebufferHeight(), 0.05F, this.farPlaneDistance * 2.0F));
+            GlStateManager.multMatrix(Matrix4f.perspective(renderer.getFOVModifier(activerenderinfo, partialTicks, true), (float) mc.mainWindow.getFramebufferWidth() / (float) mc.mainWindow.getFramebufferHeight(), 0.05F, renderer.farPlaneDistance * 2.0F));
             GlStateManager.matrixMode(5888);
             worldrenderer.renderSky(partialTicks);
             GlStateManager.matrixMode(5889);
             GlStateManager.loadIdentity();
-            GlStateManager.multMatrix(Matrix4f.perspective(this.getFOVModifier(activerenderinfo, partialTicks, true), (float) mc.mainWindow.getFramebufferWidth() / (float) mc.mainWindow.getFramebufferHeight(), 0.05F, this.farPlaneDistance * MathHelper.SQRT_2));
+            GlStateManager.multMatrix(Matrix4f.perspective(renderer.getFOVModifier(activerenderinfo, partialTicks, true), (float) mc.mainWindow.getFramebufferWidth() / (float) mc.mainWindow.getFramebufferHeight(), 0.05F, renderer.farPlaneDistance * MathHelper.SQRT_2));
             GlStateManager.matrixMode(5888);
         }
-        this.fogRenderer.setupFog(activerenderinfo, 0, partialTicks);
+        renderer.fogRenderer.setupFog(activerenderinfo, 0, partialTicks);
         GlStateManager.shadeModel(7425);
         if (activerenderinfo.getProjectedView().y < 128.0D) {
-            this.renderClouds(activerenderinfo, worldrenderer, partialTicks, d0, d1, d2);
+            renderer.renderClouds(activerenderinfo, worldrenderer, partialTicks, d0, d1, d2);
         }
         mc.getProfiler().endStartSection("prepareterrain");
-        this.fogRenderer.setupFog(activerenderinfo, 0, partialTicks);
+        renderer.fogRenderer.setupFog(activerenderinfo, 0, partialTicks);
         mc.getTextureManager().bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
         RenderHelper.disableStandardItemLighting();
         mc.getProfiler().endStartSection("terrain_setup");
         mc.world.getChunkProvider().func_212863_j_().tick(Integer.MAX_VALUE, true, true);
-        if(!ClientManager.isRenderingPiP) worldrenderer.setupTerrain(activerenderinfo, icamera, this.frameCount++, mc.player.isSpectator());
+        //if(!ClientManager.isRenderingPiP) worldrenderer.setupTerrain(activerenderinfo, icamera, renderer.frameCount++, mc.player.isSpectator());
         mc.getProfiler().endStartSection("updatechunks");
         mc.worldRenderer.updateChunks(nanoTime);
         mc.getProfiler().endStartSection("terrain");
@@ -91,7 +85,7 @@ public class ExtendedGameRenderer extends GameRenderer {
         mc.getProfiler().endStartSection("entities");
         worldrenderer.renderEntities(activerenderinfo, icamera, partialTicks);
         RenderHelper.disableStandardItemLighting();
-        this.disableLightmap();
+        renderer.disableLightmap();
         GlStateManager.matrixMode(5888);
         GlStateManager.popMatrix();
         if (flag && mc.objectMouseOver != null) {
@@ -111,22 +105,22 @@ public class ExtendedGameRenderer extends GameRenderer {
         worldrenderer.func_215318_a(Tessellator.getInstance(), Tessellator.getInstance().getBuffer(), activerenderinfo);
         mc.getTextureManager().getTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
         GlStateManager.disableBlend();
-        this.enableLightmap();
-        this.fogRenderer.setupFog(activerenderinfo, 0, partialTicks);
+        renderer.enableLightmap();
+        renderer.fogRenderer.setupFog(activerenderinfo, 0, partialTicks);
         mc.getProfiler().endStartSection("particles");
         particlemanager.renderParticles(activerenderinfo, partialTicks);
-        this.disableLightmap();
+        renderer.disableLightmap();
         GlStateManager.depthMask(false);
         GlStateManager.enableCull();
         mc.getProfiler().endStartSection("weather");
-        this.renderRainSnow(partialTicks);
+        renderer.renderRainSnow(partialTicks);
         GlStateManager.depthMask(true);
         worldrenderer.renderWorldBorder(activerenderinfo, partialTicks);
         GlStateManager.disableBlend();
         GlStateManager.enableCull();
         GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
         GlStateManager.alphaFunc(516, 0.1F);
-        this.fogRenderer.setupFog(activerenderinfo, 0, partialTicks);
+        renderer.fogRenderer.setupFog(activerenderinfo, 0, partialTicks);
         GlStateManager.enableBlend();
         GlStateManager.depthMask(false);
         mc.getTextureManager().bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
@@ -140,14 +134,14 @@ public class ExtendedGameRenderer extends GameRenderer {
         GlStateManager.disableFog();
         if (activerenderinfo.getProjectedView().y >= 128.0D) {
             mc.getProfiler().endStartSection("aboveClouds");
-            this.renderClouds(activerenderinfo, worldrenderer, partialTicks, d0, d1, d2);
+            renderer.renderClouds(activerenderinfo, worldrenderer, partialTicks, d0, d1, d2);
         }
         mc.getProfiler().endStartSection("forge_render_last");
         net.minecraftforge.client.ForgeHooksClient.dispatchRenderLast(worldrenderer, partialTicks);
         mc.getProfiler().endStartSection("hand");
-        if (this.renderHand && !ClientManager.isRenderingPiP) {
+        /*if (this.renderHand && !ClientManager.isRenderingPiP) {
             GlStateManager.clear(256, Minecraft.IS_RUNNING_ON_MAC);
             this.renderHand(activerenderinfo, partialTicks);
-        }
+        }*/
     }
 }
