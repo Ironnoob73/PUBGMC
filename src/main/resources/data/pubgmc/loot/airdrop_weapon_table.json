@@ -1,0 +1,10 @@
+{
+    "content": [
+        { "weight": 1, "pool": "weapons" }
+    ],
+    "pools": {
+        "weapons": [
+
+        ]
+    }
+}

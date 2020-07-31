@@ -7,6 +7,34 @@
         {
             "weight": 5,
             "pool": "meds"
+        },
+        {
+            "weight": 15,
+            "pool": "random_ammo"
+        },
+        {
+            "weight": 10,
+            "pool": "general_att"
+        },
+        {
+            "weight": 10,
+            "pool": "sights"
+        },
+        {
+            "weight": 10,
+            "pool": "scopes"
+        },
+        {
+            "weight": 15,
+            "pool": "smg_att"
+        },
+        {
+            "weight": 10,
+            "pool": "ar_att"
+        },
+        {
+            "weight": 5,
+            "pool": "sr_att"
         }
     ],
     "pools": {
@@ -19,6 +47,55 @@
             { "item": "pubgmc:first_aid_kit" },
             { "item": "pubgmc:medkit" },
             { "item": "pubgmc:adrenaline_syringe" }
+        ],
+        "general_att": [
+            { "item": "pubgmc:folding_stock" },
+            { "item": "pubgmc:tactical_stock" },
+            { "item": "pubgmc:cheekpad" },
+            { "item": "pubgmc:bullet_loops" },
+            { "item": "pubgmc:shotgun_choke" },
+            { "item": "pubgmc:angled_grip" },
+            { "item": "pubgmc:vertical_grip" }
+        ],
+        "sights": [
+            { "item": "pubgmc:red_dot" },
+            { "item": "pubgmc:holographic" },
+            { "item": "pubgmc:x2_scope" },
+            { "item": "pubgmc:x3_scope" }
+        ],
+        "scopes": [
+            { "item": "pubgmc:x4_scope" },
+            { "item": "pubgmc:x6_scope" },
+            { "item": "pubgmc:x8_scope" }
+        ],
+        "random_ammo": [
+            { "item": "pubgmc:crossbow_bolt", "count": 5 },
+            { "item": "pubgmc:ammo_9mm", "count": 30 },
+            { "item": "pubgmc:ammo_12g", "count": 10 },
+            { "item": "pubgmc:ammo_45acp", "count": 30 },
+            { "item": "pubgmc:ammo_556mm", "count": 30 },
+            { "item": "pubgmc:ammo_762mm", "count": 30 }
+        ],
+        "smg_att": [
+            { "item": "pubgmc:compensator_smg" },
+            { "item": "pubgmc:suppressor_smg" },
+            { "item": "pubgmc:quickdraw_smg" },
+            { "item": "pubgmc:extended_smg" },
+            { "item": "pubgmc:quickdraw_extended_smg" }
+        ],
+        "ar_att": [
+            { "item": "pubgmc:compensator_ar" },
+            { "item": "pubgmc:suppressor_ar" },
+            { "item": "pubgmc:quickdraw_ar" },
+            { "item": "pubgmc:extended_ar" },
+            { "item": "pubgmc:quickdraw_extended_ar" }
+        ],
+        "sr_att": [
+            { "item": "pubgmc:compensator_sr" },
+            { "item": "pubgmc:suppressor_sr" },
+            { "item": "pubgmc:quickdraw_sr" },
+            { "item": "pubgmc:extended_sr" },
+            { "item": "pubgmc:quickdraw_extended_sr" }
         ]
     }
 }

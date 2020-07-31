@@ -17,16 +17,22 @@ import java.util.Map;
 
 public class LootManager extends JsonReloadListener {
 
-    public static final Map<ResourceLocation, LootTable> LOOT_TABLES = new HashMap<>();
+    private static final Map<ResourceLocation, LootTable> LOOT_TABLES = new HashMap<>();
     private static final Marker marker = MarkerManager.getMarker("LootManager");
     private static final Gson GSON = new GsonBuilder()
             .registerTypeAdapter(LootTable.class, new LootTable.Deserializer())
             .registerTypeAdapter(LootEntry.class, new LootEntry.Deserializer())
             .registerTypeAdapter(LootPool.class, new LootPool.Deserializer())
             .create();
+    private static final LootTable EMPTY = new LootTable(new LootPool[0]);
 
     public LootManager() {
         super(GSON, "loot");
+    }
+
+    public static LootTable getLootTable(ResourceLocation location) {
+        LootTable table = LOOT_TABLES.get(location);
+        return table != null ? table : EMPTY;
     }
 
     @Override

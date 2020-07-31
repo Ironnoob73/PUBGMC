@@ -17,6 +17,10 @@ public class WeightedRandom<T> implements Supplier<T> {
         this.totalValue = new LazyLoader<>(this::gatherAll);
     }
 
+    public T[] getEntries() {
+        return entries;
+    }
+
     @Override
     public T get() {
         int total = totalValue.get();

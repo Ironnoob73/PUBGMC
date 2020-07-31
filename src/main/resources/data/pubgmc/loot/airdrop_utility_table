@@ -1,0 +1,45 @@
+{
+    "content": [
+        {
+            "weight": 12,
+            "pool": "ghillie"
+        },
+        {
+            "weight": 10,
+            "pool": "att"
+        }
+    ],
+    "pools": {
+        "ghillie": [
+            {
+                "item": "pubgmc:ghillie_suit",
+                "count": 1,
+                "nbt": {
+                    "color": 48059
+                }
+            },
+            {
+                "item": "pubgmc:ghillie_suit",
+                "count": 1,
+                "nbt": {
+                    "color": 11495680
+                }
+            },
+            {
+                "item": "pubgmc:ghillie_suit",
+                "count": 1,
+                "nbt": {
+                    "color": 12369084
+                }
+            }
+        ],
+        "att": [
+            { "item": "pubgmc:suppressor_ar" },
+            { "item": "pubgmc:suppressor_sr" },
+            { "item": "pubgmc:quickdraw_extended_ar" },
+            { "item": "pubgmc:quickdraw_extended_sr" },
+            { "item": "pubgmc:x8_scope" },
+            { "item": "pubgmc:x15_scope" }
+        ]
+    }
+}

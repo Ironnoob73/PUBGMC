@@ -1,0 +1,30 @@
+{
+    "content": [
+        {
+            "weight": 5,
+            "pool": "ammo_small"
+        },
+        {
+            "weight": 15,
+            "pool": "ammo_large"
+        }
+    ],
+    "pools": {
+        "ammo_small": [
+            { "item": "pubgmc:crossbow_bolt", "count": 5 },
+            { "item": "pubgmc:ammo_9mm", "count": 15 },
+            { "item": "pubgmc:ammo_12g", "count": 5 },
+            { "item": "pubgmc:ammo_45acp", "count": 15 },
+            { "item": "pubgmc:ammo_556mm", "count": 15 },
+            { "item": "pubgmc:ammo_762mm", "count": 15 }
+        ],
+        "ammo_large": [
+            { "item": "pubgmc:crossbow_bolt", "count": 10 },
+            { "item": "pubgmc:ammo_9mm", "count": 30 },
+            { "item": "pubgmc:ammo_12g", "count": 10 },
+            { "item": "pubgmc:ammo_45acp", "count": 30 },
+            { "item": "pubgmc:ammo_556mm", "count": 30 },
+            { "item": "pubgmc:ammo_762mm", "count": 30 }
+        ]
+    }
+}

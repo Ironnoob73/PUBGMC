@@ -15,6 +15,10 @@ public class LootTable {
         this.weightedRandom = new WeightedRandom<>(LootPool::getWeight, lootPools);
     }
 
+    public boolean isEmpty() {
+        return weightedRandom.getEntries().length == 0;
+    }
+
     public ItemStack getRandom() {
         return weightedRandom.get().pickRandom().get();
     }
