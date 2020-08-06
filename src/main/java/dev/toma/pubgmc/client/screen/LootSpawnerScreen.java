@@ -13,6 +13,7 @@ public class LootSpawnerScreen extends ContainerScreen<LootSpawnerContainer> {
 
     public LootSpawnerScreen(LootSpawnerContainer container, PlayerInventory inventory, ITextComponent name) {
         super(container, inventory, name);
+        ySize = 115;
     }
 
     @Override
