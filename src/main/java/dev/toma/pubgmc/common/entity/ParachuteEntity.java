@@ -1,7 +1,7 @@
 package dev.toma.pubgmc.common.entity;
 
-import dev.toma.pubgmc.Registry;
 import dev.toma.pubgmc.common.entity.vehicle.AbstractControllableEntity;
+import dev.toma.pubgmc.init.PMCEntities;
 import dev.toma.pubgmc.util.UsefulFunctions;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -22,7 +22,7 @@ public class ParachuteEntity extends AbstractControllableEntity {
     }
 
     public ParachuteEntity(World world, Entity user) {
-        this(Registry.PMCEntityTypes.PARACHUTE, world);
+        this(PMCEntities.PARACHUTE, world);
         this.setPosition(user.posX, user.posY, user.posZ);
         this.setRotation(user.rotationYaw, 0.0F);
         this.setMotion(user.getMotion());

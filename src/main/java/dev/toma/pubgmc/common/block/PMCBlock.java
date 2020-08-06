@@ -1,7 +1,7 @@
 package dev.toma.pubgmc.common.block;
 
 import dev.toma.pubgmc.Pubgmc;
-import dev.toma.pubgmc.Registry;
+import dev.toma.pubgmc.RegistryHandler;
 import dev.toma.pubgmc.common.item.PMCItem;
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
@@ -14,7 +14,7 @@ public class PMCBlock extends Block {
     public PMCBlock(String name, Properties properties) {
         super(properties);
         this.setRegistryName(Pubgmc.makeResource(name));
-        Registry.CommonHandler.blockItemList.add(this.makeItem());
+        RegistryHandler.CommonHandler.blockItemList.add(this.makeItem());
     }
 
     @Nullable

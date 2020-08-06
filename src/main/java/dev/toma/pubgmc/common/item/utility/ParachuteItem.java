@@ -1,10 +1,7 @@
 package dev.toma.pubgmc.common.item.utility;
 
-import dev.toma.pubgmc.Registry;
 import dev.toma.pubgmc.common.entity.ParachuteEntity;
 import dev.toma.pubgmc.common.item.PMCItem;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;

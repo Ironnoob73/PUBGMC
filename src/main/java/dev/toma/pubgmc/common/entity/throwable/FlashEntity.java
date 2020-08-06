@@ -1,7 +1,7 @@
 package dev.toma.pubgmc.common.entity.throwable;
 
-import dev.toma.pubgmc.Registry;
 import dev.toma.pubgmc.client.ClientManager;
+import dev.toma.pubgmc.init.PMCEntities;
 import dev.toma.pubgmc.network.NetworkManager;
 import dev.toma.pubgmc.network.packet.CPacketFlashStatus;
 import dev.toma.pubgmc.util.RenderHelper;
@@ -42,7 +42,7 @@ public class FlashEntity extends ThrowableEntity {
     }
 
     public FlashEntity(World world, LivingEntity thrower, EnumEntityThrowState state, int timeLeft) {
-        super(Registry.PMCEntityTypes.FLASH, world, thrower, state, timeLeft);
+        super(PMCEntities.FLASH, world, thrower, state, timeLeft);
     }
 
     @Override

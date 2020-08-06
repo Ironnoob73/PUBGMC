@@ -1,11 +1,10 @@
 package dev.toma.pubgmc.client;
 
-import dev.toma.pubgmc.Registry;
+import dev.toma.pubgmc.client.render.block.LootSpawnerRenderer;
 import dev.toma.pubgmc.client.render.entity.GliderRenderer;
 import dev.toma.pubgmc.client.render.entity.ParachuteRenderer;
 import dev.toma.pubgmc.client.render.entity.ThrowableRenderer;
 import dev.toma.pubgmc.client.render.entity.UAZRenderer;
-import dev.toma.pubgmc.common.entity.BulletEntity;
 import dev.toma.pubgmc.common.entity.ParachuteEntity;
 import dev.toma.pubgmc.common.entity.throwable.FlashEntity;
 import dev.toma.pubgmc.common.entity.throwable.GrenadeEntity;
@@ -13,6 +12,8 @@ import dev.toma.pubgmc.common.entity.throwable.MolotovEntity;
 import dev.toma.pubgmc.common.entity.throwable.SmokeEntity;
 import dev.toma.pubgmc.common.entity.vehicle.AirDriveableEntity;
 import dev.toma.pubgmc.common.entity.vehicle.LandDriveableEntity;
+import dev.toma.pubgmc.common.tileentity.LootSpawnerTileEntity;
+import dev.toma.pubgmc.init.PMCItems;
 import dev.toma.pubgmc.util.UsefulFunctions;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
@@ -24,6 +25,7 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 
 import java.util.function.Supplier;
@@ -55,12 +57,13 @@ public class ClientManager {
 
     public static void loadEntityRenderers() {
         RenderingRegistry.registerEntityRenderingHandler(ParachuteEntity.class, ParachuteRenderer::new);
-        RenderingRegistry.registerEntityRenderingHandler(GrenadeEntity.class, manager -> new ThrowableRenderer<>(manager, () -> Registry.PMCItems.GRENADE));
-        RenderingRegistry.registerEntityRenderingHandler(SmokeEntity.class, manager -> new ThrowableRenderer<>(manager, () -> Registry.PMCItems.SMOKE));
-        RenderingRegistry.registerEntityRenderingHandler(FlashEntity.class, manager -> new ThrowableRenderer<>(manager, () -> Registry.PMCItems.FLASH));
-        RenderingRegistry.registerEntityRenderingHandler(MolotovEntity.class, manager -> new ThrowableRenderer<>(manager, () -> Registry.PMCItems.MOLOTOV));
+        RenderingRegistry.registerEntityRenderingHandler(GrenadeEntity.class, manager -> new ThrowableRenderer<>(manager, () -> PMCItems.GRENADE));
+        RenderingRegistry.registerEntityRenderingHandler(SmokeEntity.class, manager -> new ThrowableRenderer<>(manager, () -> PMCItems.SMOKE));
+        RenderingRegistry.registerEntityRenderingHandler(FlashEntity.class, manager -> new ThrowableRenderer<>(manager, () -> PMCItems.FLASH));
+        RenderingRegistry.registerEntityRenderingHandler(MolotovEntity.class, manager -> new ThrowableRenderer<>(manager, () -> PMCItems.MOLOTOV));
         RenderingRegistry.registerEntityRenderingHandler(LandDriveableEntity.UAZDriveable.class, UAZRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(AirDriveableEntity.GliderDriveable.class, GliderRenderer::new);
+        ClientRegistry.bindTileEntitySpecialRenderer(LootSpawnerTileEntity.class, new LootSpawnerRenderer());
     }
 
     public static void run(Supplier<Runnable> supplier) {

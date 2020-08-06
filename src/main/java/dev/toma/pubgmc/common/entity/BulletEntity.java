@@ -1,8 +1,8 @@
 package dev.toma.pubgmc.common.entity;
 
 import dev.toma.pubgmc.Pubgmc;
-import dev.toma.pubgmc.Registry;
 import dev.toma.pubgmc.common.item.wearable.IPMCArmor;
+import dev.toma.pubgmc.init.PMCEntities;
 import dev.toma.pubgmc.network.NetworkManager;
 import dev.toma.pubgmc.network.packet.CPacketBulletImpactParticle;
 import net.minecraft.block.BlockState;
@@ -52,7 +52,7 @@ public class BulletEntity extends Entity implements IEntityAdditionalSpawnData {
     }
 
     public BulletEntity(World world, @Nonnull LivingEntity src, @Nonnull ItemStack stack, float damage, float headshotMultiplier, float velocity, float gravity, int ticks, int inaccuracy) {
-        this(Registry.PMCEntityTypes.BULLET, world);
+        this(PMCEntities.BULLET, world);
         setPosition(src.posX, src.posY + src.getEyeHeight(), src.posZ);
         float dp = (rand.nextFloat() / 2.0F - rand.nextFloat() / 2.0F) * inaccuracy;
         float dy = (rand.nextFloat() / 2.0F - rand.nextFloat() / 2.0F) * inaccuracy;

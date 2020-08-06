@@ -1,12 +1,13 @@
 package dev.toma.pubgmc;
 
-import com.mojang.datafixers.types.Type;
 import dev.toma.pubgmc.client.ScopeInfo;
 import dev.toma.pubgmc.client.animation.gun.GunAnimations;
 import dev.toma.pubgmc.client.model.baked.DummyBakedModel;
 import dev.toma.pubgmc.client.model.baked.DummyGunBakedModel;
 import dev.toma.pubgmc.client.render.item.GunRenderer;
 import dev.toma.pubgmc.client.render.item.VehicleSpawnerRenderer;
+import dev.toma.pubgmc.common.block.AirdropBlock;
+import dev.toma.pubgmc.common.block.LootSpawnerBlock;
 import dev.toma.pubgmc.common.block.PMCHorizontalBlock;
 import dev.toma.pubgmc.common.block.crafting.AmmoFactoryBlock;
 import dev.toma.pubgmc.common.block.crafting.WeaponFactoryBlock;
@@ -28,8 +29,8 @@ import dev.toma.pubgmc.common.item.gun.attachment.AttachmentItem;
 import dev.toma.pubgmc.common.item.healing.*;
 import dev.toma.pubgmc.common.item.utility.*;
 import dev.toma.pubgmc.common.item.wearable.BulletProofArmor;
-import dev.toma.pubgmc.common.tileentity.LootSpawnerTileEntity;
-import dev.toma.pubgmc.common.tileentity.TileEntityWeaponFactory;
+import dev.toma.pubgmc.init.PMCItems;
+import dev.toma.pubgmc.init.PMCSounds;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -39,140 +40,24 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.ObjectHolder;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Supplier;
 
-public class Registry {
-
-    @ObjectHolder(Pubgmc.MODID)
-    public static class PMCItems {
-        public static final HealingItem BANDAGE = null;
-        public static final HealingItem FIRST_AID_KIT = null;
-        public static final HealingItem MEDKIT = null;
-        public static final HealingItem ENERGY_DRINK = null;
-        public static final HealingItem PAINKILLERS = null;
-        public static final HealingItem ADRENALINE_SYRINGE = null;
-        public static final BulletProofArmor BASIC_HELMET = null;
-        public static final BulletProofArmor BASIC_VEST = null;
-        public static final BulletProofArmor POLICE_HELMET = null;
-        public static final BulletProofArmor POLICE_VEST = null;
-        public static final BulletProofArmor MILITARY_HELMET = null;
-        public static final BulletProofArmor MILITARY_VEST = null;
-        public static final ParachuteItem PARACHUTE = null;
-        public static final ThrowableItem GRENADE = null;
-        public static final ThrowableItem SMOKE = null;
-        public static final ThrowableItem FLASH = null;
-        public static final ThrowableItem MOLOTOV = null;
-        public static final VehicleSpawnerItem SPAWN_UAZ = null;
-        public static final VehicleSpawnerItem SPAWN_GLIDER = null;
-        public static final FuelCanItem FUEL_CAN = null;
-        public static final AmmoItem CROSSBOW_BOLT = null;
-        public static final AmmoItem AMMO_12G = null;
-        public static final AmmoItem AMMO_9MM = null;
-        public static final AmmoItem AMMO_45ACP = null;
-        public static final AmmoItem AMMO_556MM = null;
-        public static final AmmoItem AMMO_762MM = null;
-        public static final AmmoItem AMMO_300M = null;
-        public static final AttachmentItem.Barrel SHOTGUN_CHOKE = null;
-        public static final AttachmentItem.Barrel SUPPRESSOR_SMG = null;
-        public static final AttachmentItem.Barrel COMPENSATOR_SMG = null;
-        public static final AttachmentItem.Barrel SUPPRESSOR_AR = null;
-        public static final AttachmentItem.Barrel COMPENSATOR_AR = null;
-        public static final AttachmentItem.Barrel SUPPRESSOR_SR = null;
-        public static final AttachmentItem.Barrel COMPENSATOR_SR = null;
-        public static final AttachmentItem.Grip ANGLED_GRIP = null;
-        public static final AttachmentItem.Grip VERTICAL_GRIP = null;
-        public static final AttachmentItem.Magazine QUICKDRAW_SMG = null;
-        public static final AttachmentItem.Magazine EXTENDED_SMG = null;
-        public static final AttachmentItem.Magazine QUICKDRAW_EXTENDED_SMG = null;
-        public static final AttachmentItem.Magazine QUICKDRAW_AR = null;
-        public static final AttachmentItem.Magazine EXTENDED_AR = null;
-        public static final AttachmentItem.Magazine QUICKDRAW_EXTENDED_AR = null;
-        public static final AttachmentItem.Magazine QUICKDRAW_SR = null;
-        public static final AttachmentItem.Magazine EXTENDED_SR = null;
-        public static final AttachmentItem.Magazine QUICKDRAW_EXTENDED_SR = null;
-        public static final AttachmentItem.Stock FOLDING_STOCK = null;
-        public static final AttachmentItem.Stock TACTICAL_STOCK = null;
-        public static final AttachmentItem.Stock CHEEKPAD = null;
-        public static final AttachmentItem.Stock BULLET_LOOPS = null;
-        public static final AttachmentItem.Scope RED_DOT = null;
-        public static final AttachmentItem.Scope HOLOGRAPHIC = null;
-        public static final AttachmentItem.Scope X2_SCOPE = null;
-        public static final AttachmentItem.Scope X3_SCOPE = null;
-        public static final AttachmentItem.Scope X4_SCOPE = null;
-        public static final AttachmentItem.Scope X6_SCOPE = null;
-        public static final AttachmentItem.Scope X8_SCOPE = null;
-        public static final AttachmentItem.Scope X15_SCOPE = null;
-        public static final GunItem P92 = null;
-    }
-
-    @ObjectHolder(Pubgmc.MODID)
-    public static class PMCBlocks {
-        public static final PMCHorizontalBlock GENERATOR = null;
-        public static final PMCHorizontalBlock STORAGE = null;
-        public static final PMCHorizontalBlock INTERFACE = null;
-        public static final PMCHorizontalBlock PRODUCER = null;
-        public static final WeaponFactoryBlock WEAPON_FACTORY = null;
-        public static final AmmoFactoryBlock AMMO_FACTORY = null;
-    }
-
-    @ObjectHolder(Pubgmc.MODID)
-    public static class PMCEntityTypes {
-        public static final EntityType<ParachuteEntity> PARACHUTE = null;
-        public static final EntityType<GrenadeEntity> GRENADE = null;
-        public static final EntityType<GrenadeEntity> SMOKE = null;
-        public static final EntityType<GrenadeEntity> MOLOTOV = null;
-        public static final EntityType<FlashEntity> FLASH = null;
-        public static final EntityType<LandDriveableEntity.UAZDriveable> UAZ = null;
-        public static final EntityType<AirDriveableEntity.GliderDriveable> GLIDER = null;
-        public static final EntityType<BulletEntity> BULLET = null;
-    }
-
-    public static class PMCTileEntities {
-        public static final DeferredRegister<TileEntityType<?>> TE_TYPES = new DeferredRegister<>(ForgeRegistries.TILE_ENTITIES, Pubgmc.MODID);
-        public static final RegistryObject<TileEntityType<TileEntityWeaponFactory>> WEAPON_FACTORY = TE_TYPES.register("weapon_factory", () -> TileEntityType.Builder.create(TileEntityWeaponFactory::new, PMCBlocks.WEAPON_FACTORY).build(null));
-        public static final RegistryObject<TileEntityType<LootSpawnerTileEntity>> LOOT_SPAWNER = TE_TYPES.register("loot_spawner", () -> TileEntityType.Builder.create(LootSpawnerTileEntity::new).build(null));
-    }
-
-    @ObjectHolder(Pubgmc.MODID)
-    public static class PMCSounds {
-        public static final SoundEvent P92_SHOOT = null;
-        public static final SoundEvent P92_SHOOT_SILENT = null;
-        public static final SoundEvent P92_RELOAD = null;
-        public static final SoundEvent P92_RELOAD_FAST = null;
-    }
-
-    public static class PMCContainers {
-        public static final DeferredRegister<ContainerType<?>> CONTAINER_TYPES = new DeferredRegister<>(ForgeRegistries.CONTAINERS, Pubgmc.MODID);
-        //public static final RegistryObject<ContainerType<WeaponFactoryContainer>> WEAPON_FACTORY = register("name", WeaponFactoryContainer::new);
-
-        private static <T extends Container> RegistryObject<ContainerType<T>> register(String name, ContainerType.IFactory<T> factory) {
-            return CONTAINER_TYPES.register(name, () -> new ContainerType<>(factory));
-        }
-    }
+public class RegistryHandler {
 
     @Mod.EventBusSubscriber(modid = Pubgmc.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class CommonHandler {
@@ -271,7 +156,9 @@ public class Registry {
                     new PMCHorizontalBlock("interface", Block.Properties.create(Material.IRON).sound(SoundType.METAL).hardnessAndResistance(2.5F)),
                     new PMCHorizontalBlock("producer", Block.Properties.create(Material.IRON).sound(SoundType.METAL).hardnessAndResistance(2.5F)),
                     new WeaponFactoryBlock("weapon_factory"),
-                    new AmmoFactoryBlock("ammo_factory")
+                    new AmmoFactoryBlock("ammo_factory"),
+                    new LootSpawnerBlock("loot_spawner"),
+                    new AirdropBlock("airdrop")
             );
         }
 
@@ -302,16 +189,6 @@ public class Registry {
         private static SoundEvent sound(String key) {
             ResourceLocation location = Pubgmc.makeResource(key);
             return new SoundEvent(location).setRegistryName(location);
-        }
-
-        private static <T extends TileEntity> TileEntityType<T> registerTileEntity(String name, Supplier<T> factory, Block... blocks) {
-            return registerTileEntity(name, factory, null, blocks);
-        }
-
-        private static <T extends TileEntity> TileEntityType<T> registerTileEntity(String name, Supplier<T> factory, @Nullable Type<?> fixer, Block... blocks) {
-            TileEntityType<T> type = TileEntityType.Builder.create(factory, blocks).build(fixer);
-            type.setRegistryName(Pubgmc.makeResource(name));
-            return type;
         }
 
         private static <T extends Entity> EntityType<T> registerEntity(String name, EntityType.Builder<T> builder) {

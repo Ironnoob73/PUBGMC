@@ -1,10 +1,9 @@
 package dev.toma.pubgmc.client.render.item;
 
 import com.mojang.blaze3d.platform.GlStateManager;
-import dev.toma.pubgmc.Registry;
 import dev.toma.pubgmc.common.entity.vehicle.AirDriveableEntity;
-import dev.toma.pubgmc.common.entity.vehicle.DriveableEntity;
 import dev.toma.pubgmc.common.entity.vehicle.LandDriveableEntity;
+import dev.toma.pubgmc.init.PMCItems;
 import dev.toma.pubgmc.util.object.LazyLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -16,11 +15,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
 
 @OnlyIn(Dist.CLIENT)
 public class VehicleSpawnerRenderer extends ItemStackTileEntityRenderer {
@@ -28,8 +24,8 @@ public class VehicleSpawnerRenderer extends ItemStackTileEntityRenderer {
     public static VehicleSpawnerRenderer renderer = new VehicleSpawnerRenderer();
     public LazyLoader<Map<Item, Class<? extends Entity>>> ITEM_TO_CLASS_MAP_LOADER = new LazyLoader<>(() -> {
         Map<Item, Class<? extends Entity>> map = new HashMap<>();
-        map.put(Registry.PMCItems.SPAWN_UAZ, LandDriveableEntity.UAZDriveable.class);
-        map.put(Registry.PMCItems.SPAWN_GLIDER, AirDriveableEntity.GliderDriveable.class);
+        map.put(PMCItems.SPAWN_UAZ, LandDriveableEntity.UAZDriveable.class);
+        map.put(PMCItems.SPAWN_GLIDER, AirDriveableEntity.GliderDriveable.class);
         return map;
     });
 

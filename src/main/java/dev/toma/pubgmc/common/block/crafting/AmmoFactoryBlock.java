@@ -1,6 +1,6 @@
 package dev.toma.pubgmc.common.block.crafting;
 
-import dev.toma.pubgmc.Registry;
+import dev.toma.pubgmc.init.PMCBlocks;
 import net.minecraft.util.Direction;
 
 public class AmmoFactoryBlock extends AbstractFactoryBlock {
@@ -11,6 +11,6 @@ public class AmmoFactoryBlock extends AbstractFactoryBlock {
 
     @Override
     public void createStructureObject(StructureObject builder) {
-        builder.addPart(() -> Registry.PMCBlocks.AMMO_FACTORY.getDefaultState().with(PART, FactoryPart.PRODUCER), Direction.UP);
+        builder.addPart(() -> PMCBlocks.AMMO_FACTORY.getDefaultState().with(PART, FactoryPart.PRODUCER), Direction.UP);
     }
 }

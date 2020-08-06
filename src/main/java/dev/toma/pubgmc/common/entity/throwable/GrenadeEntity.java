@@ -1,6 +1,6 @@
 package dev.toma.pubgmc.common.entity.throwable;
 
-import dev.toma.pubgmc.Registry;
+import dev.toma.pubgmc.init.PMCEntities;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.world.Explosion;
@@ -17,7 +17,7 @@ public class GrenadeEntity extends ThrowableEntity {
     }
 
     public GrenadeEntity(World world, LivingEntity thrower, EnumEntityThrowState state, int time) {
-        super(Registry.PMCEntityTypes.GRENADE, world, thrower, state, time);
+        super(PMCEntities.GRENADE, world, thrower, state, time);
     }
 
     @Override

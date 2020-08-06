@@ -7,10 +7,14 @@ import dev.toma.pubgmc.client.ClientManager;
 import dev.toma.pubgmc.client.ModKeybinds;
 import dev.toma.pubgmc.client.animation.Animations;
 import dev.toma.pubgmc.client.animation.builder.BuilderMain;
+import dev.toma.pubgmc.client.screen.LootSpawnerScreen;
+import dev.toma.pubgmc.command.CommandLoot;
 import dev.toma.pubgmc.config.Config;
 import dev.toma.pubgmc.data.loot.LootManager;
+import dev.toma.pubgmc.init.PMCContainers;
 import dev.toma.pubgmc.network.NetworkManager;
 import dev.toma.pubgmc.util.recipe.FactoryCraftingRecipes;
+import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
@@ -25,6 +29,7 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
+import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
@@ -33,8 +38,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Random;
 
-import static dev.toma.pubgmc.Registry.PMCContainers.CONTAINER_TYPES;
-import static dev.toma.pubgmc.Registry.PMCTileEntities.TE_TYPES;
+import static dev.toma.pubgmc.init.PMCContainers.CONTAINER_TYPES;
+import static dev.toma.pubgmc.init.PMCTileEntities.TE_TYPES;
 
 @Mod(Pubgmc.MODID)
 public class Pubgmc {
@@ -56,6 +61,7 @@ public class Pubgmc {
         modBus.addListener(this::setupClient);
         modBus.addListener(this::setupCommon);
         forge.addListener(this::serverInit);
+        forge.addListener(this::serverStart);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Config.CLIENT);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.COMMON);
         Config.load(Config.CLIENT, FMLPaths.CONFIGDIR.get().resolve("pubgmc-client.toml"));
@@ -67,6 +73,7 @@ public class Pubgmc {
         ModKeybinds.init();
         DeferredWorkQueue.runLater(() -> {
             //ScreenManager.registerFactory(Registry.PMCContainers.WEAPON_FACTORY.get(), null);
+            ScreenManager.registerFactory(PMCContainers.LOOT_SPAWNER.get(), LootSpawnerScreen::new);
         });
         Animations.init();
         if(Config.animationTool.get()) BuilderMain.init();
@@ -82,6 +89,10 @@ public class Pubgmc {
         IReloadableResourceManager manager = server.getResourceManager();
         manager.addReloadListener(recipeManager);
         manager.addReloadListener(lootManager);
+    }
+
+    private void serverStart(FMLServerStartingEvent event) {
+        CommandLoot.register(event.getCommandDispatcher());
     }
 
     public static ResourceLocation makeResource(String path) {

@@ -25,6 +25,7 @@ public class NetworkManager {
         register(CPacketSendRecipes.class, new CPacketSendRecipes());
         register(CPacketBulletImpactParticle.class, new CPacketBulletImpactParticle());
         register(CPacketCreateAnimation.class, new CPacketCreateAnimation());
+        register(CPacketDisplayLootSpawners.class, new CPacketDisplayLootSpawners());
         register(SPacketControllableInput.class, new SPacketControllableInput());
         register(SPacketCookThrowable.class, new SPacketCookThrowable());
         register(SPacketShoot.class, new SPacketShoot());

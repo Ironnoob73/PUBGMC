@@ -1,7 +1,7 @@
 package dev.toma.pubgmc.common.entity.vehicle;
 
 import com.mojang.blaze3d.platform.GlStateManager;
-import dev.toma.pubgmc.Registry;
+import dev.toma.pubgmc.init.PMCEntities;
 import dev.toma.pubgmc.util.RenderHelper;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
@@ -82,7 +82,7 @@ public abstract class LandDriveableEntity extends DriveableEntity {
             super(type, world);
         }
         public UAZDriveable(World world, BlockPos pos) {
-            super(Registry.PMCEntityTypes.UAZ, world, pos, UAZ_DATA);
+            super(PMCEntities.UAZ, world, pos, UAZ_DATA);
         }
         @Override
         public int maxUserAmount() {

@@ -1,6 +1,6 @@
 package dev.toma.pubgmc.common.entity.throwable;
 
-import dev.toma.pubgmc.Registry;
+import dev.toma.pubgmc.init.PMCEntities;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
@@ -45,7 +45,7 @@ public class MolotovEntity extends ThrowableEntity {
     }
 
     public MolotovEntity(World world, LivingEntity thrower, EnumEntityThrowState state, int timeLeft) {
-        super(Registry.PMCEntityTypes.MOLOTOV, world, thrower, state, Integer.MAX_VALUE);
+        super(PMCEntities.MOLOTOV, world, thrower, state, Integer.MAX_VALUE);
         this.fireSpreader = new MolotovFireSpreader();
         this.timeLeft = 200;
     }

@@ -94,6 +94,14 @@ public class RenderHelper {
 
     public static void drawTexturedShape(int x, int y, int x2, int y2, double u1, double v1, double u2, double v2, ResourceLocation texture) {
         Minecraft.getInstance().getTextureManager().bindTexture(texture);
+        drawTexturedShape(x, y, x2, y2, u1, v1, u2, v2);
+    }
+
+    public static void drawTexturedShape(int x, int y, int x2, int y2) {
+        drawTexturedShape(x, y, x2, y2, 0, 0, 1, 1);
+    }
+
+    public static void drawTexturedShape(int x, int y, int x2, int y2, double u1, double v1, double u2, double v2) {
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder builder = tessellator.getBuffer();
         GlStateManager.enableBlend();
