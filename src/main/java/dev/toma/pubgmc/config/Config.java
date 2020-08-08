@@ -12,8 +12,8 @@ import java.nio.file.Path;
 @Mod.EventBusSubscriber(modid = Pubgmc.MODID)
 public class Config {
 
-    public static final ForgeConfigSpec.Builder COMMON_BUILDER = new ForgeConfigSpec.Builder();
-    public static final ForgeConfigSpec.Builder CLIENT_BUILDER = new ForgeConfigSpec.Builder();
+    private static final ForgeConfigSpec.Builder COMMON_BUILDER = new ForgeConfigSpec.Builder();
+    private static final ForgeConfigSpec.Builder CLIENT_BUILDER = new ForgeConfigSpec.Builder();
     public static ForgeConfigSpec COMMON;
     public static ForgeConfigSpec CLIENT;
 
@@ -27,6 +27,8 @@ public class Config {
     // GENERAL
     public static ForgeConfigSpec.EnumValue<EnumSpeedUnit> speedUnit;
     public static ForgeConfigSpec.BooleanValue specialHUDRenderer;
+    // WORLD
+    public static ForgeConfigSpec.BooleanValue cmdGeneratesAirdropLoot;
 
     public static void load(ForgeConfigSpec spec, Path path) {
         CommentedFileConfig commentedFileConfig = CommentedFileConfig.builder(path)
@@ -39,10 +41,10 @@ public class Config {
     }
 
     static {
-        COMMON = COMMON_BUILDER.comment("General")
-                .push("general")
-                .pop()
-                .build();
+        COMMON_BUILDER.comment("World settings").push("world settings");
+        cmdGeneratesAirdropLoot = COMMON_BUILDER.comment("Allows loot generation in airdrops by using /loot generate command").define("cmdGeneratesAirdropLoot", false);
+        COMMON_BUILDER.pop();
+        COMMON = COMMON_BUILDER.build();
 
         CLIENT_BUILDER.comment("Animation builder settings").push("animation builder");
         animationTool = CLIENT_BUILDER.comment("Enables tool for animation creation").define("animationTool", false);

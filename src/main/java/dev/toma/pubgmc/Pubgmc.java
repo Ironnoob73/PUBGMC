@@ -9,7 +9,7 @@ import dev.toma.pubgmc.client.animation.Animations;
 import dev.toma.pubgmc.client.animation.builder.BuilderMain;
 import dev.toma.pubgmc.client.screen.AirdropScreen;
 import dev.toma.pubgmc.client.screen.LootSpawnerScreen;
-import dev.toma.pubgmc.command.CommandLoot;
+import dev.toma.pubgmc.command.LootCommand;
 import dev.toma.pubgmc.config.Config;
 import dev.toma.pubgmc.data.loot.LootManager;
 import dev.toma.pubgmc.init.PMCContainers;
@@ -94,7 +94,7 @@ public class Pubgmc {
     }
 
     private void serverStart(FMLServerStartingEvent event) {
-        CommandLoot.register(event.getCommandDispatcher());
+        LootCommand.register(event.getCommandDispatcher());
     }
 
     public static ResourceLocation makeResource(String path) {

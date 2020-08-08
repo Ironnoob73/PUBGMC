@@ -24,7 +24,7 @@ public class LootPool {
     }
 
     public LootEntry pickRandom() {
-        return lootEntries[Pubgmc.rand.nextInt(lootEntries.length)];
+        return lootEntries.length == 0 ? LootEntry.EMPTY.get() : lootEntries[Pubgmc.rand.nextInt(lootEntries.length)];
     }
 
     public static class Deserializer implements JsonDeserializer<LootPool> {

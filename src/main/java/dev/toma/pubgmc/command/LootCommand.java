@@ -4,10 +4,11 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
-import dev.toma.pubgmc.common.tileentity.LootSpawnerTileEntity;
+import dev.toma.pubgmc.common.tileentity.AbstractInventoryTileEntity;
 import dev.toma.pubgmc.data.loot.LootManager;
 import dev.toma.pubgmc.data.loot.LootTable;
 import dev.toma.pubgmc.data.loot.LootTableConstants;
+import dev.toma.pubgmc.games.object.LootGenerator;
 import dev.toma.pubgmc.network.NetworkManager;
 import dev.toma.pubgmc.network.packet.CPacketDisplayLootSpawners;
 import net.minecraft.block.BlockState;
@@ -15,13 +16,14 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 
 import java.util.stream.Collectors;
 
-public class CommandLoot {
+public class LootCommand {
 
     private static final SimpleCommandExceptionType SPECIFY_ACTION = new SimpleCommandExceptionType(new StringTextComponent("Unspecified action! Use /loot [generate, clear]"));
     private static final SimpleCommandExceptionType INVALID_SENDER = new SimpleCommandExceptionType(new StringTextComponent("Only player can execute this command!"));
@@ -32,30 +34,30 @@ public class CommandLoot {
                         .requires(src -> src.hasPermissionLevel(4))
                         .then(
                                 Commands.literal("generate")
-                                        .executes(CommandLoot::executeGen)
+                                        .executes(LootCommand::executeGen)
                         )
                         .then(
                                 Commands.literal("clear")
-                                        .executes(CommandLoot::executeClear)
+                                        .executes(LootCommand::executeClear)
                         )
                         .then(
                                 Commands.literal("show")
-                                        .executes(CommandLoot::executeShow)
+                                        .executes(LootCommand::executeShow)
                         )
                         .then(
                                 Commands.literal("destroy")
-                                        .executes(CommandLoot::executeDestroy)
+                                        .executes(LootCommand::executeDestroy)
                         )
-                        .executes(CommandLoot::executeClear)
-                .executes(CommandLoot::executeEmpty)
+                        .executes(LootCommand::executeClear)
+                .executes(LootCommand::executeEmpty)
         );
     }
 
-    private static int executeDestroy(CommandContext<CommandSource> ctx) {
+    private static <T extends TileEntity & LootGenerator> int executeDestroy(CommandContext<CommandSource> ctx) {
         World world = ctx.getSource().func_197023_e();
-        for (LootSpawnerTileEntity tileEntity : world.loadedTileEntityList.stream()
-                .filter(te -> te instanceof LootSpawnerTileEntity)
-                .map(te -> (LootSpawnerTileEntity) te)
+        for (T tileEntity : world.loadedTileEntityList.stream()
+                .filter(te -> te instanceof LootGenerator && ((LootGenerator) te).shouldDestroyByCommand())
+                .map(te -> (T) te)
                 .collect(Collectors.toList())) {
             BlockPos pos = tileEntity.getPos();
             world.destroyBlock(pos, false);
@@ -64,26 +66,26 @@ public class CommandLoot {
         return 0;
     }
 
-    private static int executeGen(CommandContext<CommandSource> ctx) {
+    private static <T extends TileEntity & LootGenerator> int executeGen(CommandContext<CommandSource> ctx) {
         World world = ctx.getSource().func_197023_e();
         LootTable table = LootManager.getLootTable(LootTableConstants.LOOT_BLOCK);
         world.loadedTileEntityList.stream()
-                .filter(te -> te instanceof LootSpawnerTileEntity)
-                .map(te -> (LootSpawnerTileEntity) te)
+                .filter(te -> te instanceof LootGenerator)
+                .map(te -> (T) te)
                 .forEach(te -> {
                     BlockState state = world.getBlockState(te.getPos());
-                    te.genLoot(table);
+                    te.generateLoot();
                     world.notifyBlockUpdate(te.getPos(), state, state, 3);
                 });
         ctx.getSource().sendFeedback(new StringTextComponent("Loot has been generated"), false);
         return 0;
     }
 
-    private static int executeClear(CommandContext<CommandSource> ctx) {
+    private static <T extends AbstractInventoryTileEntity & LootGenerator> int executeClear(CommandContext<CommandSource> ctx) {
         World world = ctx.getSource().func_197023_e();
         world.loadedTileEntityList.stream()
-                .filter(te -> te instanceof LootSpawnerTileEntity)
-                .map(te -> (LootSpawnerTileEntity) te)
+                .filter(te -> te instanceof AbstractInventoryTileEntity && te instanceof LootGenerator)
+                .map(te -> (T) te)
                 .forEach(te -> {
                     BlockState state = world.getBlockState(te.getPos());
                     te.clearInventory();

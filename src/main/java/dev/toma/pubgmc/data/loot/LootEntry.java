@@ -3,8 +3,10 @@ package dev.toma.pubgmc.data.loot;
 import com.google.gson.*;
 import dev.toma.pubgmc.Pubgmc;
 import dev.toma.pubgmc.util.JsonHelper;
+import dev.toma.pubgmc.util.object.LazyLoader;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
@@ -16,6 +18,7 @@ import java.util.function.Supplier;
 
 public class LootEntry implements Supplier<ItemStack> {
 
+    public static final LazyLoader<LootEntry> EMPTY = new LazyLoader<>(() -> new LootEntry(Items.AIR));
     private final Item item;
     private final CompoundNBT nbt;
     private final int baseCount;

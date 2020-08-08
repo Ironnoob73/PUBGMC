@@ -2,23 +2,24 @@ package dev.toma.pubgmc.common.tileentity;
 
 import dev.toma.pubgmc.Pubgmc;
 import dev.toma.pubgmc.common.container.LootSpawnerContainer;
-import dev.toma.pubgmc.common.item.gun.AmmoType;
-import dev.toma.pubgmc.common.item.gun.GunItem;
 import dev.toma.pubgmc.data.loot.LootManager;
 import dev.toma.pubgmc.data.loot.LootTable;
 import dev.toma.pubgmc.data.loot.LootTableConstants;
+import dev.toma.pubgmc.games.object.LootGenerator;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.items.IItemHandler;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 
 import static dev.toma.pubgmc.init.PMCTileEntities.LOOT_SPAWNER;
 
-public class LootSpawnerTileEntity extends AbstractInventoryTileEntity {
+public class LootSpawnerTileEntity extends AbstractInventoryTileEntity implements LootGenerator {
+
+    private long id = -1;
 
     public LootSpawnerTileEntity() {
         super(LOOT_SPAWNER.get());
@@ -35,7 +36,8 @@ public class LootSpawnerTileEntity extends AbstractInventoryTileEntity {
         return new ItemStackHandler(9);
     }
 
-    public void genLoot() {
+    @Override
+    public void generateLoot() {
         this.genLoot(LootManager.getLootTable(LootTableConstants.LOOT_BLOCK));
     }
 
@@ -50,23 +52,31 @@ public class LootSpawnerTileEntity extends AbstractInventoryTileEntity {
                 ItemStack stack = table.getRandom();
                 inv.insertItem(at, stack, false);
                 ++at;
-                at = postStackGen(stack, at);
+                at = postItemGenerated(stack, at, inventory);
             }
         });
     }
 
-    private int postStackGen(ItemStack stack, int atIndex) {
-        if(stack.getItem() instanceof GunItem && inventory.isPresent()) {
-            IItemHandler handler = inventory.orElseThrow(NullPointerException::new);
-            GunItem gun = (GunItem) stack.getItem();
-            AmmoType ammoType = gun.getAmmoType();
-            int ammoBoxes = 1 + Pubgmc.rand.nextInt(3);
-            for(int a = 0; a < ammoBoxes; a++) {
-                if(atIndex >= handler.getSlots()) break;
-                handler.insertItem(atIndex, ammoType.generateAmmoDrop(), false);
-                ++atIndex;
-            }
-        }
-        return atIndex;
+    @Override
+    public void setGameID(long ID) {
+        this.id = ID;
+    }
+
+    @Override
+    public long getGameID() {
+        return id;
+    }
+
+    @Override
+    public CompoundNBT write(CompoundNBT compound) {
+        super.write(compound);
+        compound.putLong("gameID", id);
+        return compound;
+    }
+
+    @Override
+    public void read(CompoundNBT compound) {
+        super.read(compound);
+        id = compound.getLong("gameID");
     }
 }
