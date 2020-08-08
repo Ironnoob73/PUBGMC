@@ -11,6 +11,7 @@ import dev.toma.pubgmc.common.block.LootSpawnerBlock;
 import dev.toma.pubgmc.common.block.PMCHorizontalBlock;
 import dev.toma.pubgmc.common.block.crafting.AmmoFactoryBlock;
 import dev.toma.pubgmc.common.block.crafting.WeaponFactoryBlock;
+import dev.toma.pubgmc.common.entity.AirdropEntity;
 import dev.toma.pubgmc.common.entity.BulletEntity;
 import dev.toma.pubgmc.common.entity.ParachuteEntity;
 import dev.toma.pubgmc.common.entity.throwable.FlashEntity;
@@ -158,7 +159,8 @@ public class RegistryHandler {
                     new WeaponFactoryBlock("weapon_factory"),
                     new AmmoFactoryBlock("ammo_factory"),
                     new LootSpawnerBlock("loot_spawner"),
-                    new AirdropBlock("airdrop")
+                    new AirdropBlock("airdrop"),
+                    new AirdropBlock("flare_airdrop")
             );
         }
 
@@ -172,7 +174,8 @@ public class RegistryHandler {
                     registerEntity("flash", track_builder(FlashEntity::new, EntityClassification.MISC, 32).size(0.2F, 0.2F)),
                     registerEntity("uaz", track_builder(LandDriveableEntity.UAZDriveable::new, EntityClassification.MISC, 64).size(2.25F, 2.0F)),
                     registerEntity("glider", track_builder(AirDriveableEntity.GliderDriveable::new, EntityClassification.MISC, 64).size(2.5F, 2.0F)),
-                    registerEntity("bullet", track_builder(BulletEntity::new, EntityClassification.MISC, 64).size(0.1F, 0.1F))
+                    registerEntity("bullet", track_builder(BulletEntity::new, EntityClassification.MISC, 64).size(0.1F, 0.1F)),
+                    registerEntity("airdrop", track_builder(AirdropEntity::new, EntityClassification.MISC, 256).size(1.0F, 1.0F))
             );
         }
 

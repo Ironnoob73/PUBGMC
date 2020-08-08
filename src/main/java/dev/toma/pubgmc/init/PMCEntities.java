@@ -1,6 +1,7 @@
 package dev.toma.pubgmc.init;
 
 import dev.toma.pubgmc.Pubgmc;
+import dev.toma.pubgmc.common.entity.AirdropEntity;
 import dev.toma.pubgmc.common.entity.BulletEntity;
 import dev.toma.pubgmc.common.entity.ParachuteEntity;
 import dev.toma.pubgmc.common.entity.throwable.FlashEntity;
@@ -20,4 +21,5 @@ public class PMCEntities {
     public static final EntityType<LandDriveableEntity.UAZDriveable> UAZ = null;
     public static final EntityType<AirDriveableEntity.GliderDriveable> GLIDER = null;
     public static final EntityType<BulletEntity> BULLET = null;
+    public static final EntityType<AirdropEntity> AIRDROP = null;
 }

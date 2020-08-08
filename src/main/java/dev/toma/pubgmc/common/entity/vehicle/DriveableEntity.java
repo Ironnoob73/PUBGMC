@@ -45,7 +45,7 @@ public abstract class DriveableEntity extends AbstractControllableEntity impleme
     }
 
     public void burnFuel() {
-        this.fuel = Math.max(0.0F, this.fuel - 0.05f);
+        this.fuel = Math.max(0.0F, this.fuel - 0.01f);
     }
 
     public void setBaseData() {
@@ -259,6 +259,10 @@ public abstract class DriveableEntity extends AbstractControllableEntity impleme
 
     public boolean isMoving() {
         return currentSpeed != 0;
+    }
+
+    public float getCurrentSpeed() {
+        return currentSpeed;
     }
 
     public static class DriveableData {

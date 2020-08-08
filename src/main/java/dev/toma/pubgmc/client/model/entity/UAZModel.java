@@ -288,8 +288,9 @@ public class UAZModel extends DriveableModel<LandDriveableEntity.UAZDriveable> {
         mirror.render(1f);
         mirror2.render(1f);
         interior.render(1f);
-        float turningModifier = entity != null ? entity.getTurnModifier() : 0.0F;
-        renderSteeringWheel(steering_wheel, turningModifier);
+        boolean nullFlag = entity != null;
+        float turningModifier = nullFlag ? entity.getTurnModifier() : 0.0F;
+        renderSteeringWheel(steering_wheel, nullFlag && entity.getCurrentSpeed() < 0 ? -turningModifier : turningModifier);
         renderFrontWheel(wheelFR, turningModifier);
         renderFrontWheel(wheelFL, turningModifier);
     }

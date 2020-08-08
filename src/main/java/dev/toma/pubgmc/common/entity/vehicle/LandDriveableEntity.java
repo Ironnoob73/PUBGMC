@@ -53,7 +53,7 @@ public abstract class LandDriveableEntity extends DriveableEntity {
         int top = window.getScaledHeight() - 30;
         Vec3d motion = this.getMotion();
         double speed = Math.sqrt(motion.x * motion.x + motion.z * motion.z) * 20;
-        String speedString =  speed * 3.6d + " m/s";
+        String speedString =  (int)(speed * 3.6d) + " m/s";
         mc.fontRenderer.drawStringWithShadow(speedString, left, top - 8, 0xFFFFFF);
         mc.fontRenderer.drawStringWithShadow("E", left - 7, top + 1, 0xBB0000);
         mc.fontRenderer.drawStringWithShadow("F", left + 152, top + 1, 0x00BB00);

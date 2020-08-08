@@ -18,4 +18,5 @@ public class PMCBlocks {
     public static final AmmoFactoryBlock AMMO_FACTORY = null;
     public static final LootSpawnerBlock LOOT_SPAWNER = null;
     public static final AirdropBlock AIRDROP = null;
+    public static final AirdropBlock FLARE_AIRDROP = null;
 }

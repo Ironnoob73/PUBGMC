@@ -1,10 +1,8 @@
 package dev.toma.pubgmc.client;
 
 import dev.toma.pubgmc.client.render.block.LootSpawnerRenderer;
-import dev.toma.pubgmc.client.render.entity.GliderRenderer;
-import dev.toma.pubgmc.client.render.entity.ParachuteRenderer;
-import dev.toma.pubgmc.client.render.entity.ThrowableRenderer;
-import dev.toma.pubgmc.client.render.entity.UAZRenderer;
+import dev.toma.pubgmc.client.render.entity.*;
+import dev.toma.pubgmc.common.entity.AirdropEntity;
 import dev.toma.pubgmc.common.entity.ParachuteEntity;
 import dev.toma.pubgmc.common.entity.throwable.FlashEntity;
 import dev.toma.pubgmc.common.entity.throwable.GrenadeEntity;
@@ -55,7 +53,7 @@ public class ClientManager {
         return framebuffer;
     }
 
-    public static void loadEntityRenderers() {
+    public static void registerEntityRenderers() {
         RenderingRegistry.registerEntityRenderingHandler(ParachuteEntity.class, ParachuteRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(GrenadeEntity.class, manager -> new ThrowableRenderer<>(manager, () -> PMCItems.GRENADE));
         RenderingRegistry.registerEntityRenderingHandler(SmokeEntity.class, manager -> new ThrowableRenderer<>(manager, () -> PMCItems.SMOKE));
@@ -63,6 +61,7 @@ public class ClientManager {
         RenderingRegistry.registerEntityRenderingHandler(MolotovEntity.class, manager -> new ThrowableRenderer<>(manager, () -> PMCItems.MOLOTOV));
         RenderingRegistry.registerEntityRenderingHandler(LandDriveableEntity.UAZDriveable.class, UAZRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(AirDriveableEntity.GliderDriveable.class, GliderRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(AirdropEntity.class, AirdropRenderer::new);
         ClientRegistry.bindTileEntitySpecialRenderer(LootSpawnerTileEntity.class, new LootSpawnerRenderer());
     }
 

@@ -70,7 +70,7 @@ public class Pubgmc {
     }
 
     private void setupClient(FMLClientSetupEvent event) {
-        ClientManager.loadEntityRenderers();
+        ClientManager.registerEntityRenderers();
         ModKeybinds.init();
         DeferredWorkQueue.runLater(() -> {
             //ScreenManager.registerFactory(Registry.PMCContainers.WEAPON_FACTORY.get(), null);
