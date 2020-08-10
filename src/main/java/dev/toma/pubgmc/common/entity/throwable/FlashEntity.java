@@ -2,6 +2,7 @@ package dev.toma.pubgmc.common.entity.throwable;
 
 import dev.toma.pubgmc.client.ClientManager;
 import dev.toma.pubgmc.init.PMCEntities;
+import dev.toma.pubgmc.init.PMCSounds;
 import dev.toma.pubgmc.network.NetworkManager;
 import dev.toma.pubgmc.network.packet.CPacketFlashStatus;
 import dev.toma.pubgmc.util.RenderHelper;
@@ -13,6 +14,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -107,7 +109,7 @@ public class FlashEntity extends ThrowableEntity {
                 }
             } else if (getFlashAmountFor(player, from) > 0) {
                 // TODO - ???? why is this here
-                //player.playSound(PMCSounds.flash_short, 10f, 1f);
+                player.playSound(PMCSounds.STUN_EFFECT_SHORT, 10.0F, 1.0F);
             }
         }
 
@@ -119,9 +121,8 @@ public class FlashEntity extends ThrowableEntity {
             } else if (f0 > MAX_FLASH_RANGE - 5 && f0 <= MAX_FLASH_RANGE + 5) {
                 amount = 1;
             }
-            // TODO
-            //SoundEvent e = amount == 1 ? PMCSounds.flash_short : PMCSounds.flash;
-            //player.playSound(e, 10f, 1f);
+            SoundEvent e = amount == 1 ? PMCSounds.STUN_EFFECT_SHORT : PMCSounds.STUN_EFFECT;
+            player.playSound(e, 10f, 1f);
             return amount;
         }
 
@@ -149,8 +150,7 @@ public class FlashEntity extends ThrowableEntity {
             public static void worldTick(TickEvent.WorldTickEvent e) {
                 if (!FLASHED_PLAYERS.isEmpty()) {
                     List<UUID> list = FLASHED_PLAYERS.keySet().stream().filter(uuid -> e.world.getPlayerByUuid(uuid) != null).collect(Collectors.toList());
-                    for (int i = 0; i < list.size(); i++) {
-                        UUID player = list.get(i);
+                    for (UUID player : list) {
                         int amount = FLASHED_PLAYERS.get(player);
                         amount--;
                         if (amount > 0) {

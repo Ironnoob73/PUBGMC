@@ -13,8 +13,8 @@ public class AttachmentItem extends PMCItem {
         this.category = category;
     }
 
-    public boolean isEmpty(AttachmentItem item) {
-        return item == EMPTY;
+    public boolean isEmpty() {
+        return this == EMPTY;
     }
 
     public float getInaccuracyModifier() {

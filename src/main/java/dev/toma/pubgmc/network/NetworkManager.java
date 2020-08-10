@@ -24,13 +24,14 @@ public class NetworkManager {
         register(CPacketFlashStatus.class, new CPacketFlashStatus());
         register(CPacketSendRecipes.class, new CPacketSendRecipes());
         register(CPacketBulletImpactParticle.class, new CPacketBulletImpactParticle());
-        register(CPacketCreateAnimation.class, new CPacketCreateAnimation());
+        register(CPacketAnimation.class, new CPacketAnimation());
         register(CPacketDisplayLootSpawners.class, new CPacketDisplayLootSpawners());
         register(SPacketControllableInput.class, new SPacketControllableInput());
         register(SPacketCookThrowable.class, new SPacketCookThrowable());
         register(SPacketShoot.class, new SPacketShoot());
         register(SPacketSetAiming.class, new SPacketSetAiming());
         register(SPacketSetReloading.class, new SPacketSetReloading());
+        register(SPacketFiremode.class, new SPacketFiremode());
     }
 
     public static void sendToClient(ServerPlayerEntity player, NetworkPacket<?> packet) {

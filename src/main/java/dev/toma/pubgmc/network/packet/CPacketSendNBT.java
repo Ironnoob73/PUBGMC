@@ -16,8 +16,8 @@ public class CPacketSendNBT implements NetworkPacket<CPacketSendNBT> {
     public static int PLAYER_CAP_SYNC_NETWORK = 0;
     public static int PLAYER_CAP_SYNC_FULL = 1;
 
-    private CompoundNBT nbt;
-    private int id;
+    private final CompoundNBT nbt;
+    private final int id;
 
     public CPacketSendNBT(CompoundNBT nbt, int id) {
         this.nbt = nbt;

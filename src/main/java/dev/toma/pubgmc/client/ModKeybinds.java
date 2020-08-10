@@ -1,10 +1,14 @@
 package dev.toma.pubgmc.client;
 
 import dev.toma.pubgmc.Pubgmc;
+import dev.toma.pubgmc.client.animation.AnimationManager;
+import dev.toma.pubgmc.client.animation.Animations;
+import dev.toma.pubgmc.client.animation.types.FiremodeAnimation;
 import dev.toma.pubgmc.common.item.gun.GunItem;
 import dev.toma.pubgmc.common.item.utility.ThrowableItem;
 import dev.toma.pubgmc.network.NetworkManager;
 import dev.toma.pubgmc.network.packet.SPacketCookThrowable;
+import dev.toma.pubgmc.network.packet.SPacketFiremode;
 import dev.toma.pubgmc.network.packet.SPacketSetReloading;
 import dev.toma.pubgmc.util.UsefulFunctions;
 import net.minecraft.client.Minecraft;
@@ -22,9 +26,11 @@ public class ModKeybinds {
 
     private static final String CATEGORY = "pubgmc.key.category";
     public static KeyBinding RELOAD_COOK;
+    public static KeyBinding FIREMODE_CHANGE;
 
     public static void init() {
         RELOAD_COOK = register("reload", GLFW.GLFW_KEY_R);
+        FIREMODE_CHANGE = register("firemode", GLFW.GLFW_KEY_B);
     }
 
     public static KeyBinding register(String key, int code) {
@@ -50,8 +56,18 @@ public class ModKeybinds {
                     int limit = gun.getMaxAmmo(stack);
                     if(ammo < limit && (player.isCreative() || UsefulFunctions.totalItemCountInInventory(gun.getAmmoType().getAmmo(), player.inventory) > 0)) {
                         NetworkManager.sendToServer(new SPacketSetReloading(true, gun.getReloadTime(stack)));
-                        // TODO reload animation
+                        AnimationManager.playNewAnimation(Animations.RELOADING, gun.getAnimations().getReloadAnimation(gun, stack));
                         player.playSound(gun.getReloadSound(stack), 1.0F, 1.0F);
+                    }
+                }
+            } else if(FIREMODE_CHANGE.isPressed()) {
+                ItemStack stack = player.getHeldItemMainhand();
+                if(stack.getItem() instanceof GunItem) {
+                    GunItem gunItem = (GunItem) stack.getItem();
+                    boolean switched = gunItem.switchFiremode(player, stack);
+                    if(switched) {
+                        AnimationManager.playNewAnimation(Animations.FIREMODE_SWITCH, new FiremodeAnimation());
+                        NetworkManager.sendToServer(new SPacketFiremode());
                     }
                 }
             }

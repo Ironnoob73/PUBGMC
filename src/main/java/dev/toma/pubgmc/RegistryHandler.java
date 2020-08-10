@@ -1,7 +1,7 @@
 package dev.toma.pubgmc;
 
 import dev.toma.pubgmc.client.ScopeInfo;
-import dev.toma.pubgmc.client.animation.gun.GunAnimations;
+import dev.toma.pubgmc.client.animation.gun.AnimationPackP92;
 import dev.toma.pubgmc.client.model.baked.DummyBakedModel;
 import dev.toma.pubgmc.client.model.baked.DummyGunBakedModel;
 import dev.toma.pubgmc.client.render.item.GunRenderer;
@@ -30,6 +30,8 @@ import dev.toma.pubgmc.common.item.gun.attachment.AttachmentItem;
 import dev.toma.pubgmc.common.item.healing.*;
 import dev.toma.pubgmc.common.item.utility.*;
 import dev.toma.pubgmc.common.item.wearable.BulletProofArmor;
+import dev.toma.pubgmc.common.tileentity.AirdropTileEntity;
+import dev.toma.pubgmc.common.tileentity.FlareAirdropTileEntity;
 import dev.toma.pubgmc.init.PMCItems;
 import dev.toma.pubgmc.init.PMCSounds;
 import net.minecraft.block.Block;
@@ -62,6 +64,8 @@ public class RegistryHandler {
 
     @Mod.EventBusSubscriber(modid = Pubgmc.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class CommonHandler {
+
+        public static List<BlockItem> blockItemList = new ArrayList<>();
 
         @SubscribeEvent
         public static void onItemRegister(RegistryEvent.Register<Item> event) {
@@ -118,12 +122,12 @@ public class RegistryHandler {
                     new AttachmentItem.Stock("bullet_loops", true, 1.0F),
                     new AttachmentItem.Scope("red_dot", new ScopeInfo(ScopeInfo.OVERLAY_RED_DOT)),
                     new AttachmentItem.Scope("holographic", new ScopeInfo(ScopeInfo.OVERLAY_HOLOGRAPHIC)),
-                    new AttachmentItem.Scope("x2_scope", new ScopeInfo(ScopeInfo.OVERLAY_2X, 34)),
-                    new AttachmentItem.Scope("x3_scope", new ScopeInfo(ScopeInfo.OVERLAY_3X, 26)),
-                    new AttachmentItem.Scope("x4_scope", new ScopeInfo(ScopeInfo.OVERLAY_4X, 20)),
-                    new AttachmentItem.Scope("x6_scope", new ScopeInfo(ScopeInfo.OVERLAY_6X, 16)),
-                    new AttachmentItem.Scope("x8_scope", new ScopeInfo(ScopeInfo.OVERLAY_8X, 12)),
-                    new AttachmentItem.Scope("x15_scope", new ScopeInfo(ScopeInfo.OVERLAY_15X, 8)),
+                    new AttachmentItem.Scope("x2_scope", new ScopeInfo(ScopeInfo.OVERLAY_2X, ScopeInfo.BLUR_SMALL, 34)),
+                    new AttachmentItem.Scope("x3_scope", new ScopeInfo(ScopeInfo.OVERLAY_3X, ScopeInfo.BLUR_SMALL, 26)),
+                    new AttachmentItem.Scope("x4_scope", new ScopeInfo(ScopeInfo.OVERLAY_4X, ScopeInfo.BLUR_MEDIUM, 20)),
+                    new AttachmentItem.Scope("x6_scope", new ScopeInfo(ScopeInfo.OVERLAY_6X, ScopeInfo.BLUR_MEDIUM, 16)),
+                    new AttachmentItem.Scope("x8_scope", new ScopeInfo(ScopeInfo.OVERLAY_8X, ScopeInfo.BLUR_LARGE, 12)),
+                    new AttachmentItem.Scope("x15_scope", new ScopeInfo(ScopeInfo.OVERLAY_15X, ScopeInfo.BLUR_LARGE, 8)),
                     new GunItem.GunBuilder()
                             .gunProperties(4.0F, 2.5F, 11.0F, 0.05F, 3)
                             .recoil(1.5F, 0.75F)
@@ -133,11 +137,11 @@ public class RegistryHandler {
                             .reload(ReloadManager.Magazine.instance, isQuickdraw -> isQuickdraw ? 30 : 40)
                             .ister(() -> GunRenderer.P92Renderer::new)
                             .attachments()
-                                .barrel(() -> new AttachmentItem.Barrel[] {PMCItems.SUPPRESSOR_SMG})
-                                .scope(() -> new AttachmentItem.Scope[] {PMCItems.RED_DOT, PMCItems.HOLOGRAPHIC})
-                                .magazine(() -> new AttachmentItem.Magazine[] {PMCItems.QUICKDRAW_SMG, PMCItems.EXTENDED_SMG, PMCItems.QUICKDRAW_EXTENDED_SMG})
+                            .barrel(() -> new AttachmentItem.Barrel[]{PMCItems.SUPPRESSOR_SMG})
+                            .scope(() -> new AttachmentItem.Scope[]{PMCItems.RED_DOT, PMCItems.HOLOGRAPHIC})
+                            .magazine(() -> new AttachmentItem.Magazine[]{PMCItems.QUICKDRAW_SMG, PMCItems.EXTENDED_SMG, PMCItems.QUICKDRAW_EXTENDED_SMG})
                             .build()
-                            .animations(() -> () -> GunAnimations.PistolAnimations::new)
+                            .animations(() -> () -> AnimationPackP92::new)
                             .shootingSound(silenced -> silenced ? PMCSounds.P92_SHOOT_SILENT : PMCSounds.P92_SHOOT)
                             .reloadingSound(quickdraw -> quickdraw ? PMCSounds.P92_RELOAD_FAST : PMCSounds.P92_RELOAD)
                             .shootingVolume(silenced -> silenced ? 5.0F : 9.0F)
@@ -146,8 +150,6 @@ public class RegistryHandler {
             blockItemList.stream().filter(Objects::nonNull).forEach(registry::register);
             blockItemList = null;
         }
-
-        public static List<BlockItem> blockItemList = new ArrayList<>();
 
         @SubscribeEvent
         public static void onBlockRegister(RegistryEvent.Register<Block> event) {
@@ -159,33 +161,35 @@ public class RegistryHandler {
                     new WeaponFactoryBlock("weapon_factory"),
                     new AmmoFactoryBlock("ammo_factory"),
                     new LootSpawnerBlock("loot_spawner"),
-                    new AirdropBlock("airdrop"),
-                    new AirdropBlock("flare_airdrop")
+                    new AirdropBlock("airdrop", AirdropTileEntity::new),
+                    new AirdropBlock("flare_airdrop", FlareAirdropTileEntity::new)
             );
         }
 
         @SubscribeEvent
         public static void onEntityTypeRegister(RegistryEvent.Register<EntityType<?>> event) {
             event.getRegistry().registerAll(
-                    registerEntity("parachute", track_builder(ParachuteEntity::new, EntityClassification.MISC, 256).size(1.5F, 2.5F)),
-                    registerEntity("grenade", track_builder(GrenadeEntity::new, EntityClassification.MISC, 32).size(0.2F, 0.2F)),
-                    registerEntity("smoke", track_builder(SmokeEntity::new, EntityClassification.MISC, 32).size(0.2F, 0.2F)),
-                    registerEntity("molotov", track_builder(MolotovEntity::new, EntityClassification.MISC, 32).size(0.2F, 0.2F)),
-                    registerEntity("flash", track_builder(FlashEntity::new, EntityClassification.MISC, 32).size(0.2F, 0.2F)),
-                    registerEntity("uaz", track_builder(LandDriveableEntity.UAZDriveable::new, EntityClassification.MISC, 64).size(2.25F, 2.0F)),
-                    registerEntity("glider", track_builder(AirDriveableEntity.GliderDriveable::new, EntityClassification.MISC, 64).size(2.5F, 2.0F)),
-                    registerEntity("bullet", track_builder(BulletEntity::new, EntityClassification.MISC, 64).size(0.1F, 0.1F)),
-                    registerEntity("airdrop", track_builder(AirdropEntity::new, EntityClassification.MISC, 256).size(1.0F, 1.0F))
+                    registerEntity("parachute", trackBuilder(ParachuteEntity::new, EntityClassification.MISC, 256).size(1.5F, 2.5F)),
+                    registerEntity("grenade", trackBuilder(GrenadeEntity::new, EntityClassification.MISC, 32).size(0.2F, 0.2F)),
+                    registerEntity("smoke", trackBuilder(SmokeEntity::new, EntityClassification.MISC, 32).size(0.2F, 0.2F)),
+                    registerEntity("molotov", trackBuilder(MolotovEntity::new, EntityClassification.MISC, 32).size(0.2F, 0.2F)),
+                    registerEntity("flash", trackBuilder(FlashEntity::new, EntityClassification.MISC, 32).size(0.2F, 0.2F)),
+                    registerEntity("uaz", trackBuilder(LandDriveableEntity.UAZDriveable::new, EntityClassification.MISC, 64).size(2.25F, 2.0F)),
+                    registerEntity("glider", trackBuilder(AirDriveableEntity.GliderDriveable::new, EntityClassification.MISC, 64).size(2.5F, 2.0F)),
+                    registerEntity("bullet", trackBuilder(BulletEntity::new, EntityClassification.MISC, 64).size(0.1F, 0.1F)),
+                    registerEntity("airdrop", trackBuilder(AirdropEntity::new, EntityClassification.MISC, 256).size(1.0F, 1.0F))
             );
         }
 
         @SubscribeEvent
         public static void onSoundRegister(RegistryEvent.Register<SoundEvent> event) {
             event.getRegistry().registerAll(
-                sound("p92_shoot"),
-                sound("p92_shoot_silent"),
-                sound("p92_reload"),
-                sound("p92_reload_fast")
+                    sound("stun_effect"),
+                    sound("stun_effect_short"),
+                    sound("p92_shoot"),
+                    sound("p92_shoot_silent"),
+                    sound("p92_reload"),
+                    sound("p92_reload_fast")
             );
         }
 
@@ -204,7 +208,7 @@ public class RegistryHandler {
             return EntityType.Builder.create(factory, classification);
         }
 
-        private static <T extends Entity> EntityType.Builder<T> track_builder(EntityType.IFactory<T> factory, EntityClassification classification, int range) {
+        private static <T extends Entity> EntityType.Builder<T> trackBuilder(EntityType.IFactory<T> factory, EntityClassification classification, int range) {
             return EntityType.Builder.create(factory, classification).setTrackingRange(range).setUpdateInterval(1).setShouldReceiveVelocityUpdates(true);
         }
     }

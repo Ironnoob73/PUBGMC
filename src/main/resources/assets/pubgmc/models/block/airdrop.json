@@ -1,0 +1,12 @@
+{
+    "parent": "block/orientable",
+    "textures": {
+        "up": "pubgmc:blocks/airdrop_top",
+        "down": "pubgmc:blocks/airdrop_bottom",
+        "north": "pubgmc:blocks/airdrop_side",
+        "south": "pubgmc:blocks/airdrop_side",
+        "west": "pubgmc:blocks/airdrop_side",
+        "east": "pubgmc:blocks/airdrop_side",
+        "particle": "pubgmc:blocks/airdrop_side"
+    }
+}

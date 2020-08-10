@@ -17,8 +17,6 @@ import java.util.function.Supplier;
 
 public abstract class AbstractGunModel extends Model {
 
-    // attachments models
-
     private final Map<Integer, RendererModel> animatedPartMap = new HashMap<>();
     private LazyLoader<AnimationType[]> listeningTo = new LazyLoader<>(() -> new AnimationType[0]);
 

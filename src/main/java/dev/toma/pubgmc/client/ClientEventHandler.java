@@ -67,6 +67,7 @@ public class ClientEventHandler {
         }
     });
     public static ScopeInfo scopeInfo;
+    static boolean isShaderLoaded;
 
     @SubscribeEvent
     public static void cancelOverlayRenders(RenderGameOverlayEvent.Pre event) {
@@ -87,19 +88,24 @@ public class ClientEventHandler {
             IPlayerCap data = PlayerCapFactory.get(player);
             if(data.getAimInfo().isAiming() && scopeInfo != null) {
                 MainWindow window = event.getWindow();
-                int left = window.getScaledWidth() / 2 - 60;
-                int top = window.getScaledHeight() / 2 - 60;
+                int top = 25;
+                int size = window.getScaledHeight() - 50;
+                int left = window.getScaledWidth() / 2 - size / 2;
                 if(scopeInfo.shouldRenderPiP()) {
                     ClientManager.setScopeRendering(true);
-                    RenderHelper.drawColoredShape(0, 0, window.getScaledWidth(), window.getScaledHeight(), 0.0F, 0.0F, 0.0F, 0.6F);
                     GameRenderer renderer = mc.gameRenderer;
                     FogRenderer fogRenderer = renderer.fogRenderer;
-                    RenderHelper.drawColoredShape(left - 2, top - 2, left + 122, top + 122, 0.0F, 0.0F, 0.0F, 1.0F);
-                    RenderHelper.drawColoredShape(left, top, left + 120, top + 120, fogRenderer.red, fogRenderer.green, fogRenderer.blue, 1.0F);
+                    // black frame background
+                    RenderHelper.drawColoredShape(left - 2, top - 2, left + size + 2, top + size + 2, 0.0F, 0.0F, 0.0F, 1.0F);
+                    // background with fog color
+                    RenderHelper.drawColoredShape(left, top, left + size, top + size, fogRenderer.red, fogRenderer.green, fogRenderer.blue, 1.0F);
+                    // bind texture from the other framebuffer
                     ClientManager.getFramebuffer().bindFramebufferTexture();
-                    renderBoundTexture(left, top, left + 120, top + 120);
+                    // render framebuffer texture
+                    renderBoundTexture(left, top, left + size, top + size);
                 }
-                RenderHelper.drawTexturedShape(left, top, left + 120, top + 120, scopeInfo.getTextureOverlay());
+                // scope overlay
+                RenderHelper.drawTexturedShape(left, top, left + size, top + size, scopeInfo.getTextureOverlay());
             }
 
             if(player.getRidingEntity() instanceof IControllableEntity) {
@@ -128,8 +134,9 @@ public class ClientEventHandler {
                 } else if(settings.keyBindUseItem.isPressed() && Animations.AIMING.canPlay()) {
                     boolean aiming = !PlayerCapFactory.get(player).getAimInfo().isActualAim();
                     NetworkManager.sendToServer(new SPacketSetAiming(aiming, 0.2F * gun.getAttachment(AttachmentCategory.STOCK, stack).getAimSpeedMultiplier()));
+                    ClientManager.needsShaderUpdate = true;
                     if(aiming) {
-                        AnimationManager.playNewAnimation(Animations.AIMING, gun.getAnimations().getAimingAnimation());
+                        AnimationManager.playNewAnimation(Animations.AIMING, gun.getAnimations().getAimingAnimation(gun, stack));
                         scopeInfo = gun.getScopeData(stack);
                     }
                 }
@@ -219,9 +226,9 @@ public class ClientEventHandler {
 
     @SubscribeEvent
     public static void onRenderTick(TickEvent.RenderTickEvent event) {
+        Minecraft mc = Minecraft.getInstance();
         if(event.phase == TickEvent.Phase.START) {
             if(ClientManager.shouldRenderScopeOverlay) {
-                Minecraft mc = Minecraft.getInstance();
                 ClientManager.updateFramebufferSize(mc.mainWindow);
                 Framebuffer main = mc.getFramebuffer();
                 ClientManager.isRenderingPiP = true;
@@ -240,6 +247,18 @@ public class ClientEventHandler {
                 main.bindFramebuffer(true);
                 ClientManager.isRenderingPiP = false;
                 ClientManager.setScopeRendering(false);
+            }
+        } else {
+            if(mc.player == null) return;
+            boolean aiming = PlayerCapFactory.get(mc.player).getAimInfo().isAiming();
+            if(aiming && scopeInfo != null && scopeInfo.shouldRenderPiP()) {
+                if(!isShaderLoaded) {
+                    isShaderLoaded = true;
+                    mc.gameRenderer.loadShader(scopeInfo.getBlurShader());
+                }
+            } else if(!aiming && isShaderLoaded) {
+                isShaderLoaded = false;
+                mc.gameRenderer.stopUseShader();
             }
         }
         AnimationManager.renderTick(event.renderTickTime, event.phase);
@@ -316,10 +335,10 @@ public class ClientEventHandler {
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder builder = tessellator.getBuffer();
         builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-        builder.pos(x1, y2, 0).tex(0.4, 0.35).endVertex();
-        builder.pos(x2, y2, 0).tex(0.6, 0.35).endVertex();
-        builder.pos(x2, y1, 0).tex(0.6, 0.65).endVertex();
-        builder.pos(x1, y1, 0).tex(0.4, 0.65).endVertex();
+        builder.pos(x1, y2, 0).tex(0.35, 0.3).endVertex();
+        builder.pos(x2, y2, 0).tex(0.65, 0.3).endVertex();
+        builder.pos(x2, y1, 0).tex(0.65, 0.7).endVertex();
+        builder.pos(x1, y1, 0).tex(0.35, 0.7).endVertex();
         tessellator.draw();
     }
 

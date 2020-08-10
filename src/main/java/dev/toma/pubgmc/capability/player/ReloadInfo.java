@@ -42,10 +42,6 @@ public class ReloadInfo {
         if(!reloading) {
             PlayerEntity player = factory.getOwner();
             ItemStack stack = player.getHeldItemMainhand();
-            if(stack.getItem() instanceof GunItem) {
-                // TODO play reload sound
-                // TODO reload animation
-            }
             reloading = true;
             slotIn = slot;
             total = time;

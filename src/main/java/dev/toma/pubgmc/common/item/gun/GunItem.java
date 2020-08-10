@@ -3,14 +3,15 @@ package dev.toma.pubgmc.common.item.gun;
 import dev.toma.pubgmc.capability.IPlayerCap;
 import dev.toma.pubgmc.capability.player.PlayerCapFactory;
 import dev.toma.pubgmc.client.ScopeInfo;
+import dev.toma.pubgmc.client.animation.Animations;
 import dev.toma.pubgmc.client.animation.HandAnimate;
-import dev.toma.pubgmc.client.animation.gun.GunAnimations;
+import dev.toma.pubgmc.client.animation.gun.GunAnimationPack;
 import dev.toma.pubgmc.common.item.PMCItem;
 import dev.toma.pubgmc.common.item.gun.attachment.AttachmentCategory;
 import dev.toma.pubgmc.common.item.gun.attachment.AttachmentItem;
 import dev.toma.pubgmc.common.item.gun.attachment.GunAttachments;
 import dev.toma.pubgmc.network.NetworkManager;
-import dev.toma.pubgmc.network.packet.CPacketCreateAnimation;
+import dev.toma.pubgmc.network.packet.CPacketAnimation;
 import dev.toma.pubgmc.util.function.Bool2FloatFunction;
 import dev.toma.pubgmc.util.function.Bool2IntFunction;
 import dev.toma.pubgmc.util.function.Bool2ObjFunction;
@@ -59,9 +60,10 @@ public class GunItem extends PMCItem implements HandAnimate {
     protected final Bool2ObjFunction<SoundEvent> shootSound;
     protected final Bool2FloatFunction shootVolume;
     protected final Bool2ObjFunction<SoundEvent> reloadSound;
-    protected final GunAnimations animations;
+    protected final GunAnimationPack animationPack;
     @Nullable
     protected final ScopeInfo customScopeFactory;
+    protected final GunAttachments attachments;
 
     protected GunItem(String name, Properties properties, GunBuilder builder) {
         super(name, properties);
@@ -83,11 +85,12 @@ public class GunItem extends PMCItem implements HandAnimate {
         this.shootSound = builder.shootSound;
         this.shootVolume = builder.shootVolumeFunction;
         this.reloadSound = builder.reloadSound;
-        Supplier<GunAnimations> tmp = DistExecutor.callWhenOn(Dist.CLIENT, builder.animations);
+        Supplier<GunAnimationPack> tmp = DistExecutor.callWhenOn(Dist.CLIENT, builder.animations);
         if (tmp != null) {
-            this.animations = tmp.get();
-        } else animations = null;
+            this.animationPack = tmp.get();
+        } else animationPack = null;
         this.customScopeFactory = builder.customScopeFactory;
+        this.attachments = builder.attachments;
     }
 
     public void doReload(PlayerEntity player, World world, ItemStack stack) {
@@ -113,7 +116,7 @@ public class GunItem extends PMCItem implements HandAnimate {
                 if (!player.isCreative()) addAmmo(stack, -1);
                 world.playSound(null, source.posX, source.posY, source.posZ, getShootSound(silent), SoundCategory.MASTER, getVolume(silent), 1.0F);
                 tracker.setCooldown(stack.getItem(), this.firerate);
-                NetworkManager.sendToClient((ServerPlayerEntity) player, new CPacketCreateAnimation(5));
+                NetworkManager.sendToClient((ServerPlayerEntity) player, new CPacketAnimation(Animations.RECOIL, CPacketAnimation.Result.PLAY));
             }
         } else {
             if (ammo > 0) {
@@ -144,13 +147,14 @@ public class GunItem extends PMCItem implements HandAnimate {
         return reloadTime.apply(getAttachment(AttachmentCategory.MAGAZINE, stack).isQuickdraw());
     }
 
-    public void switchFiremode(PlayerEntity player, ItemStack stack) {
+    public boolean switchFiremode(PlayerEntity player, ItemStack stack) {
         Firemode current = getFiremode(stack);
         Firemode next = firemodeSwitchFunction.apply(current);
         if (!player.world.isRemote && next != current) {
             getOrCreateTag(stack).putInt("firemode", next.ordinal());
             player.sendStatusMessage(new TranslationTextComponent("firemode.switch." + next.name().toLowerCase()), true);
         }
+        return current != next;
     }
 
     public Firemode getFiremode(ItemStack stack) {
@@ -211,20 +215,20 @@ public class GunItem extends PMCItem implements HandAnimate {
     @OnlyIn(Dist.CLIENT)
     @Override
     public void renderRightArm() {
-        animations.applyOnRightArm();
+        animationPack.applyOnRightArm();
         renderHand(HandSide.RIGHT);
     }
 
     @OnlyIn(Dist.CLIENT)
     @Override
     public void renderLeftArm() {
-        animations.applyOnLeftArm();
+        animationPack.applyOnLeftArm();
         renderHand(HandSide.LEFT);
     }
 
     @OnlyIn(Dist.CLIENT)
-    public GunAnimations getAnimations() {
-        return animations;
+    public GunAnimationPack getAnimations() {
+        return animationPack;
     }
 
     private CompoundNBT getOrCreateTag(ItemStack stack) {
@@ -252,6 +256,10 @@ public class GunItem extends PMCItem implements HandAnimate {
         return ammoType;
     }
 
+    public GunAttachments getAttachmentList() {
+        return attachments;
+    }
+
     public static class GunBuilder {
 
         protected static Logger log = LogManager.getLogger("pubgmc-gunbuilder");
@@ -273,7 +281,7 @@ public class GunItem extends PMCItem implements HandAnimate {
         private AmmoType ammoType;
         private Item.Properties properties = new Properties().group(GUNS).maxStackSize(1);
         private Supplier<Callable<ItemStackTileEntityRenderer>> ister;
-        private Supplier<Callable<Supplier<GunAnimations>>> animations;
+        private Supplier<Callable<Supplier<GunAnimationPack>>> animations;
         private Bool2ObjFunction<SoundEvent> shootSound;
         private Bool2ObjFunction<SoundEvent> reloadSound;
         private Bool2FloatFunction shootVolumeFunction = silent -> silent ? 6.0F : 12.0F;
@@ -384,7 +392,7 @@ public class GunItem extends PMCItem implements HandAnimate {
             return this;
         }
 
-        public GunBuilder animations(Supplier<Callable<Supplier<GunAnimations>>> animations) {
+        public GunBuilder animations(Supplier<Callable<Supplier<GunAnimationPack>>> animations) {
             this.animations = animations;
             return this;
         }

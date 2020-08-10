@@ -14,9 +14,15 @@ public final class AnimationType {
     public final int index;
     private LazyLoader<AnimationType[]> blockedBy = new LazyLoader<>(() -> new AnimationType[0]);
     private LazyLoader<AnimationType[]> overrides = new LazyLoader<>(() -> new AnimationType[0]);
+    private Supplier<Animation> instanceSupplier;
 
     public AnimationType(int id) {
         this.index = id;
+    }
+
+    public AnimationType factory(Supplier<Animation> supplier) {
+        this.instanceSupplier = supplier;
+        return this;
     }
 
     public AnimationType blockedBy(Supplier<AnimationType[]> conditions) {
@@ -27,6 +33,13 @@ public final class AnimationType {
     public AnimationType override(Supplier<AnimationType[]> overrides) {
         this.overrides = new LazyLoader<>(overrides);
         return this;
+    }
+
+    public Animation getDefaultInstance() {
+        if(instanceSupplier == null) {
+            throw new UnsupportedOperationException("No defined animation for this type");
+        }
+        return instanceSupplier.get();
     }
 
     public void apply() {

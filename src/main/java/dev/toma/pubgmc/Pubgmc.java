@@ -8,6 +8,7 @@ import dev.toma.pubgmc.client.ModKeybinds;
 import dev.toma.pubgmc.client.animation.Animations;
 import dev.toma.pubgmc.client.animation.builder.BuilderMain;
 import dev.toma.pubgmc.client.screen.AirdropScreen;
+import dev.toma.pubgmc.client.screen.FlareAirdropScreen;
 import dev.toma.pubgmc.client.screen.LootSpawnerScreen;
 import dev.toma.pubgmc.command.LootCommand;
 import dev.toma.pubgmc.config.Config;
@@ -76,6 +77,7 @@ public class Pubgmc {
             //ScreenManager.registerFactory(Registry.PMCContainers.WEAPON_FACTORY.get(), null);
             ScreenManager.registerFactory(PMCContainers.LOOT_SPAWNER.get(), LootSpawnerScreen::new);
             ScreenManager.registerFactory(PMCContainers.AIRDROP.get(), AirdropScreen::new);
+            ScreenManager.registerFactory(PMCContainers.FLARE_AIRDROP.get(), FlareAirdropScreen::new);
         });
         Animations.init();
         if(Config.animationTool.get()) BuilderMain.init();

@@ -17,8 +17,10 @@ import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.audio.SoundHandler;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.api.distmarker.Dist;
@@ -31,6 +33,7 @@ import java.util.function.Supplier;
 public class ClientManager {
 
     private static Framebuffer framebuffer;
+    public static boolean needsShaderUpdate;
     public static boolean isRenderingPiP;
     public static boolean shouldRenderScopeOverlay;
 

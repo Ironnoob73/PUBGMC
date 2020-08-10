@@ -1,5 +1,6 @@
 package dev.toma.pubgmc.common.entity.vehicle;
 
+import dev.toma.pubgmc.games.object.GameKeyHolder;
 import dev.toma.pubgmc.util.UsefulFunctions;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;

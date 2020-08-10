@@ -15,11 +15,15 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nullable;
+import java.util.function.Supplier;
 
 public class AirdropBlock extends PMCBlock {
 
-    public AirdropBlock(String name) {
+    private final Supplier<? extends AirdropTileEntity> supplier;
+
+    public AirdropBlock(String name, Supplier<? extends AirdropTileEntity> supplier) {
         super(name, Properties.create(Material.IRON).hardnessAndResistance(4.0F));
+        this.supplier = supplier;
     }
 
     @Override
@@ -38,6 +42,6 @@ public class AirdropBlock extends PMCBlock {
     @Nullable
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        return new AirdropTileEntity();
+        return supplier.get();
     }
 }

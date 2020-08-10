@@ -44,25 +44,30 @@ public class AirdropTileEntity extends AbstractInventoryTileEntity implements Lo
 
     @Override
     public void generateLoot() {
-        if(Config.cmdGeneratesAirdropLoot.get()) {
-            clearInventory();
-            inventory.ifPresent(inv -> {
-                LootTable gun = LootManager.getLootTable(LootTableConstants.AIRDROP_WEAPONS);
-                LootTable util = LootManager.getLootTable(LootTableConstants.AIRDROP_UTILITIES);
-                int at = 0;
-                if(!gun.isEmpty()) {
-                    ItemStack gunStack = gun.getRandom();
-                    inv.insertItem(at, gunStack, false);
+        clearInventory();
+        inventory.ifPresent(inv -> {
+            LootTable gun = LootManager.getLootTable(LootTableConstants.AIRDROP_WEAPONS);
+            LootTable util = LootManager.getLootTable(LootTableConstants.AIRDROP_UTILITIES);
+            int at = 0;
+            if(!gun.isEmpty()) {
+                ItemStack gunStack = gun.getRandom();
+                inv.insertItem(at, gunStack, false);
+                ++at;
+                at = postItemGenerated(gunStack, at, inventory);
+            }
+            if(!util.isEmpty()) {
+                for(int i = 0; i < 3; i++) {
+                    inv.insertItem(at, util.getRandom(), false);
                     ++at;
-                    at = postItemGenerated(gunStack, at, inventory);
                 }
-                if(!util.isEmpty()) {
-                    for(int i = 0; i < 3; i++) {
-                        inv.insertItem(at, util.getRandom(), false);
-                        ++at;
-                    }
-                }
-            });
+            }
+        });
+    }
+
+    @Override
+    public void onExecuteLootGenCommand() {
+        if(Config.cmdGeneratesAirdropLoot.get()) {
+            generateLoot();
         }
     }
 
