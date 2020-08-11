@@ -80,6 +80,9 @@ public abstract class GunRenderer extends ItemStackTileEntityRenderer {
                 RED_DOT.doRender();
                 GlStateManager.popMatrix();
             }
+            if(AttachmentHelper.hasSilencer(item, stack)) {
+                PISTOL_SUPPRESSOR.doRender();
+            }
         }
     }
 }

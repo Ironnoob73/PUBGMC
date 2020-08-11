@@ -1,5 +1,6 @@
 package dev.toma.pubgmc.client.model.gun.attachment;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.renderer.entity.model.RendererModel;
 import net.minecraft.client.renderer.model.ModelBox;
 
@@ -47,6 +48,12 @@ public class PistolSupressorModel extends AttachmentModel {
         bone3.cubeList.add(new ModelBox(bone3, 70, 68, -3.7321F, -1.0F, -7.1719F, 3, 2, 5, 0.0F, false));
         bone3.cubeList.add(new ModelBox(bone3, 70, 68, -1.0F, -3.7321F, -7.1719F, 2, 3, 5, 0.0F, true));
         bone3.cubeList.add(new ModelBox(bone3, 70, 68, 0.7321F, -1.0F, -7.1719F, 3, 2, 5, 0.0F, true));
+    }
+
+    @Override
+    protected void preRenderCallback() {
+        GlStateManager.scaled(1.4, 1.4, 1.4);
+        GlStateManager.translated(-35.7, -13, -18);
     }
 
     @Override
