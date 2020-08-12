@@ -90,7 +90,7 @@ public class ClientEventHandler {
                 MainWindow window = event.getWindow();
                 int top = 25;
                 int size = window.getScaledHeight() - 50;
-                int left = window.getScaledWidth() / 2 - size / 2;
+                int left = window.getScaledWidth() / 2 - size / 2 - 1;
                 if(scopeInfo.shouldRenderPiP()) {
                     ClientManager.setScopeRendering(true);
                     GameRenderer renderer = mc.gameRenderer;
