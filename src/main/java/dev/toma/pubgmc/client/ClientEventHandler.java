@@ -90,7 +90,7 @@ public class ClientEventHandler {
                 MainWindow window = event.getWindow();
                 int top = 25;
                 int size = window.getScaledHeight() - 50;
-                int left = window.getScaledWidth() / 2 - size / 2 - 1;
+                double left = window.getScaledWidth() / 2.0D - size / 2.0D;
                 if(scopeInfo.shouldRenderPiP()) {
                     ClientManager.setScopeRendering(true);
                     GameRenderer renderer = mc.gameRenderer;
@@ -331,7 +331,7 @@ public class ClientEventHandler {
         }
     }
 
-    private static void renderBoundTexture(int x1, int y1, int x2, int y2) {
+    private static void renderBoundTexture(double x1, double y1, double x2, double y2) {
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder builder = tessellator.getBuffer();
         builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
