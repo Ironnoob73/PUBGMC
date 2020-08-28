@@ -28,7 +28,6 @@ import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.screen.inventory.InventoryScreen;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.FogRenderer;
 import net.minecraft.client.renderer.GameRenderer;
@@ -43,7 +42,6 @@ import net.minecraft.util.CooldownTracker;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Util;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderSpecificHandEvent;
@@ -111,7 +109,7 @@ public class ClientEventHandler {
             if(player.getRidingEntity() instanceof IControllableEntity) {
                 ((IControllableEntity) player.getRidingEntity()).drawOnScreen(mc, event.getWindow());
             }
-            if(player.isCreative() || player.isSpectator()) return;
+            if(player.isSpectator()) return;
             IPlayerCap cap = PlayerCapFactory.get(player);
             BoostStats stats = cap.getBoostStats();
             renderHUD(mc, event.getWindow(), stats, Config.specialHUDRenderer.get());
@@ -264,15 +262,8 @@ public class ClientEventHandler {
         AnimationManager.renderTick(event.renderTickTime, event.phase);
     }
 
-    @SubscribeEvent
-    public static void openGUI(GuiOpenEvent event) {
-        if(event.getGui() instanceof InventoryScreen) {
-            // TODO display our own
-        }
-    }
-
     private static void shoot(GunItem item, ItemStack stack, PlayerEntity player) {
-        if(player.isCreative() || item.getAmmo(stack) > 0) {
+        if(item.getAmmo(stack) > 0) {
             float vertical = item.getVerticalRecoil(player, stack);
             float horizontalUnmodified = item.getHorizontalRecoil(stack);
             float horizontal = rand.nextBoolean() ? horizontalUnmodified : -horizontalUnmodified;
@@ -289,12 +280,18 @@ public class ClientEventHandler {
         int left = window.getScaledWidth() / 2 - 91;
         int top = window.getScaledHeight() - 35;
         if(specialRenderer) {
-            int width = 183;
+            boolean creative = player.isCreative();
+            if(creative) {
+                top += 13;
+            }
+            int width = 182;
             // health background
-            RenderHelper.x16Blit(left, top, left + width, top + 10, 0, 0, 10, 1);
-            float healthMod = player.getHealth() / 20f;
-            // health bar
-            RenderHelper.drawColoredShape(left, top, (int)(left + width * healthMod), top + 10, 1.0F, healthMod, healthMod, 1.0F);
+            if(!creative) {
+                RenderHelper.x16Blit(left, top, left + width, top + 10, 0, 0, 10, 1);
+                float healthMod = player.getHealth() / 20f;
+                // health bar
+                RenderHelper.drawColoredShape(left, top, (int)(left + width * healthMod), top + 10, 1.0F, healthMod, healthMod, 1.0F);
+            }
             // black transparent bar
             RenderHelper.drawColoredShape(left, top - 20, left + width, top, 0.0F, 0.0F, 0.0F, 0.5F);
             float step = 1 / 20.0F * width;

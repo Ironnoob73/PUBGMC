@@ -14,6 +14,10 @@ import dev.toma.pubgmc.command.LootCommand;
 import dev.toma.pubgmc.config.Config;
 import dev.toma.pubgmc.data.loot.LootManager;
 import dev.toma.pubgmc.init.PMCContainers;
+import dev.toma.pubgmc.inv.cap.InventoryFactory;
+import dev.toma.pubgmc.inv.cap.InventoryProvider;
+import dev.toma.pubgmc.inv.cap.PMCInventoryHandler;
+import dev.toma.pubgmc.inv.screen.PMCPlayerInventoryScreen;
 import dev.toma.pubgmc.network.NetworkManager;
 import dev.toma.pubgmc.util.recipe.FactoryCraftingRecipes;
 import net.minecraft.client.gui.ScreenManager;
@@ -21,9 +25,12 @@ import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.GameRules;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DeferredWorkQueue;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -78,6 +85,7 @@ public class Pubgmc {
             ScreenManager.registerFactory(PMCContainers.LOOT_SPAWNER.get(), LootSpawnerScreen::new);
             ScreenManager.registerFactory(PMCContainers.AIRDROP.get(), AirdropScreen::new);
             ScreenManager.registerFactory(PMCContainers.FLARE_AIRDROP.get(), FlareAirdropScreen::new);
+            ScreenManager.registerFactory(PMCContainers.PLAYER_CONTAINER.get(), PMCPlayerInventoryScreen::new);
         });
         Animations.init();
         if(Config.animationTool.get()) BuilderMain.init();
@@ -86,6 +94,7 @@ public class Pubgmc {
     private void setupCommon(FMLCommonSetupEvent event) {
         NetworkManager.init();
         CapabilityManager.INSTANCE.register(IPlayerCap.class, new PlayerCapStorage(), () -> new PlayerCapFactory(null));
+        CapabilityManager.INSTANCE.register(PMCInventoryHandler.class, new InventoryProvider.Storage(), InventoryFactory::new);
     }
 
     private void serverInit(FMLServerAboutToStartEvent event) {
@@ -109,5 +118,19 @@ public class Pubgmc {
         pubgmcLog.error(message, objects);
         pubgmcLog.error("");
         pubgmcLog.error("-------------------------------------------------");
+    }
+
+    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    static class ClientModEventHandler {
+
+        @SubscribeEvent
+        public static void stitchTextures(TextureStitchEvent.Pre event) {
+            if(event.getMap().getBasePath().equals("textures")) {
+                event.addSprite(makeResource("slot/night_vision"));
+                event.addSprite(makeResource("slot/ghillie"));
+                event.addSprite(makeResource("slot/backpack"));
+                event.addSprite(makeResource("slot/locked"));
+            }
+        }
     }
 }

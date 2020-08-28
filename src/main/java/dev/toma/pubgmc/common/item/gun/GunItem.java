@@ -111,9 +111,9 @@ public class GunItem extends PMCItem implements HandAnimate {
             PlayerEntity player = (PlayerEntity) source;
             CooldownTracker tracker = player.getCooldownTracker();
             IPlayerCap cap = PlayerCapFactory.get(player);
-            if ((ammo > 0 || player.isCreative()) && !tracker.hasCooldown(stack.getItem()) && !cap.getReloadInfo().isReloading()) {
+            if (ammo > 0 && !tracker.hasCooldown(stack.getItem()) && !cap.getReloadInfo().isReloading()) {
                 shootManager.shoot(source, world, stack);
-                if (!player.isCreative()) addAmmo(stack, -1);
+                addAmmo(stack, -1);
                 world.playSound(null, source.posX, source.posY, source.posZ, getShootSound(silent), SoundCategory.MASTER, getVolume(silent), 1.0F);
                 tracker.setCooldown(stack.getItem(), this.firerate);
                 NetworkManager.sendToClient((ServerPlayerEntity) player, new CPacketAnimation(Animations.RECOIL, CPacketAnimation.Result.PLAY));
@@ -428,6 +428,8 @@ public class GunItem extends PMCItem implements HandAnimate {
             shootSound = nonnullOrThrow(shootSound, "Undefined shooting sounds", name);
             reloadSound = nonnullOrThrow(reloadSound, "Undefined reloading sounds", name);
             shootVolumeFunction = nonnullOrThrow(shootVolumeFunction, "Undefined shooting volume", name);
+            animations = nonnullOrThrow(animations, "Undefined animations", name);
+            shootVolumeFunction = nonnullOrThrow(shootVolumeFunction, "Undefined weapon volume", name);
             return new GunItem(
                     name,
                     nonnullOrThrow(properties, "Item properties cannot be null!", name).setTEISR(nonnullOrThrow(ister, "Gun renderer cannot be null!", name)),

@@ -1,6 +1,8 @@
 package dev.toma.pubgmc.network;
 
 import dev.toma.pubgmc.Pubgmc;
+import dev.toma.pubgmc.inv.network.CPacketSyncInventory;
+import dev.toma.pubgmc.inv.network.SPacketOpenPlayerInventory;
 import dev.toma.pubgmc.network.packet.*;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.world.World;
@@ -26,12 +28,14 @@ public class NetworkManager {
         register(CPacketBulletImpactParticle.class, new CPacketBulletImpactParticle());
         register(CPacketAnimation.class, new CPacketAnimation());
         register(CPacketDisplayLootSpawners.class, new CPacketDisplayLootSpawners());
+        register(CPacketSyncInventory.class, new CPacketSyncInventory());
         register(SPacketControllableInput.class, new SPacketControllableInput());
         register(SPacketCookThrowable.class, new SPacketCookThrowable());
         register(SPacketShoot.class, new SPacketShoot());
         register(SPacketSetAiming.class, new SPacketSetAiming());
         register(SPacketSetReloading.class, new SPacketSetReloading());
         register(SPacketFiremode.class, new SPacketFiremode());
+        register(SPacketOpenPlayerInventory.class, new SPacketOpenPlayerInventory());
     }
 
     public static void sendToClient(ServerPlayerEntity player, NetworkPacket<?> packet) {

@@ -68,4 +68,7 @@ public class PMCItems {
     public static final AttachmentItem.Scope X8_SCOPE = null;
     public static final AttachmentItem.Scope X15_SCOPE = null;
     public static final GunItem P92 = null;
+    public static final BackpackItem SMALL_BACKPACK = null;
+    public static final BackpackItem MEDIUM_BACKPACK = null;
+    public static final BackpackItem LARGE_BACKPACK = null;
 }

@@ -145,7 +145,10 @@ public class RegistryHandler {
                             .shootingSound(silenced -> silenced ? PMCSounds.P92_SHOOT_SILENT : PMCSounds.P92_SHOOT)
                             .reloadingSound(quickdraw -> quickdraw ? PMCSounds.P92_RELOAD_FAST : PMCSounds.P92_RELOAD)
                             .shootingVolume(silenced -> silenced ? 5.0F : 9.0F)
-                            .build("p92")
+                            .build("p92"),
+                    new BackpackItem("small_backpack", BackpackSlotItem.BackpackType.SMALL),
+                    new BackpackItem("medium_backpack", BackpackSlotItem.BackpackType.MEDIUM),
+                    new BackpackItem("large_backpack", BackpackSlotItem.BackpackType.LARGE)
             );
             blockItemList.stream().filter(Objects::nonNull).forEach(registry::register);
             blockItemList = null;
