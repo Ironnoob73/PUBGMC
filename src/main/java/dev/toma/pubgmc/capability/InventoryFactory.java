@@ -1,6 +1,7 @@
-package dev.toma.pubgmc.inv.cap;
+package dev.toma.pubgmc.capability;
 
-import dev.toma.pubgmc.inv.inventory.MyInventoryWrapper;
+import dev.toma.pubgmc.common.inventory.MyInventoryWrapper;
+import dev.toma.pubgmc.common.inventory.SlotType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.ItemStackHandler;
@@ -11,25 +12,33 @@ public class InventoryFactory extends ItemStackHandler implements PMCInventoryHa
 
     private boolean[] slotStates = new boolean[3];
     private boolean isBlocked;
-    private PlayerEntity player;
+    private final PlayerEntity player;
 
     public InventoryFactory() {
-        super(3);
+        this(null);
     }
 
     public InventoryFactory(PlayerEntity player) {
+        super(3);
+        this.player = player;
+    }
 
+    public static ItemStack getStackInSlot(PlayerEntity player, SlotType type) {
+        return getInventoryHandler(player).getStackInSlot(type.ordinal());
     }
 
     public static PMCInventoryHandler getInventoryHandler(PlayerEntity player) {
-        PMCInventoryHandler handler = player.getCapability(InventoryProvider.INVENTORY_HANDLER, null).orElseThrow(NullPointerException::new);
-        handler.setOwner(player);
-        return handler;
+        return player.getCapability(InventoryProvider.INVENTORY_HANDLER, null).orElseThrow(NullPointerException::new);
     }
 
     public static MyInventoryWrapper getInventory(PlayerEntity player) {
         PMCInventoryHandler handler = getInventoryHandler(player);
         return new MyInventoryWrapper(handler, player);
+    }
+
+    @Override
+    public PlayerEntity getOwner() {
+        return player;
     }
 
     @Override
@@ -61,11 +70,6 @@ public class InventoryFactory extends ItemStackHandler implements PMCInventoryHa
             slotStates = new boolean[getSlots()];
         }
         slotStates[slotId] = changed;
-    }
-
-    @Override
-    public void setOwner(PlayerEntity player) {
-        this.player = player;
     }
 
     @Override

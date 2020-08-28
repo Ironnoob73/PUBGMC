@@ -1,6 +1,6 @@
-package dev.toma.pubgmc.inv.network;
+package dev.toma.pubgmc.network.packet;
 
-import dev.toma.pubgmc.inv.container.PMCPlayerContainer;
+import dev.toma.pubgmc.common.container.PMCPlayerContainer;
 import dev.toma.pubgmc.network.NetworkPacket;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -31,7 +31,7 @@ public class SPacketOpenPlayerInventory implements NetworkPacket<SPacketOpenPlay
     public void handle(SPacketOpenPlayerInventory instance, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             NetworkHooks.openGui(ctx.get().getSender(), new INamedContainerProvider() {
-                final ITextComponent DISPLAY = new TranslationTextComponent("container.player");
+                final ITextComponent DISPLAY = new TranslationTextComponent("");
                 @Override
                 public ITextComponent getDisplayName() {
                     return DISPLAY;
@@ -40,7 +40,7 @@ public class SPacketOpenPlayerInventory implements NetworkPacket<SPacketOpenPlay
                 @Nullable
                 @Override
                 public Container createMenu(int p_createMenu_1_, PlayerInventory p_createMenu_2_, PlayerEntity p_createMenu_3_) {
-                    return new PMCPlayerContainer(p_createMenu_1_, p_createMenu_2_, p_createMenu_3_.world.isRemote, p_createMenu_3_);
+                    return new PMCPlayerContainer(p_createMenu_1_, p_createMenu_2_, p_createMenu_3_);
                 }
             });
         });

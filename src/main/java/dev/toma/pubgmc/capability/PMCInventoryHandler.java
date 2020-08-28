@@ -1,4 +1,4 @@
-package dev.toma.pubgmc.inv.cap;
+package dev.toma.pubgmc.capability;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;

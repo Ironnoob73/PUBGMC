@@ -1,6 +1,6 @@
-package dev.toma.pubgmc.inv.inventory;
+package dev.toma.pubgmc.common.inventory;
 
-import dev.toma.pubgmc.inv.cap.PMCInventoryHandler;
+import dev.toma.pubgmc.capability.PMCInventoryHandler;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;

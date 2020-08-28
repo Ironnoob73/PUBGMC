@@ -18,6 +18,7 @@ import dev.toma.pubgmc.common.item.wearable.IPMCArmor;
 import dev.toma.pubgmc.config.Config;
 import dev.toma.pubgmc.network.NetworkManager;
 import dev.toma.pubgmc.network.packet.SPacketControllableInput;
+import dev.toma.pubgmc.network.packet.SPacketOpenPlayerInventory;
 import dev.toma.pubgmc.network.packet.SPacketSetAiming;
 import dev.toma.pubgmc.network.packet.SPacketShoot;
 import dev.toma.pubgmc.util.RenderHelper;
@@ -28,6 +29,7 @@ import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.screen.inventory.InventoryScreen;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.FogRenderer;
 import net.minecraft.client.renderer.GameRenderer;
@@ -42,6 +44,7 @@ import net.minecraft.util.CooldownTracker;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Util;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderSpecificHandEvent;
@@ -260,6 +263,14 @@ public class ClientEventHandler {
             }
         }
         AnimationManager.renderTick(event.renderTickTime, event.phase);
+    }
+
+    @SubscribeEvent
+    public static void openGui(GuiOpenEvent event) {
+        if(event.getGui() instanceof InventoryScreen) {
+            NetworkManager.sendToServer(new SPacketOpenPlayerInventory());
+            event.setCanceled(true);
+        }
     }
 
     private static void shoot(GunItem item, ItemStack stack, PlayerEntity player) {

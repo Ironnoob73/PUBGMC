@@ -4,7 +4,7 @@ import dev.toma.pubgmc.Pubgmc;
 import dev.toma.pubgmc.common.container.AirdropContainer;
 import dev.toma.pubgmc.common.container.FlareAirdropContainer;
 import dev.toma.pubgmc.common.container.LootSpawnerContainer;
-import dev.toma.pubgmc.inv.container.PMCPlayerContainer;
+import dev.toma.pubgmc.common.container.PMCPlayerContainer;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.fml.RegistryObject;

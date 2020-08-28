@@ -1,16 +1,11 @@
 package dev.toma.pubgmc.capability.player;
 
-import dev.toma.pubgmc.Pubgmc;
 import dev.toma.pubgmc.capability.IPlayerCap;
 import dev.toma.pubgmc.network.NetworkManager;
 import dev.toma.pubgmc.network.packet.CPacketSendNBT;
-import dev.toma.pubgmc.network.packet.CPacketSendRecipes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 
 public class PlayerCapFactory implements IPlayerCap {
 
@@ -98,15 +93,5 @@ public class PlayerCapFactory implements IPlayerCap {
 
     public static IPlayerCap get(PlayerEntity player) {
         return player.getCapability(PlayerCapProvider.CAP, null).orElse(PlayerCapProvider.dummyCap);
-    }
-
-    @Mod.EventBusSubscriber(modid = Pubgmc.MODID)
-    public static class EventListener {
-        @SubscribeEvent
-        public static void onPlayerLogIn(PlayerEvent.PlayerLoggedInEvent event) {
-            IPlayerCap cap = PlayerCapFactory.get(event.getPlayer());
-            cap.syncAllData();
-            NetworkManager.sendToClient((ServerPlayerEntity) event.getPlayer(), new CPacketSendRecipes(Pubgmc.recipeManager.recipeMap));
-        }
     }
 }

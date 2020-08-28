@@ -1,8 +1,11 @@
-package dev.toma.pubgmc.inv.container;
+package dev.toma.pubgmc.common.container;
 
+import dev.toma.pubgmc.common.inventory.PMCInventoryItem;
+import dev.toma.pubgmc.common.inventory.SlotType;
+import dev.toma.pubgmc.common.item.utility.BackpackSlotItem;
 import dev.toma.pubgmc.init.PMCContainers;
-import dev.toma.pubgmc.inv.cap.InventoryFactory;
-import dev.toma.pubgmc.inv.cap.PMCInventoryHandler;
+import dev.toma.pubgmc.capability.InventoryFactory;
+import dev.toma.pubgmc.capability.PMCInventoryHandler;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -25,8 +28,10 @@ import net.minecraft.network.play.server.SSetSlotPacket;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Optional;
 
@@ -38,16 +43,14 @@ public class PMCPlayerContainer extends RecipeBookContainer<CraftingInventory> {
     public final CraftResultInventory result = new CraftResultInventory();
     private final PlayerEntity player;
     public PMCInventoryHandler invHandler;
-    public boolean isLocal;
 
     public PMCPlayerContainer(int id, PlayerInventory inventory, PacketBuffer data) {
-        this(id, inventory, inventory.player.world.isRemote, inventory.player);
+        this(id, inventory, inventory.player);
     }
 
-    public PMCPlayerContainer(int id, PlayerInventory inventory, boolean isLocal, PlayerEntity player) {
+    public PMCPlayerContainer(int id, PlayerInventory inventory, PlayerEntity player) {
         super(PMCContainers.PLAYER_CONTAINER.get(), id);
         this.player = player;
-        this.isLocal = isLocal;
         this.invHandler = InventoryFactory.getInventoryHandler(player);
 
         addSlot(new CraftingResultSlot(inventory.player, matrix, result, 0, 154, 28));
@@ -85,7 +88,34 @@ public class PMCPlayerContainer extends RecipeBookContainer<CraftingInventory> {
         }
         for (int y = 0; y < 3; y++) {
             for (int x = 0; x < 9; x++) {
-                addSlot(new Slot(inventory, x + (y + 1) * 9, 8 + x * 18, 84 + y * 18));
+                addSlot(new Slot(inventory, x + (y + 1) * 9, 8 + x * 18, 84 + y * 18) {
+                    @Override
+                    public boolean isItemValid(ItemStack stack) {
+                        return valid();
+                    }
+
+                    @Override
+                    public boolean canTakeStack(PlayerEntity playerIn) {
+                        return valid();
+                    }
+
+                    @Nullable
+                    @Override
+                    public String getSlotTexture() {
+                        return valid() ? null : "pubgmc:slot/locked";
+                    }
+
+                    boolean valid() {
+                        PMCInventoryHandler invHandler = PMCPlayerContainer.this.invHandler;
+                        ItemStack stack = invHandler.getStackInSlot(2);
+                        if(!stack.isEmpty() && stack.getItem() instanceof BackpackSlotItem) {
+                            int row = 2 - (this.getSlotIndex() - 9) / 9;
+                            int access = ((BackpackSlotItem) stack.getItem()).getType().ordinal();
+                            return row <= access;
+                        }
+                        return false;
+                    }
+                });
             }
         }
         for (int x = 0; x < 9; x++) {
@@ -100,7 +130,7 @@ public class PMCPlayerContainer extends RecipeBookContainer<CraftingInventory> {
             }
         });
         for(int y = 0; y < 3; y++) {
-            addSlot(new SlotItemHandler(invHandler, y, 77, 8 + y * 18));
+            addSlot(new MySlot(invHandler, SlotType.values()[y], y, 77, 8 + y * 18));
         }
     }
 
@@ -225,5 +255,31 @@ public class PMCPlayerContainer extends RecipeBookContainer<CraftingInventory> {
     @OnlyIn(Dist.CLIENT)
     public int getSize() {
         return 5;
+    }
+
+    static class MySlot extends SlotItemHandler {
+
+        private final SlotType type;
+
+        public MySlot(IItemHandler handler, SlotType type, int index, int x, int y) {
+            super(handler, index, x, y);
+            this.type = type;
+        }
+
+        @Override
+        public int getSlotStackLimit() {
+            return 1;
+        }
+
+        @Nullable
+        @Override
+        public String getSlotTexture() {
+            return type.getSlotTexture();
+        }
+
+        @Override
+        public boolean isItemValid(@Nonnull ItemStack stack) {
+            return stack.getItem() instanceof PMCInventoryItem && ((PMCInventoryItem) stack.getItem()).getSlotType() == this.type;
+        }
     }
 }
