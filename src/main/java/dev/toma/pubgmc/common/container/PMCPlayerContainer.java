@@ -1,11 +1,10 @@
 package dev.toma.pubgmc.common.container;
 
-import dev.toma.pubgmc.common.inventory.PMCInventoryItem;
-import dev.toma.pubgmc.common.inventory.SlotType;
-import dev.toma.pubgmc.common.item.utility.BackpackSlotItem;
-import dev.toma.pubgmc.init.PMCContainers;
 import dev.toma.pubgmc.capability.InventoryFactory;
 import dev.toma.pubgmc.capability.PMCInventoryHandler;
+import dev.toma.pubgmc.common.inventory.PMCInventoryItem;
+import dev.toma.pubgmc.common.inventory.SlotType;
+import dev.toma.pubgmc.init.PMCContainers;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -88,34 +87,7 @@ public class PMCPlayerContainer extends RecipeBookContainer<CraftingInventory> {
         }
         for (int y = 0; y < 3; y++) {
             for (int x = 0; x < 9; x++) {
-                addSlot(new Slot(inventory, x + (y + 1) * 9, 8 + x * 18, 84 + y * 18) {
-                    @Override
-                    public boolean isItemValid(ItemStack stack) {
-                        return valid();
-                    }
-
-                    @Override
-                    public boolean canTakeStack(PlayerEntity playerIn) {
-                        return valid();
-                    }
-
-                    @Nullable
-                    @Override
-                    public String getSlotTexture() {
-                        return valid() ? null : "pubgmc:slot/locked";
-                    }
-
-                    boolean valid() {
-                        PMCInventoryHandler invHandler = PMCPlayerContainer.this.invHandler;
-                        ItemStack stack = invHandler.getStackInSlot(2);
-                        if(!stack.isEmpty() && stack.getItem() instanceof BackpackSlotItem) {
-                            int row = 2 - (this.getSlotIndex() - 9) / 9;
-                            int access = ((BackpackSlotItem) stack.getItem()).getType().ordinal();
-                            return row <= access;
-                        }
-                        return false;
-                    }
-                });
+                addSlot(new BackpackLockableSlot(inventory, x + (y + 1) * 9, 8 + x * 18, 84 + y * 18, invHandler));
             }
         }
         for (int x = 0; x < 9; x++) {

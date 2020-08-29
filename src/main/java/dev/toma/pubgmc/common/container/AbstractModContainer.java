@@ -1,5 +1,7 @@
 package dev.toma.pubgmc.common.container;
 
+import dev.toma.pubgmc.capability.InventoryFactory;
+import dev.toma.pubgmc.capability.PMCInventoryHandler;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -63,9 +65,10 @@ public abstract class AbstractModContainer<T extends TileEntity> extends Contain
     }
 
     protected void addPlayerInventory(PlayerInventory inv, int yStart) {
+        PMCInventoryHandler handler = InventoryFactory.getInventoryHandler(inv.player);
         for (int y = 0; y < 3; y++) {
             for (int x = 0; x < 9; x++) {
-                addSlot(new Slot(inv, 9 + x + y * 9, 8 + x * 18, yStart + y * 18));
+                addSlot(new BackpackLockableSlot(inv, 9 + x + y * 9, 8 + x * 18, yStart + y * 18, handler));
             }
         }
         for (int x = 0; x < 9; x++) {
