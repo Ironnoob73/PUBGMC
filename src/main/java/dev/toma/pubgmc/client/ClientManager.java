@@ -1,5 +1,6 @@
 package dev.toma.pubgmc.client;
 
+import dev.toma.pubgmc.Pubgmc;
 import dev.toma.pubgmc.client.render.block.LootSpawnerRenderer;
 import dev.toma.pubgmc.client.render.entity.*;
 import dev.toma.pubgmc.common.entity.AirdropEntity;
@@ -10,6 +11,7 @@ import dev.toma.pubgmc.common.entity.throwable.MolotovEntity;
 import dev.toma.pubgmc.common.entity.throwable.SmokeEntity;
 import dev.toma.pubgmc.common.entity.vehicle.AirDriveableEntity;
 import dev.toma.pubgmc.common.entity.vehicle.LandDriveableEntity;
+import dev.toma.pubgmc.common.item.wearable.GhillieSuitItem;
 import dev.toma.pubgmc.common.tileentity.LootSpawnerTileEntity;
 import dev.toma.pubgmc.init.PMCItems;
 import dev.toma.pubgmc.util.UsefulFunctions;
@@ -18,15 +20,19 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.ColorHandlerEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
+import net.minecraftforge.fml.common.Mod;
 
 import java.util.function.Supplier;
 
@@ -82,5 +88,15 @@ public class ClientManager {
             int ticks = (int) ((dist / 34) * 5);
             handler.playDelayed(sound, ticks);
         });
+    }
+
+    @Mod.EventBusSubscriber(modid = Pubgmc.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    static class ModEventHandler {
+
+        @SubscribeEvent
+        public static void onItemColorHandlerRegister(ColorHandlerEvent.Item event) {
+            ItemColors colors = event.getItemColors();
+            colors.register((stack, layer) -> ((GhillieSuitItem) stack.getItem()).getColor(stack), PMCItems.GHILLIE_SUIT);
+        }
     }
 }
