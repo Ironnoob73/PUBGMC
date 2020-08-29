@@ -7,7 +7,9 @@ import dev.toma.pubgmc.capability.InventoryProvider;
 import dev.toma.pubgmc.capability.PMCInventoryHandler;
 import dev.toma.pubgmc.capability.player.PlayerCapFactory;
 import dev.toma.pubgmc.capability.player.PlayerCapProvider;
+import dev.toma.pubgmc.common.inventory.SlotType;
 import dev.toma.pubgmc.common.item.gun.GunItem;
+import dev.toma.pubgmc.common.item.utility.BackpackSlotItem;
 import dev.toma.pubgmc.network.NetworkManager;
 import dev.toma.pubgmc.network.packet.CPacketSendRecipes;
 import dev.toma.pubgmc.network.packet.CPacketSyncInventory;
@@ -30,6 +32,7 @@ import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -145,7 +148,81 @@ public class CommonEventHandler {
     public static void pickupItem(EntityItemPickupEvent event) {
         ItemStack stack = event.getItem().getItem();
         PlayerInventory inventory = event.getPlayer().inventory;
+        int slot = findFirstSuitableSlot(inventory, stack);
+        event.setResult(Event.Result.DENY);
+        if(slot > 0) {
+            PlayerEntity player = inventory.player;
+            if(slot >= 9) {
+                int row = (slot - 9) / 9;
+                ItemStack backpack = InventoryFactory.getStackInSlot(player, SlotType.BACKPACK);
+                if(backpack.isEmpty() || !(backpack.getItem() instanceof BackpackSlotItem)) {
+                    event.setCanceled(true);
+                    return;
+                } else {
+                    int type = 2 - ((BackpackSlotItem) backpack.getItem()).getType().ordinal();
+                    if(row < type) {
+                        event.setCanceled(true);
+                        return;
+                    }
+                }
+            }
+            event.setResult(Event.Result.DEFAULT);
+            ItemStack itemStack = inventory.getStackInSlot(slot);
+            if(itemStack.isEmpty()) {
+                event.setCanceled(true);
+                player.onItemPickup(event.getItem(), stack.getCount());
+                event.getItem().remove();
+                inventory.setInventorySlotContents(slot, stack.copy());
+            } else {
+                int amountInInventory = itemStack.getCount();
+                int insertAmount = stack.getCount();
+                int total = amountInInventory + insertAmount;
+                if(total <= itemStack.getMaxStackSize()) {
+                    itemStack.setCount(total);
+                    stack.setCount(0);
+                } else {
+                    int extra = total - itemStack.getMaxStackSize();
+                    ItemStack leftOut = stack.copy();
+                    itemStack.setCount(itemStack.getMaxStackSize());
+                    stack.setCount(0);
+                    leftOut.setCount(extra);
+                    World world = player.world;
+                    if(!world.isRemote) {
+                        ItemEntity itemEntity = new ItemEntity(world, player.posX, player.posY, player.posZ, leftOut);
+                        itemEntity.setPickupDelay(0);
+                        world.addEntity(itemEntity);
+                    }
+                }
+            }
+        }
+    }
 
+    private static int findFirstSuitableSlot(PlayerInventory inventory, ItemStack stack) {
+        for(int i = 0; i < inventory.getSizeInventory(); i++) {
+            ItemStack itemStack = inventory.getStackInSlot(i);
+            if(!itemStack.isEmpty() && ItemStack.areItemsEqual(stack, itemStack) && itemStack.getCount() < itemStack.getMaxStackSize()) {
+                return i;
+            }
+        }
+        // hotbar
+        for (int i = 0; i < 9; i++) {
+            ItemStack itemStack = inventory.getStackInSlot(i);
+            if(isValidSlotForStack(stack, itemStack)) {
+                return i;
+            }
+        }
+        // inventory
+        for(int i = 35; i >= 9; i--) {
+            ItemStack itemStack = inventory.getStackInSlot(i);
+            if(isValidSlotForStack(stack, itemStack)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private static boolean isValidSlotForStack(ItemStack stack, ItemStack inInventory) {
+        return inInventory.isEmpty() || (ItemStack.areItemsEqual(stack, inInventory) && inInventory.getCount() < inInventory.getMaxStackSize());
     }
 
     private static final Map<UUID, ItemStack[]> syncMap = new HashMap<>();
