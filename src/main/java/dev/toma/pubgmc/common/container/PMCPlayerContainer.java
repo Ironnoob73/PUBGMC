@@ -193,11 +193,11 @@ public class PMCPlayerContainer extends RecipeBookContainer<CraftingInventory> {
                 }
                 slot.onSlotChange(itemstack1, itemstack);
             } else if (index >= 1 && index < 5) {
-                if (!this.mergeItemStack(itemstack1, 9, 45, false)) {
+                if (!this.mergeItemStack(itemstack1, 9, 45, true)) {
                     return ItemStack.EMPTY;
                 }
             } else if (index >= 5 && index < 9) {
-                if (!this.mergeItemStack(itemstack1, 9, 45, false)) {
+                if (!this.mergeItemStack(itemstack1, 9, 45, true)) {
                     return ItemStack.EMPTY;
                 }
             } else if (equipmentslottype.getSlotType() == EquipmentSlotType.Group.ARMOR && !this.inventorySlots.get(8 - equipmentslottype.getIndex()).getHasStack()) {
@@ -210,7 +210,7 @@ public class PMCPlayerContainer extends RecipeBookContainer<CraftingInventory> {
                     return ItemStack.EMPTY;
                 }
             } else if (index >= 9 && index < 36) {
-                if (!this.mergeItemStack(itemstack1, 36, 45, false)) {
+                if (!this.mergeItemStack(itemstack1, 36, 45, true)) {
                     return ItemStack.EMPTY;
                 }
             } else if (index >= 36 && index < 45) {
@@ -222,6 +222,9 @@ public class PMCPlayerContainer extends RecipeBookContainer<CraftingInventory> {
             }
             if (itemstack1.isEmpty()) {
                 slot.putStack(ItemStack.EMPTY);
+                if(slot instanceof MySlot) {
+                    ((MySlot) slot).getItemHandler().extractItem(slot.getSlotIndex(), 0, false);
+                }
             } else {
                 slot.onSlotChanged();
             }

@@ -17,7 +17,7 @@ public class BackpackItem extends PMCItem implements BackpackSlotItem {
     private final BackpackType type;
 
     public BackpackItem(String name, BackpackType type) {
-        super(name, new Properties().maxStackSize(1));
+        super(name, new Properties().maxStackSize(1).group(ITEMS));
         this.type = type;
     }
 
@@ -35,7 +35,7 @@ public class BackpackItem extends PMCItem implements BackpackSlotItem {
             PlayerInventory inventory = player.inventory;
             ItemStack stack = held.copy();
             held.shrink(1);
-            handler.setStackInSlot(2, stack);
+            handler.insertItem(2, stack, false);
         } else if(backpackSlot.getItem() instanceof BackpackSlotItem) {
             int equipped = ((BackpackSlotItem) backpackSlot.getItem()).getType().ordinal();
             int c = type.ordinal();
@@ -46,7 +46,7 @@ public class BackpackItem extends PMCItem implements BackpackSlotItem {
                 if(!world.isRemote) {
                     world.addEntity(new ItemEntity(world, player.posX, player.posY, player.posZ, fromSlot));
                 }
-                handler.setStackInSlot(2, equip);
+                handler.insertItem(2, equip, false);
                 held.shrink(1);
             }
         }

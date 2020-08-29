@@ -2,8 +2,12 @@ package dev.toma.pubgmc.capability;
 
 import dev.toma.pubgmc.common.inventory.MyInventoryWrapper;
 import dev.toma.pubgmc.common.inventory.SlotType;
+import dev.toma.pubgmc.common.item.utility.BackpackSlotItem;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
@@ -92,13 +96,56 @@ public class InventoryFactory extends ItemStackHandler implements PMCInventoryHa
 
     @Nonnull
     @Override
+    public ItemStack extractItem(int slot, int amount, boolean simulate) {
+        ItemStack itemStack = super.extractItem(slot, amount, simulate);
+        if (slot == 2 && !simulate) {
+            ItemStack stack = getStackInSlot(2);
+            World world = player.world;
+            PlayerInventory playerInventory = player.inventory;
+            if(stack.isEmpty()) {
+                dropInventoryContents(world, playerInventory, 27);
+            }
+        }
+        return itemStack;
+    }
+
+    @Nonnull
+    @Override
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
         if(!isValidForSlot(slot, player, stack)) return stack;
+        if (slot == 2) {
+            World world = player.world;
+            PlayerInventory playerInventory = player.inventory;
+            if(stack.isEmpty()) {
+                dropInventoryContents(world, playerInventory, 0);
+            } else if(stack.getItem() instanceof BackpackSlotItem) {
+                int level = 2 - ((BackpackSlotItem) stack.getItem()).getType().ordinal();
+                if(level > 0) {
+                    int x = level * 9;
+                    dropInventoryContents(world, playerInventory, x);
+                }
+            }
+        }
         return super.insertItem(slot, stack, simulate);
     }
 
     @Override
     protected void onContentsChanged(int slot) {
         setChanged(slot, true);
+    }
+
+    private void dropInventoryContents(World world, PlayerInventory inventory, int from) {
+        for(int i = 0; i < from; i++) {
+            int idx = i + 9;
+            ItemStack stack = inventory.getStackInSlot(idx);
+            if(!stack.isEmpty()) {
+                if(!world.isRemote) {
+                    ItemEntity itemEntity = new ItemEntity(world, player.posX, player.posY, player.posZ, stack.copy());
+                    itemEntity.setPickupDelay(40);
+                    world.addEntity(itemEntity);
+                }
+                inventory.removeStackFromSlot(idx);
+            }
+        }
     }
 }

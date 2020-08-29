@@ -30,6 +30,7 @@ import dev.toma.pubgmc.common.item.gun.attachment.AttachmentItem;
 import dev.toma.pubgmc.common.item.healing.*;
 import dev.toma.pubgmc.common.item.utility.*;
 import dev.toma.pubgmc.common.item.wearable.BulletProofArmor;
+import dev.toma.pubgmc.common.item.wearable.GhillieSuitItem;
 import dev.toma.pubgmc.common.tileentity.AirdropTileEntity;
 import dev.toma.pubgmc.common.tileentity.FlareAirdropTileEntity;
 import dev.toma.pubgmc.init.PMCItems;
@@ -148,7 +149,8 @@ public class RegistryHandler {
                             .build("p92"),
                     new BackpackItem("small_backpack", BackpackSlotItem.BackpackType.SMALL),
                     new BackpackItem("medium_backpack", BackpackSlotItem.BackpackType.MEDIUM),
-                    new BackpackItem("large_backpack", BackpackSlotItem.BackpackType.LARGE)
+                    new BackpackItem("large_backpack", BackpackSlotItem.BackpackType.LARGE),
+                    new GhillieSuitItem("ghillie_suit")
             );
             blockItemList.stream().filter(Objects::nonNull).forEach(registry::register);
             blockItemList = null;

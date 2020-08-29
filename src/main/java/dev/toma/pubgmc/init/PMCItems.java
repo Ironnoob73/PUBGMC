@@ -6,6 +6,7 @@ import dev.toma.pubgmc.common.item.gun.attachment.AttachmentItem;
 import dev.toma.pubgmc.common.item.healing.HealingItem;
 import dev.toma.pubgmc.common.item.utility.*;
 import dev.toma.pubgmc.common.item.wearable.BulletProofArmor;
+import dev.toma.pubgmc.common.item.wearable.GhillieSuitItem;
 import net.minecraftforge.registries.ObjectHolder;
 
 @ObjectHolder(Pubgmc.MODID)
@@ -71,4 +72,5 @@ public class PMCItems {
     public static final BackpackItem SMALL_BACKPACK = null;
     public static final BackpackItem MEDIUM_BACKPACK = null;
     public static final BackpackItem LARGE_BACKPACK = null;
+    public static final GhillieSuitItem GHILLIE_SUIT = null;
 }

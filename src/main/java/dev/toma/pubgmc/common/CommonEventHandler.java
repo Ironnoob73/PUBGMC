@@ -15,6 +15,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
@@ -27,6 +28,7 @@ import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
+import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -137,6 +139,13 @@ public class CommonEventHandler {
                 dropItems((PlayerEntity) event.getEntity(), event.getDrops());
             }
         }
+    }
+
+    @SubscribeEvent
+    public static void pickupItem(EntityItemPickupEvent event) {
+        ItemStack stack = event.getItem().getItem();
+        PlayerInventory inventory = event.getPlayer().inventory;
+
     }
 
     private static final Map<UUID, ItemStack[]> syncMap = new HashMap<>();
