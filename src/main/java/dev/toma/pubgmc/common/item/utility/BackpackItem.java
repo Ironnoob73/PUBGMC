@@ -1,8 +1,8 @@
 package dev.toma.pubgmc.common.item.utility;
 
+import dev.toma.pubgmc.Pubgmc;
 import dev.toma.pubgmc.capability.InventoryFactory;
 import dev.toma.pubgmc.capability.PMCInventoryHandler;
-import dev.toma.pubgmc.common.inventory.PMCInventoryItem;
 import dev.toma.pubgmc.common.item.PMCItem;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -10,20 +10,28 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 public class BackpackItem extends PMCItem implements BackpackSlotItem {
 
     private final BackpackType type;
+    private final ResourceLocation textureLocation;
 
     public BackpackItem(String name, BackpackType type) {
         super(name, new Properties().maxStackSize(1).group(ITEMS));
         this.type = type;
+        this.textureLocation = Pubgmc.makeResource("textures/entity/layer/" + name + ".png");
     }
 
     @Override
     public BackpackType getType() {
         return type;
+    }
+
+    @Override
+    public ResourceLocation getBackpackTexture() {
+        return textureLocation;
     }
 
     @Override

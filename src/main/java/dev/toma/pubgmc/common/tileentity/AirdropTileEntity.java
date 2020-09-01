@@ -50,14 +50,14 @@ public class AirdropTileEntity extends AbstractInventoryTileEntity implements Lo
             LootTable util = LootManager.getLootTable(LootTableConstants.AIRDROP_UTILITIES);
             int at = 0;
             if(!gun.isEmpty()) {
-                ItemStack gunStack = gun.getRandom();
+                ItemStack gunStack = gun.getRandom(world.rand);
                 inv.insertItem(at, gunStack, false);
                 ++at;
                 at = postItemGenerated(gunStack, at, inventory);
             }
             if(!util.isEmpty()) {
                 for(int i = 0; i < 3; i++) {
-                    inv.insertItem(at, util.getRandom(), false);
+                    inv.insertItem(at, util.getRandom(world.rand), false);
                     ++at;
                 }
             }

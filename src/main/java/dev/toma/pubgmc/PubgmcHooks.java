@@ -1,5 +1,6 @@
 package dev.toma.pubgmc;
 
+import dev.toma.pubgmc.client.render.layer.BackpackLayer;
 import dev.toma.pubgmc.client.render.layer.GhillieLayer;
 import net.minecraft.client.renderer.entity.LivingRenderer;
 import net.minecraft.client.renderer.entity.PlayerRenderer;
@@ -14,6 +15,7 @@ public class PubgmcHooks {
         if(renderer instanceof PlayerRenderer) {
             PlayerRenderer playerRenderer = (PlayerRenderer) renderer;
             playerRenderer.addLayer(new GhillieLayer<>(playerRenderer));
+            playerRenderer.addLayer(new BackpackLayer<>(playerRenderer));
         }
     }
 }

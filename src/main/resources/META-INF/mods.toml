@@ -15,9 +15,9 @@ Description here
 '''
 
 [[dependencies.pubgmc]]
-    modId="forge" #mandatory
-    mandatory=true #mandatory
-    versionRange="[28,)" #mandatory
+    modId="forge"
+    mandatory=true
+    versionRange="[28.2.23,)"
     ordering="NONE"
     side="BOTH"
 

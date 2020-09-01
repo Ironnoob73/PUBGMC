@@ -49,7 +49,7 @@ public class LootSpawnerTileEntity extends AbstractInventoryTileEntity implement
             int at = 0;
             for(int n = 0; n < attempts; n++) {
                 if(at >= inv.getSlots()) break;
-                ItemStack stack = table.getRandom();
+                ItemStack stack = table.getRandom(world.rand);
                 inv.insertItem(at, stack, false);
                 ++at;
                 at = postItemGenerated(stack, at, inventory);

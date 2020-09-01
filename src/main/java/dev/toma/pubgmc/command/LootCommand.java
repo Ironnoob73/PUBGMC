@@ -54,7 +54,7 @@ public class LootCommand {
     }
 
     private static <T extends TileEntity & LootGenerator> int executeDestroy(CommandContext<CommandSource> ctx) {
-        World world = ctx.getSource().func_197023_e();
+        World world = ctx.getSource().getWorld();
         for (T tileEntity : world.loadedTileEntityList.stream()
                 .filter(te -> te instanceof LootGenerator && ((LootGenerator) te).shouldDestroyByCommand())
                 .map(te -> (T) te)
@@ -67,7 +67,7 @@ public class LootCommand {
     }
 
     private static <T extends TileEntity & LootGenerator> int executeGen(CommandContext<CommandSource> ctx) {
-        World world = ctx.getSource().func_197023_e();
+        World world = ctx.getSource().getWorld();
         LootTable table = LootManager.getLootTable(LootTableConstants.LOOT_BLOCK);
         world.loadedTileEntityList.stream()
                 .filter(te -> te instanceof LootGenerator)
@@ -82,7 +82,7 @@ public class LootCommand {
     }
 
     private static <T extends AbstractInventoryTileEntity & LootGenerator> int executeClear(CommandContext<CommandSource> ctx) {
-        World world = ctx.getSource().func_197023_e();
+        World world = ctx.getSource().getWorld();
         world.loadedTileEntityList.stream()
                 .filter(te -> te instanceof AbstractInventoryTileEntity && te instanceof LootGenerator)
                 .map(te -> (T) te)

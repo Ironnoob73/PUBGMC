@@ -5,22 +5,27 @@ import dev.toma.pubgmc.util.JsonHelper;
 import dev.toma.pubgmc.util.object.WeightedRandom;
 import net.minecraft.item.ItemStack;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Random;
 
 public class LootTable {
 
     private final WeightedRandom<LootPool> weightedRandom;
+    private final List<LootPool> forced;
 
-    public LootTable(LootPool[] lootPools) {
+    public LootTable(LootPool[] lootPools, @Nullable List<LootPool> forcedPools) {
         this.weightedRandom = new WeightedRandom<>(LootPool::getWeight, lootPools);
+        this.forced = forcedPools;
     }
 
     public boolean isEmpty() {
         return weightedRandom.getEntries().length == 0;
     }
 
-    public ItemStack getRandom() {
-        return weightedRandom.get().pickRandom().get();
+    public ItemStack getRandom(Random random) {
+        return weightedRandom.get().pickRandom().get(random);
     }
 
     public static class Deserializer implements JsonDeserializer<LootTable> {
@@ -42,6 +47,7 @@ public class LootTable {
                 pool.withWeight(weight);
                 pools[i] = pool;
             }
+            //List<LootPool> forcedPools =
             return new LootTable(pools);
         }
     }

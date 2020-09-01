@@ -9,28 +9,25 @@
             "pool": "att"
         }
     ],
+    "forced": [
+        ""
+    ],
     "pools": {
         "ghillie": [
             {
                 "item": "pubgmc:ghillie_suit",
                 "count": 1,
-                "nbt": {
-                    "color": 48059
-                }
+                "nbt": "{color:7048002}"
             },
             {
                 "item": "pubgmc:ghillie_suit",
                 "count": 1,
-                "nbt": {
-                    "color": 11495680
-                }
+                "nbt": "{color:11495680}"
             },
             {
                 "item": "pubgmc:ghillie_suit",
                 "count": 1,
-                "nbt": {
-                    "color": 12369084
-                }
+                "nbt": "{color:12369084}"
             }
         ],
         "att": [

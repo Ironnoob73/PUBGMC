@@ -23,7 +23,7 @@ import java.util.Map;
 public class LootManager extends JsonReloadListener {
 
     private static final Map<ResourceLocation, LootTable> LOOT_TABLES = new HashMap<>();
-    private static final Marker marker = MarkerManager.getMarker("LootManager");
+    public static final Marker marker = MarkerManager.getMarker("LootManager");
     private static final Gson GSON = new GsonBuilder()
             .registerTypeAdapter(LootTable.class, new LootTable.Deserializer())
             .registerTypeAdapter(LootEntry.class, new LootEntry.Deserializer())

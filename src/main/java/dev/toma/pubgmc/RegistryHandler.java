@@ -147,9 +147,15 @@ public class RegistryHandler {
                             .reloadingSound(quickdraw -> quickdraw ? PMCSounds.P92_RELOAD_FAST : PMCSounds.P92_RELOAD)
                             .shootingVolume(silenced -> silenced ? 5.0F : 9.0F)
                             .build("p92"),
-                    new BackpackItem("small_backpack", BackpackSlotItem.BackpackType.SMALL),
-                    new BackpackItem("medium_backpack", BackpackSlotItem.BackpackType.MEDIUM),
-                    new BackpackItem("large_backpack", BackpackSlotItem.BackpackType.LARGE),
+                    new BackpackItem("small_backpack_desert", BackpackSlotItem.BackpackType.SMALL),
+                    new BackpackItem("medium_backpack_desert", BackpackSlotItem.BackpackType.MEDIUM),
+                    new BackpackItem("large_backpack_desert", BackpackSlotItem.BackpackType.LARGE),
+                    new BackpackItem("small_backpack_forest", BackpackSlotItem.BackpackType.SMALL),
+                    new BackpackItem("medium_backpack_forest", BackpackSlotItem.BackpackType.MEDIUM),
+                    new BackpackItem("large_backpack_forest", BackpackSlotItem.BackpackType.LARGE),
+                    new BackpackItem("small_backpack_snow", BackpackSlotItem.BackpackType.SMALL),
+                    new BackpackItem("medium_backpack_snow", BackpackSlotItem.BackpackType.MEDIUM),
+                    new BackpackItem("large_backpack_snow", BackpackSlotItem.BackpackType.LARGE),
                     new GhillieSuitItem("ghillie_suit")
             );
             blockItemList.stream().filter(Objects::nonNull).forEach(registry::register);
