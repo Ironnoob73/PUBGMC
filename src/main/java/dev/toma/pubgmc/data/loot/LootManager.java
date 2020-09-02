@@ -29,7 +29,7 @@ public class LootManager extends JsonReloadListener {
             .registerTypeAdapter(LootEntry.class, new LootEntry.Deserializer())
             .registerTypeAdapter(LootPool.class, new LootPool.Deserializer())
             .create();
-    private static final LootTable EMPTY = new LootTable(new LootPool[0]);
+    private static final LootTable EMPTY = new LootTable(new LootPool[0], null);
 
     public LootManager() {
         super(GSON, "loot");

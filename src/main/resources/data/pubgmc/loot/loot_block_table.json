@@ -1,41 +1,14 @@
 {
     "content": [
-        {
-            "weight": 15,
-            "pool": "small_meds"
-        },
-        {
-            "weight": 5,
-            "pool": "meds"
-        },
-        {
-            "weight": 15,
-            "pool": "random_ammo"
-        },
-        {
-            "weight": 10,
-            "pool": "general_att"
-        },
-        {
-            "weight": 10,
-            "pool": "sights"
-        },
-        {
-            "weight": 10,
-            "pool": "scopes"
-        },
-        {
-            "weight": 15,
-            "pool": "smg_att"
-        },
-        {
-            "weight": 10,
-            "pool": "ar_att"
-        },
-        {
-            "weight": 5,
-            "pool": "sr_att"
-        }
+        { "weight": 15, "pool": "small_meds" },
+        { "weight": 5, "pool": "meds" },
+        { "weight": 15, "pool": "random_ammo" },
+        { "weight": 10, "pool": "general_att" },
+        { "weight": 10, "pool": "sights" },
+        { "weight": 10, "pool": "scopes" },
+        { "weight": 15, "pool": "smg_att" },
+        { "weight": 10, "pool": "ar_att" },
+        { "weight": 5, "pool": "sr_att" }
     ],
     "pools": {
         "small_meds": [

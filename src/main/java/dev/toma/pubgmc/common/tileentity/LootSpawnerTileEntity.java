@@ -15,6 +15,8 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 
+import java.util.List;
+
 import static dev.toma.pubgmc.init.PMCTileEntities.LOOT_SPAWNER;
 
 public class LootSpawnerTileEntity extends AbstractInventoryTileEntity implements LootGenerator {
@@ -49,10 +51,12 @@ public class LootSpawnerTileEntity extends AbstractInventoryTileEntity implement
             int at = 0;
             for(int n = 0; n < attempts; n++) {
                 if(at >= inv.getSlots()) break;
-                ItemStack stack = table.getRandom(world.rand);
-                inv.insertItem(at, stack, false);
-                ++at;
-                at = postItemGenerated(stack, at, inventory);
+                List<ItemStack> stacks = table.getLoot(world.rand, true);
+                for(ItemStack stack : stacks) {
+                    inv.insertItem(at, stack, false);
+                    ++at;
+                    at = postItemGenerated(stack, at, inventory);
+                }
             }
         });
     }

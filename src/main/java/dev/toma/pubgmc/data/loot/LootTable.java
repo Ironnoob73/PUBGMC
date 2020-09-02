@@ -1,31 +1,52 @@
 package dev.toma.pubgmc.data.loot;
 
+import com.google.common.collect.ImmutableList;
 import com.google.gson.*;
+import dev.toma.pubgmc.Pubgmc;
 import dev.toma.pubgmc.util.JsonHelper;
 import dev.toma.pubgmc.util.object.WeightedRandom;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Consumer;
 
 public class LootTable {
 
     private final WeightedRandom<LootPool> weightedRandom;
-    private final List<LootPool> forced;
+    private final ImmutableList<LootPool> forced;
 
     public LootTable(LootPool[] lootPools, @Nullable List<LootPool> forcedPools) {
         this.weightedRandom = new WeightedRandom<>(LootPool::getWeight, lootPools);
-        this.forced = forcedPools;
+        this.forced = forcedPools != null ? ImmutableList.copyOf(forcedPools) : null;
+    }
+
+    public ImmutableList<LootPool> getForcedPools() {
+        return forced;
+    }
+
+    public boolean hasForcedPools() {
+        return forced != null && !forced.isEmpty();
     }
 
     public boolean isEmpty() {
-        return weightedRandom.getEntries().length == 0;
+        return weightedRandom.getEntries().length == 0 && !this.hasForcedPools();
     }
 
-    public ItemStack getRandom(Random random) {
-        return weightedRandom.get().pickRandom().get(random);
+    public List<ItemStack> getLoot(Random random, boolean ignoreForce) {
+        List<ItemStack> list = new ArrayList<>();
+        if(hasForcedPools() && !ignoreForce) {
+            for(LootPool pool : getForcedPools()) {
+                list.add(pool.pickRandom().get(random));
+            }
+        }
+        list.add(weightedRandom.get().pickRandom().get(random));
+        return list;
     }
 
     public static class Deserializer implements JsonDeserializer<LootTable> {
@@ -47,8 +68,20 @@ public class LootTable {
                 pool.withWeight(weight);
                 pools[i] = pool;
             }
-            //List<LootPool> forcedPools =
-            return new LootTable(pools);
+            List<LootPool> forcedPools = null;
+            if(object.has("forced")) {
+                if(object.get("forced").isJsonArray()) {
+                    forcedPools = new ArrayList<>();
+                    JsonArray array = object.get("forced").getAsJsonArray();
+                    for(int i = 0; i < array.size(); i++) {
+                        String path = array.get(i).getAsString();
+                        JsonArray poolContent = JsonHelper.getArray(path, poolDefs, () -> new JsonParseException(String.format("No pool defined for key %s", path)));
+                        LootPool pool = context.deserialize(poolContent, LootPool.class);
+                        forcedPools.add(pool);
+                    }
+                } else Pubgmc.pubgmcLog.warn(LootManager.marker, "Found 'forced' property with invalid type. Expected array");
+            }
+            return new LootTable(pools, forcedPools);
         }
     }
 }

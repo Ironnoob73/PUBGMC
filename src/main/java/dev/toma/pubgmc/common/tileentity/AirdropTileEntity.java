@@ -17,6 +17,8 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 
+import java.util.List;
+
 import static dev.toma.pubgmc.init.PMCTileEntities.AIRDROP;
 
 public class AirdropTileEntity extends AbstractInventoryTileEntity implements LootGenerator {
@@ -50,14 +52,19 @@ public class AirdropTileEntity extends AbstractInventoryTileEntity implements Lo
             LootTable util = LootManager.getLootTable(LootTableConstants.AIRDROP_UTILITIES);
             int at = 0;
             if(!gun.isEmpty()) {
-                ItemStack gunStack = gun.getRandom(world.rand);
-                inv.insertItem(at, gunStack, false);
-                ++at;
-                at = postItemGenerated(gunStack, at, inventory);
+                List<ItemStack> gunStack = gun.getLoot(world.rand, false);
+                for(ItemStack stack : gunStack) {
+                    if(at >= inv.getSlots()) break;
+                    inv.insertItem(at, stack, false);
+                    ++at;
+                    at = postItemGenerated(stack, at, inventory);
+                }
             }
             if(!util.isEmpty()) {
-                for(int i = 0; i < 3; i++) {
-                    inv.insertItem(at, util.getRandom(world.rand), false);
+                List<ItemStack> list = util.getLoot(world.rand, false);
+                for(ItemStack stack : list) {
+                    if(at >= inv.getSlots()) break;
+                    inv.insertItem(at, stack, false);
                     ++at;
                 }
             }

@@ -1,13 +1,7 @@
 {
     "content": [
-        {
-            "weight": 5,
-            "pool": "ammo_small"
-        },
-        {
-            "weight": 15,
-            "pool": "ammo_large"
-        }
+        { "weight": 5, "pool": "ammo_small" },
+        { "weight": 15, "pool": "ammo_large" }
     ],
     "pools": {
         "ammo_small": [

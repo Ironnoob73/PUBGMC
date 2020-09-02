@@ -13,6 +13,8 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 
+import java.util.List;
+
 import static dev.toma.pubgmc.init.PMCTileEntities.FLARE_AIRDROP;
 
 public class FlareAirdropTileEntity extends AirdropTileEntity {
@@ -40,19 +42,24 @@ public class FlareAirdropTileEntity extends AirdropTileEntity {
             LootTable util = LootManager.getLootTable(LootTableConstants.AIRDROP_UTILITIES);
             int at = 0;
             if (!gun.isEmpty()) {
-                ItemStack gunStack = gun.getRandom(world.rand);
-                inv.insertItem(at, gunStack, false);
-                ++at;
-                at = postItemGenerated(gunStack, at, inventory);
-                gunStack = gun.getRandom(world.rand);
-                inv.insertItem(at, gunStack, false);
-                ++at;
-                at = postItemGenerated(gunStack, at, inventory);
+                for(int i = 0; i < 2; i++) {
+                    List<ItemStack> stacks = gun.getLoot(world.rand, false);
+                    for(ItemStack stack : stacks) {
+                        if(at >= inv.getSlots()) break;
+                        inv.insertItem(at, stack, false);
+                        ++at;
+                        at = postItemGenerated(stack, at, inventory);
+                    }
+                }
             }
             if (!util.isEmpty()) {
-                for (int i = 0; i < 6; i++) {
-                    inv.insertItem(at, util.getRandom(world.rand), false);
-                    ++at;
+                for (int i = 0; i < 2; i++) {
+                    List<ItemStack> stacks = util.getLoot(world.rand, false);
+                    for(ItemStack stack : stacks) {
+                        if(at >= inv.getSlots()) break;
+                        inv.insertItem(at, stack, false);
+                        ++at;
+                    }
                 }
             }
         });

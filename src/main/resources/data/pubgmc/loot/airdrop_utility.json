@@ -1,34 +1,19 @@
 {
     "content": [
-        {
-            "weight": 12,
-            "pool": "ghillie"
-        },
-        {
-            "weight": 10,
-            "pool": "att"
-        }
+        { "weight": 1, "pool": "ghillie" },
+        { "weight": 1, "pool": "att" }
     ],
     "forced": [
-        ""
+        "helmet", "vest", "backpack"
     ],
     "pools": {
+        "helmet": [{ "item": "pubgmc:military_helmet" }],
+        "vest": [{ "item": "pubgmc:military_vest" }],
+        "backpack": [{"item": "pubgmc:large_backpack_forest"}, {"item": "pubgmc:large_backpack_desert"}, {"item": "pubgmc:large_backpack_snow"}],
         "ghillie": [
-            {
-                "item": "pubgmc:ghillie_suit",
-                "count": 1,
-                "nbt": "{color:7048002}"
-            },
-            {
-                "item": "pubgmc:ghillie_suit",
-                "count": 1,
-                "nbt": "{color:11495680}"
-            },
-            {
-                "item": "pubgmc:ghillie_suit",
-                "count": 1,
-                "nbt": "{color:12369084}"
-            }
+            { "item": "pubgmc:ghillie_suit", "count": 1, "nbt": "{color:7048002}" },
+            { "item": "pubgmc:ghillie_suit", "count": 1, "nbt": "{color:11495680}" },
+            { "item": "pubgmc:ghillie_suit", "count": 1, "nbt": "{color:12369084}" }
         ],
         "att": [
             { "item": "pubgmc:suppressor_ar" },
