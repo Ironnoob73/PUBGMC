@@ -79,9 +79,16 @@ public class CommonEventHandler {
 
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
-        PlayerEntity player = event.player;
-        IPlayerCap cap = PlayerCapFactory.get(player);
-        cap.onTick();
+        if(event.phase == TickEvent.Phase.END) {
+            PlayerEntity player = event.player;
+            IPlayerCap cap = PlayerCapFactory.get(player);
+            cap.onTick();
+
+            PMCInventoryHandler handler = InventoryFactory.getInventoryHandler(player);
+            if(!player.world.isRemote) {
+                sync(player, handler);
+            }
+        }
     }
 
     @SubscribeEvent
@@ -109,18 +116,6 @@ public class CommonEventHandler {
             newCap.syncNetworkData();
         } catch (Exception e) {
             Pubgmc.pubgmcLog.error("Exception cloning player data: {}", e.toString());
-        }
-    }
-
-    //@SubscribeEvent
-    public static void _onPlayerTick(TickEvent.PlayerTickEvent event) {
-        if(event.phase == TickEvent.Phase.END) {
-            PlayerEntity player = event.player;
-            PMCInventoryHandler handler = InventoryFactory.getInventoryHandler(player);
-            for(int i = 0; i < handler.getSlots(); i++) {
-                ItemStack stack = handler.getStackInSlot(i);
-
-            }
         }
     }
 
@@ -226,7 +221,7 @@ public class CommonEventHandler {
     }
 
     private static final Map<UUID, ItemStack[]> syncMap = new HashMap<>();
-    private static final boolean autoSync = false;
+    private static final boolean autoSync = true;
 
     private static void sync(PlayerEntity player, PMCInventoryHandler handler) {
         ItemStack[] stacks = syncMap.get(player.getUniqueID());

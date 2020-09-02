@@ -3,6 +3,8 @@ package dev.toma.pubgmc.capability;
 import dev.toma.pubgmc.common.inventory.MyInventoryWrapper;
 import dev.toma.pubgmc.common.inventory.SlotType;
 import dev.toma.pubgmc.common.item.utility.BackpackSlotItem;
+import dev.toma.pubgmc.network.NetworkManager;
+import dev.toma.pubgmc.network.packet.CPacketSyncInventory;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -32,7 +34,7 @@ public class InventoryFactory extends ItemStackHandler implements PMCInventoryHa
     }
 
     public static PMCInventoryHandler getInventoryHandler(PlayerEntity player) {
-        return player.getCapability(InventoryProvider.INVENTORY_HANDLER, null).orElseThrow(NullPointerException::new);
+        return player.getCapability(InventoryProvider.INVENTORY_HANDLER, null).orElse(InventoryProvider.DUMMY);
     }
 
     public static MyInventoryWrapper getInventory(PlayerEntity player) {
