@@ -42,6 +42,14 @@ public abstract class AirDriveableEntity extends DriveableEntity {
     }
 
     @Override
+    public void updatePassenger(Entity passenger) {
+        if(!world.isRemote) {
+            passenger.fallDistance = 0.0F;
+        }
+        super.updatePassenger(passenger);
+    }
+
+    @Override
     protected void updateEntityPost() {
         if(onGround && (rotationPitch > 0 || currentSpeed == 0)) rotationPitch = 0;
         this.currentSpeed = throttle > 0.0F ? currentSpeed < this.maxSpeed() ? currentSpeed + throttle * data.getAcceleration() : Math.max(0.0F, currentSpeed - (onGround ? 0.05F : 0.005F)) : Math.max(0.0F, currentSpeed - (onGround ? 0.05F : 0.005F));
