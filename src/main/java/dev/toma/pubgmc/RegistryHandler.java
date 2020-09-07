@@ -147,15 +147,15 @@ public class RegistryHandler {
                             .reloadingSound(quickdraw -> quickdraw ? PMCSounds.P92_RELOAD_FAST : PMCSounds.P92_RELOAD)
                             .shootingVolume(silenced -> silenced ? 5.0F : 9.0F)
                             .build("p92"),
-                    new BackpackItem("small_backpack_desert", BackpackSlotItem.BackpackType.SMALL),
-                    new BackpackItem("medium_backpack_desert", BackpackSlotItem.BackpackType.MEDIUM),
-                    new BackpackItem("large_backpack_desert", BackpackSlotItem.BackpackType.LARGE),
-                    new BackpackItem("small_backpack_forest", BackpackSlotItem.BackpackType.SMALL),
-                    new BackpackItem("medium_backpack_forest", BackpackSlotItem.BackpackType.MEDIUM),
-                    new BackpackItem("large_backpack_forest", BackpackSlotItem.BackpackType.LARGE),
-                    new BackpackItem("small_backpack_snow", BackpackSlotItem.BackpackType.SMALL),
-                    new BackpackItem("medium_backpack_snow", BackpackSlotItem.BackpackType.MEDIUM),
-                    new BackpackItem("large_backpack_snow", BackpackSlotItem.BackpackType.LARGE),
+                    new BackpackItem("small_backpack_desert", BackpackSlotItem.BackpackType.SMALL, BackpackItem.Variant.DESERT),
+                    new BackpackItem("medium_backpack_desert", BackpackSlotItem.BackpackType.MEDIUM, BackpackItem.Variant.DESERT),
+                    new BackpackItem("large_backpack_desert", BackpackSlotItem.BackpackType.LARGE, BackpackItem.Variant.DESERT),
+                    new BackpackItem("small_backpack_forest", BackpackSlotItem.BackpackType.SMALL, BackpackItem.Variant.FOREST),
+                    new BackpackItem("medium_backpack_forest", BackpackSlotItem.BackpackType.MEDIUM, BackpackItem.Variant.FOREST),
+                    new BackpackItem("large_backpack_forest", BackpackSlotItem.BackpackType.LARGE, BackpackItem.Variant.FOREST),
+                    new BackpackItem("small_backpack_snow", BackpackSlotItem.BackpackType.SMALL, BackpackItem.Variant.SNOW),
+                    new BackpackItem("medium_backpack_snow", BackpackSlotItem.BackpackType.MEDIUM, BackpackItem.Variant.SNOW),
+                    new BackpackItem("large_backpack_snow", BackpackSlotItem.BackpackType.LARGE, BackpackItem.Variant.SNOW),
                     new GhillieSuitItem("ghillie_suit")
             );
             blockItemList.stream().filter(Objects::nonNull).forEach(registry::register);

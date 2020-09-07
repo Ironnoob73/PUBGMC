@@ -16,12 +16,12 @@ import net.minecraft.world.World;
 public class BackpackItem extends PMCItem implements BackpackSlotItem {
 
     private final BackpackType type;
-    private final ResourceLocation textureLocation;
+    private final Variant variant;
 
-    public BackpackItem(String name, BackpackType type) {
+    public BackpackItem(String name, BackpackType type, Variant variant) {
         super(name, new Properties().maxStackSize(1).group(ITEMS));
         this.type = type;
-        this.textureLocation = Pubgmc.makeResource("textures/entity/layer/" + name + ".png");
+        this.variant = variant;
     }
 
     @Override
@@ -31,7 +31,7 @@ public class BackpackItem extends PMCItem implements BackpackSlotItem {
 
     @Override
     public ResourceLocation getBackpackTexture() {
-        return textureLocation;
+        return variant.getTexture();
     }
 
     @Override
@@ -59,5 +59,22 @@ public class BackpackItem extends PMCItem implements BackpackSlotItem {
             }
         }
         return super.onItemRightClick(world, player, hand);
+    }
+
+    public enum Variant {
+
+        DESERT,
+        FOREST,
+        SNOW;
+
+        private final ResourceLocation texture;
+
+        Variant() {
+            this.texture = Pubgmc.makeResource("textures/entity/layer/backpack_" + name().toLowerCase() + ".png");
+        }
+
+        public ResourceLocation getTexture() {
+            return texture;
+        }
     }
 }
