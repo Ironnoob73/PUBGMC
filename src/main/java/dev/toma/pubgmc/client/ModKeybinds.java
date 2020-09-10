@@ -9,17 +9,21 @@ import dev.toma.pubgmc.common.item.utility.ThrowableItem;
 import dev.toma.pubgmc.network.NetworkManager;
 import dev.toma.pubgmc.network.packet.SPacketCookThrowable;
 import dev.toma.pubgmc.network.packet.SPacketFiremode;
+import dev.toma.pubgmc.network.packet.SPacketOpenAttachmentMenu;
 import dev.toma.pubgmc.network.packet.SPacketSetReloading;
 import dev.toma.pubgmc.util.UsefulFunctions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.network.NetworkHooks;
 import org.lwjgl.glfw.GLFW;
 
 public class ModKeybinds {
@@ -27,10 +31,12 @@ public class ModKeybinds {
     private static final String CATEGORY = "pubgmc.key.category";
     public static KeyBinding RELOAD_COOK;
     public static KeyBinding FIREMODE_CHANGE;
+    public static KeyBinding EDIT_ATTACHMENTS;
 
     public static void init() {
         RELOAD_COOK = register("reload", GLFW.GLFW_KEY_R);
         FIREMODE_CHANGE = register("firemode", GLFW.GLFW_KEY_B);
+        EDIT_ATTACHMENTS = register("edit_attachments", GLFW.GLFW_KEY_Z);
     }
 
     public static KeyBinding register(String key, int code) {
@@ -69,6 +75,13 @@ public class ModKeybinds {
                         AnimationManager.playNewAnimation(Animations.FIREMODE_SWITCH, new FiremodeAnimation());
                         NetworkManager.sendToServer(new SPacketFiremode());
                     }
+                }
+            } else if(EDIT_ATTACHMENTS.isPressed()) {
+                ItemStack stack = player.getHeldItemMainhand();
+                if(stack.getItem() instanceof GunItem) {
+                    NetworkManager.sendToServer(new SPacketOpenAttachmentMenu(stack));
+                } else {
+                    player.sendStatusMessage(new StringTextComponent(TextFormatting.RED + "Cannot change attachments on currently held item!"), true);
                 }
             }
         }

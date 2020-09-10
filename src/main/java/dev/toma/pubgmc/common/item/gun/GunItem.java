@@ -231,8 +231,9 @@ public class GunItem extends PMCItem implements HandAnimate {
         return animationPack;
     }
 
-    private CompoundNBT getOrCreateTag(ItemStack stack) {
-        if (!stack.hasTag()) {
+    public CompoundNBT getOrCreateTag(ItemStack stack) {
+        CompoundNBT tag = stack.getTag();
+        if (!stack.hasTag() || !tag.contains("ammo") || !tag.contains("firemode") || !tag.contains("attachments")) {
             CompoundNBT nbt = new CompoundNBT();
             nbt.putInt("ammo", 0);
             nbt.putInt("firemode", defaultFiremode.ordinal());
