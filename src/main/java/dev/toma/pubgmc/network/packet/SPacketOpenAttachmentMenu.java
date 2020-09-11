@@ -21,31 +21,25 @@ import java.util.function.Supplier;
 
 public class SPacketOpenAttachmentMenu implements NetworkPacket<SPacketOpenAttachmentMenu> {
 
-    private ItemStack stack;
-
     public SPacketOpenAttachmentMenu() {
 
-    }
-
-    public SPacketOpenAttachmentMenu(ItemStack stack) {
-        this.stack = stack;
     }
     
     @Override
     public void encode(SPacketOpenAttachmentMenu instance, PacketBuffer buf) {
-        buf.writeItemStack(instance.stack);
     }
 
     @Override
     public SPacketOpenAttachmentMenu decode(PacketBuffer buf) {
-        return new SPacketOpenAttachmentMenu(buf.readItemStack());
+        return new SPacketOpenAttachmentMenu();
     }
 
     @Override
     public void handle(SPacketOpenAttachmentMenu instance, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             ServerPlayerEntity player = ctx.get().getSender();
-            if(instance.stack.getItem() instanceof GunItem) {
+            ItemStack stack = player.getHeldItemMainhand();
+            if(stack.getItem() instanceof GunItem) {
                 NetworkHooks.openGui(player, new INamedContainerProvider() {
                     @Override
                     public ITextComponent getDisplayName() {
@@ -55,9 +49,9 @@ public class SPacketOpenAttachmentMenu implements NetworkPacket<SPacketOpenAttac
                     @Nullable
                     @Override
                     public Container createMenu(int windowID, PlayerInventory playerInventory, PlayerEntity player) {
-                        return new AttachmentContainer(windowID, playerInventory, instance.stack);
+                        return new AttachmentContainer(windowID, playerInventory);
                     }
-                }, buf -> buf.writeItemStack(instance.stack));
+                }, buf -> buf.writeItemStack(stack));
             }
         });
         ctx.get().setPacketHandled(true);

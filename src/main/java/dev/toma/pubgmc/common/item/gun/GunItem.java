@@ -457,7 +457,7 @@ public class GunItem extends PMCItem implements HandAnimate {
         }
 
         public AttachmentBuilder magazine(Supplier<AttachmentItem.Magazine[]> supplier) {
-            return insert(AttachmentCategory.BARREL, supplier);
+            return insert(AttachmentCategory.MAGAZINE, supplier);
         }
 
         public AttachmentBuilder stock(Supplier<AttachmentItem.Stock[]> supplier) {

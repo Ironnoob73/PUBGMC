@@ -21,16 +21,16 @@ public class AttachmentContainer extends Container {
     private final ItemStack stack;
 
     public AttachmentContainer(int i, PlayerInventory inventory, PacketBuffer data) {
-        this(i, inventory, data.readItemStack());
+        this(i, inventory);
     }
 
-    public AttachmentContainer(int i, PlayerInventory playerInventory, ItemStack stack) {
+    public AttachmentContainer(int i, PlayerInventory playerInventory) {
         super(ATTACHMENT_CONTAINER.get(), i);
-        this.stack = stack;
-        this.inventory = new AttachmentInventory(playerInventory.player, stack);
+        this.stack = playerInventory.player.getHeldItemMainhand();
+        this.inventory = new AttachmentInventory(playerInventory.player);
         inventory.openInventory(playerInventory.player);
         for(AttachmentCategory category : AttachmentCategory.values()) {
-            addSlot(new AttachmentSlot(inventory, stack, category.ordinal(), category.getX(), category.getY()));
+            addSlot(new AttachmentSlot(inventory, stack.copy(), category.ordinal(), category.getX(), category.getY()));
         }
         for(int y = 0; y < 3; y++) {
             for (int x = 0; x < 9; x++) {
@@ -40,6 +40,10 @@ public class AttachmentContainer extends Container {
         for (int x = 0; x < 9; x++) {
             addSlot(new Slot(playerInventory, x, 8 + x * 18, 173));
         }
+    }
+
+    public ItemStack getStack() {
+        return stack;
     }
 
     @Override

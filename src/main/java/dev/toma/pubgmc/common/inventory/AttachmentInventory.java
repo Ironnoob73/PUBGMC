@@ -16,17 +16,19 @@ import net.minecraftforge.registries.ForgeRegistries;
 public class AttachmentInventory extends Inventory {
 
     private final PlayerEntity player;
-    public final ItemStack stack;
 
-    public AttachmentInventory(PlayerEntity player, ItemStack stack) {
+    public AttachmentInventory(PlayerEntity player) {
         super(5);
         this.player = player;
-        this.stack = player.getHeldItemMainhand();
     }
 
     @Override
     public void openInventory(PlayerEntity player) {
-        CompoundNBT nbt = ((GunItem) this.stack.getItem()).getOrCreateTag(this.stack).getCompound("attachments");
+        ItemStack stack = player.getHeldItemMainhand();
+        if(!validate(stack, player)) {
+            return;
+        }
+        CompoundNBT nbt = ((GunItem) stack.getItem()).getOrCreateTag(stack).getCompound("attachments");
         for (int i = 0; i < getSizeInventory(); i++) {
             ItemStack itemStack = detach(nbt, i);
             if(!itemStack.isEmpty()) {
@@ -37,12 +39,16 @@ public class AttachmentInventory extends Inventory {
 
     @Override
     public void closeInventory(PlayerEntity player) {
-        GunAttachments attachments = ((GunItem) this.stack.getItem()).getAttachmentList();
-        CompoundNBT nbt = ((GunItem) this.stack.getItem()).getOrCreateTag(this.stack).getCompound("attachments");
+        ItemStack stack = player.getHeldItemMainhand();
+        if(!validate(stack, player)) {
+            return;
+        }
+        GunAttachments attachments = ((GunItem) stack.getItem()).getAttachmentList();
+        CompoundNBT nbt = ((GunItem) stack.getItem()).getOrCreateTag(stack).getCompound("attachments");
         for(int i = 0; i < getSizeInventory(); i++) {
-            ItemStack stack = getStackInSlot(i);
-            if(!stack.isEmpty()) {
-                attach(nbt, stack, attachments);
+            ItemStack itemStack = getStackInSlot(i);
+            if(!itemStack.isEmpty()) {
+                attach(nbt, itemStack, attachments);
             }
         }
     }
@@ -62,15 +68,6 @@ public class AttachmentInventory extends Inventory {
         }
     }
 
-    void dropItem(ItemStack stack) {
-        if(!player.world.isRemote) {
-            ItemEntity entity = new ItemEntity(player.world, player.posX, player.posY, player.posZ, stack.copy());
-            stack.setCount(0);
-            entity.setPickupDelay(40);
-            player.world.addEntity(entity);
-        }
-    }
-
     public ItemStack detach(CompoundNBT nbt, int id) {
         String key = id + "";
         if(nbt.contains(key)) {
@@ -82,5 +79,27 @@ public class AttachmentInventory extends Inventory {
             }
         }
         return ItemStack.EMPTY;
+    }
+
+    void dropItem(ItemStack stack) {
+        if(!player.world.isRemote) {
+            ItemEntity entity = new ItemEntity(player.world, player.posX, player.posY, player.posZ, stack.copy());
+            stack.setCount(0);
+            entity.setPickupDelay(40);
+            player.world.addEntity(entity);
+        }
+    }
+
+    boolean validate(ItemStack stack, PlayerEntity player) {
+        if(!(stack.getItem() instanceof GunItem)) {
+            for (int i = 0; i < getSizeInventory(); i++) {
+                ItemStack itemStack = getStackInSlot(i);
+                if(!itemStack.isEmpty()) {
+                    dropItem(itemStack);
+                }
+            }
+            return false;
+        }
+        return true;
     }
 }

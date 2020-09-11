@@ -79,7 +79,7 @@ public class ModKeybinds {
             } else if(EDIT_ATTACHMENTS.isPressed()) {
                 ItemStack stack = player.getHeldItemMainhand();
                 if(stack.getItem() instanceof GunItem) {
-                    NetworkManager.sendToServer(new SPacketOpenAttachmentMenu(stack));
+                    NetworkManager.sendToServer(new SPacketOpenAttachmentMenu());
                 } else {
                     player.sendStatusMessage(new StringTextComponent(TextFormatting.RED + "Cannot change attachments on currently held item!"), true);
                 }
