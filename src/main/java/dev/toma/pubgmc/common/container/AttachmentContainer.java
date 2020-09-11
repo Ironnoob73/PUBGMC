@@ -30,7 +30,7 @@ public class AttachmentContainer extends Container {
         this.inventory = new AttachmentInventory(playerInventory.player);
         inventory.openInventory(playerInventory.player);
         for(AttachmentCategory category : AttachmentCategory.values()) {
-            addSlot(new AttachmentSlot(inventory, stack.copy(), category.ordinal(), category.getX(), category.getY()));
+            addSlot(new AttachmentSlot(inventory, category, stack.copy(), category.ordinal(), category.getX(), category.getY()));
         }
         for(int y = 0; y < 3; y++) {
             for (int x = 0; x < 9; x++) {
@@ -60,14 +60,17 @@ public class AttachmentContainer extends Container {
     static class AttachmentSlot extends Slot {
 
         private final ItemStack stack;
+        private final AttachmentCategory category;
+        private final String texture;
 
-        public AttachmentSlot(AttachmentInventory inventory, ItemStack stack, int i, int x, int y) {
+        public AttachmentSlot(AttachmentInventory inventory, AttachmentCategory category, ItemStack stack, int i, int x, int y) {
             super(inventory, i, x, y);
             this.stack = stack;
+            this.category = category;
+            this.texture = category.getSlotTexture();
         }
 
         boolean isCategorySupported() {
-            AttachmentCategory category = AttachmentCategory.values()[this.getSlotIndex()];
             return ((GunItem) this.stack.getItem()).getAttachmentList().supports(category);
         }
 
@@ -82,7 +85,7 @@ public class AttachmentContainer extends Container {
         @Nullable
         @Override
         public String getSlotTexture() {
-            return isCategorySupported() ? null : "pubgmc:slot/locked";
+            return isCategorySupported() ? texture : "pubgmc:slot/locked";
         }
     }
 }

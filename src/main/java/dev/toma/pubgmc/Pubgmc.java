@@ -9,6 +9,7 @@ import dev.toma.pubgmc.client.animation.Animations;
 import dev.toma.pubgmc.client.animation.builder.BuilderMain;
 import dev.toma.pubgmc.client.screen.*;
 import dev.toma.pubgmc.command.LootCommand;
+import dev.toma.pubgmc.common.item.gun.attachment.AttachmentCategory;
 import dev.toma.pubgmc.config.Config;
 import dev.toma.pubgmc.data.loot.LootManager;
 import dev.toma.pubgmc.init.PMCContainers;
@@ -128,6 +129,9 @@ public class Pubgmc {
                 event.addSprite(makeResource("slot/ghillie"));
                 event.addSprite(makeResource("slot/backpack"));
                 event.addSprite(makeResource("slot/locked"));
+                for (AttachmentCategory category : AttachmentCategory.values()) {
+                    event.addSprite(makeResource("slot/" + category.name().toLowerCase()));
+                }
             }
         }
     }

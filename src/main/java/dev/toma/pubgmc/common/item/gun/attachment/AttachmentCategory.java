@@ -22,4 +22,8 @@ public enum AttachmentCategory {
     public int getY() {
         return y;
     }
+
+    public String getSlotTexture() {
+        return "pubgmc:slot/" + name().toLowerCase();
+    }
 }
