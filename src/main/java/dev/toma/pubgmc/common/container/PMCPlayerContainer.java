@@ -181,12 +181,33 @@ public class PMCPlayerContainer extends RecipeBookContainer<CraftingInventory> {
                 if (!this.mergeItemStack(itemstack1, 45, 46, false)) {
                     return ItemStack.EMPTY;
                 }
+            } else if(itemstack1.getItem() instanceof PMCInventoryItem && index < 45) {
+                int i = ((PMCInventoryItem) itemstack1.getItem()).getSlotType().ordinal();
+                if(!inventorySlots.get(46 + i).getHasStack()) {
+                    if(!mergeItemStack(itemstack1, 46 + i, 47 + i, false)) {
+                        return ItemStack.EMPTY;
+                    }
+                } else {
+                    if (index >= 9 && index < 36) {
+                        if (!this.mergeItemStack(itemstack1, 36, 45, true)) {
+                            return ItemStack.EMPTY;
+                        }
+                    } else if (index >= 36 && index < 45) {
+                        if (!this.mergeItemStack(itemstack1, 9, 36, false)) {
+                            return ItemStack.EMPTY;
+                        }
+                    }
+                }
             } else if (index >= 9 && index < 36) {
                 if (!this.mergeItemStack(itemstack1, 36, 45, true)) {
                     return ItemStack.EMPTY;
                 }
             } else if (index >= 36 && index < 45) {
                 if (!this.mergeItemStack(itemstack1, 9, 36, false)) {
+                    return ItemStack.EMPTY;
+                }
+            } else if(index > 45) {
+                if (!this.mergeItemStack(itemstack1, 9, 45, true)) {
                     return ItemStack.EMPTY;
                 }
             } else if (!this.mergeItemStack(itemstack1, 9, 45, false)) {

@@ -23,9 +23,7 @@ public abstract class AbstractModContainer<T extends TileEntity> extends Contain
     public AbstractModContainer(ContainerType<?> type, int windowID, PlayerInventory inventory, T tileEntity) {
         super(type, windowID);
         this.tileEntity = tileEntity;
-        tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
-            invSize = h.getSlots();
-        });
+        tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> invSize = h.getSlots());
     }
 
     public AbstractModContainer(ContainerType<?> type, int windowID, PlayerInventory inventory, PacketBuffer buffer) {

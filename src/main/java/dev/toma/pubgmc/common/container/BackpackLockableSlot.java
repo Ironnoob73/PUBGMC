@@ -25,7 +25,7 @@ public class BackpackLockableSlot extends Slot {
 
     @Override
     public final boolean canTakeStack(PlayerEntity playerIn) {
-        return valid();
+        return playerIn.isCreative() || valid();
     }
 
     @Nullable
