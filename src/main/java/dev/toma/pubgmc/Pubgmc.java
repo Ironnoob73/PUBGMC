@@ -52,7 +52,7 @@ import static dev.toma.pubgmc.init.PMCTileEntities.TE_TYPES;
 public class Pubgmc {
 
     public static final String MODID = "pubgmc";
-    public static Logger pubgmcLog = LogManager.getLogger("pubgmc");
+    public static final Logger pubgmcLog = LogManager.getLogger("pubgmc");
     public static final Random rand = new Random();
 
     public static FactoryCraftingRecipes recipeManager = new FactoryCraftingRecipes();
