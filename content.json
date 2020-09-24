@@ -1,3 +1,15 @@
 {
-
+    "event": [
+        {
+            "name": "Test Event",
+            "date": "24.09.2020-12:00",
+            "description": ["Very first event made just as a test", "Enjoy"],
+            "host": "Toma"
+        }
+    ],
+    "announcement": [],
+    "map": [],
+    "news": [
+        "§b§uUpdate 1.0"
+    ]
 }

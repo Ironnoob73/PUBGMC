@@ -11,6 +11,7 @@ import dev.toma.pubgmc.client.screen.*;
 import dev.toma.pubgmc.command.LootCommand;
 import dev.toma.pubgmc.common.item.gun.attachment.AttachmentCategory;
 import dev.toma.pubgmc.config.Config;
+import dev.toma.pubgmc.content.ContentManager;
 import dev.toma.pubgmc.data.loot.LootManager;
 import dev.toma.pubgmc.init.PMCContainers;
 import dev.toma.pubgmc.capability.InventoryFactory;
@@ -56,6 +57,7 @@ public class Pubgmc {
     public static final Random rand = new Random();
 
     public static FactoryCraftingRecipes recipeManager = new FactoryCraftingRecipes();
+    public static ContentManager contentManager = new ContentManager();
     public static LootManager lootManager = new LootManager();
 
     public static GameRules.RuleKey<GameRules.BooleanValue> WEAPON_GRIEFING = GameRules.register("weaponGriefing", GameRules.BooleanValue.create(true));
@@ -87,6 +89,7 @@ public class Pubgmc {
             ScreenManager.registerFactory(PMCContainers.ATTACHMENT_CONTAINER.get(), AttachmentScreen::new);
         });
         Animations.init();
+        contentManager.start();
         if(Config.animationTool.get()) BuilderMain.init();
     }
 
