@@ -95,7 +95,7 @@ public class CommonEventHandler {
     public static void onPlayerLogIn(PlayerEvent.PlayerLoggedInEvent event) {
         IPlayerCap cap = PlayerCapFactory.get(event.getPlayer());
         cap.syncAllData();
-        NetworkManager.sendToClient((ServerPlayerEntity) event.getPlayer(), new CPacketSendRecipes(Pubgmc.recipeManager.recipeMap));
+        NetworkManager.sendToClient((ServerPlayerEntity) event.getPlayer(), new CPacketSendRecipes(Pubgmc.getRecipeManager().recipeMap));
         syncInventory(event.getPlayer(), Collections.singletonList(event.getPlayer()));
     }
 

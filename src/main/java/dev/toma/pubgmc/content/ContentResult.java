@@ -1,31 +1,39 @@
 package dev.toma.pubgmc.content;
 
 import com.google.gson.*;
+import dev.toma.pubgmc.client.screen.menu.RefreshListener;
+import dev.toma.pubgmc.util.UsefulFunctions;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.JSONUtils;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ContentResult {
 
-    private CommunityEvent[] events;
-    private MenuAnnouncement[] announcements;
+    private MenuDisplayContent[] menuDisplayContents;
     private final MapData[] mapData;
-    private final String[] news;
+    private String[] news;
     private boolean changed;
 
-    public ContentResult(CommunityEvent[] events, MenuAnnouncement[] announcements, String[] news, MapData[] mapData) {
-        this.events = events;
-        this.announcements = announcements;
+    public ContentResult(MenuDisplayContent[] menuDisplayContents, String[] news, MapData[] mapData) {
+        this.menuDisplayContents = menuDisplayContents;
         this.news = news;
         this.mapData = mapData;
     }
 
     public void updateModifiable(ContentResult other) {
-        this.changed = this.events.length != other.events.length || this.announcements.length != other.events.length;
-        this.events = other.events;
-        this.announcements = other.announcements;
+        this.changed = this.menuDisplayContents.length != other.menuDisplayContents.length || !Arrays.equals(news, other.news);
+        this.menuDisplayContents = other.menuDisplayContents;
+        this.news = other.news;
+        Minecraft mc = Minecraft.getInstance();
+        if(changed && mc.currentScreen instanceof RefreshListener) {
+            synchronized (Minecraft.getInstance()) {
+                ((RefreshListener) mc.currentScreen).onRefresh();
+            }
+        }
     }
 
     public boolean hasChanged() {
@@ -36,12 +44,8 @@ public class ContentResult {
         return mapData;
     }
 
-    public CommunityEvent[] getEvents() {
-        return events;
-    }
-
-    public MenuAnnouncement[] getAnnouncements() {
-        return announcements;
+    public MenuDisplayContent[] getMenuDisplayContents() {
+        return menuDisplayContents;
     }
 
     public String[] getNews() {
@@ -54,17 +58,12 @@ public class ContentResult {
         public ContentResult deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             if(!json.isJsonObject()) throw new JsonParseException("Received invalid data - not a Json Object");
             JsonObject object = json.getAsJsonObject();
-            JsonArray eventArray = JSONUtils.getJsonArray(object, "event");
-            JsonArray announcementArray = JSONUtils.getJsonArray(object, "announcement");
-            JsonArray newsArray = JSONUtils.getJsonArray(object, "news");
+            JsonArray displayArray = JSONUtils.getJsonArray(object, "display");
+            JsonArray newsArray = JSONUtils.getJsonArray(object, "mainMenuText");
             JsonArray mapDataArray = JSONUtils.getJsonArray(object, "map");
-            List<CommunityEvent> communityEventList = new ArrayList<>();
-            for (JsonElement element : eventArray) {
-                communityEventList.add(context.deserialize(element, CommunityEvent.class));
-            }
-            List<MenuAnnouncement> menuAnnouncementList = new ArrayList<>();
-            for (JsonElement element : announcementArray) {
-                menuAnnouncementList.add(context.deserialize(element, MenuAnnouncement.class));
+            List<MenuDisplayContent> menuDisplayContentList = new ArrayList<>();
+            for (JsonElement element : displayArray) {
+                menuDisplayContentList.add(context.deserialize(element, MenuDisplayContent.class));
             }
             List<String> stringList = new ArrayList<>();
             for (JsonElement element : newsArray) {
@@ -74,7 +73,7 @@ public class ContentResult {
             for (JsonElement element : mapDataArray) {
                 mapDataList.add(context.deserialize(element, MapData.class));
             }
-            return new ContentResult(communityEventList.toArray(new CommunityEvent[0]), menuAnnouncementList.toArray(new MenuAnnouncement[0]), stringList.toArray(new String[0]), mapDataList.toArray(new MapData[0]));
+            return new ContentResult(menuDisplayContentList.toArray(new MenuDisplayContent[0]), stringList.toArray(new String[0]), mapDataList.toArray(new MapData[0]));
         }
     }
 }

@@ -68,7 +68,7 @@ public class CPacketSendRecipes implements NetworkPacket<CPacketSendRecipes> {
 
     @Override
     public void handle(CPacketSendRecipes instance, Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> Pubgmc.recipeManager.recipeMap = instance.recipeMap);
+        ctx.get().enqueueWork(() -> Pubgmc.getRecipeManager().recipeMap = instance.recipeMap);
         ctx.get().setPacketHandled(true);
     }
 }

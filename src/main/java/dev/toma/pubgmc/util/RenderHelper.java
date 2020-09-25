@@ -145,6 +145,17 @@ public class RenderHelper {
         GlStateManager.disableBlend();
     }
 
+    public static void drawColoredTexturedShape(int x, int y, int x2, int y2, float r, float g, float b, float a) {
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder builder = tessellator.getBuffer();
+        GlStateManager.enableBlend();
+        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        color_tex_shape(builder, x, y, x2, y2, 0.0, 0.0, 1.0, 1.0, r, g, b, a);
+        tessellator.draw();
+        GlStateManager.disableBlend();
+    }
+
     public static void line(int fromX, int fromY, int toX, int toY, float r, float g, float b, float a, int width) {
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder builder = tessellator.getBuffer();

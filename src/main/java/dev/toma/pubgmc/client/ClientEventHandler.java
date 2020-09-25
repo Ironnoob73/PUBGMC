@@ -29,6 +29,7 @@ import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.screen.MainMenuScreen;
 import net.minecraft.client.gui.screen.inventory.InventoryScreen;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.FogRenderer;
@@ -270,6 +271,8 @@ public class ClientEventHandler {
         if(event.getGui() instanceof InventoryScreen) {
             NetworkManager.sendToServer(new SPacketOpenPlayerInventory());
             event.setCanceled(true);
+        } else if(event.getGui() instanceof MainMenuScreen) {
+            event.setGui(new dev.toma.pubgmc.client.screen.menu.MainMenuScreen());
         }
     }
 

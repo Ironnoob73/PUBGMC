@@ -1,24 +1,58 @@
 package dev.toma.pubgmc.content;
 
-import com.google.gson.*;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import dev.toma.pubgmc.client.screen.menu.Component;
+import dev.toma.pubgmc.client.screen.menu.EventComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
-import java.lang.reflect.Type;
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class CommunityEvent {
+public class CommunityEvent extends MenuDisplayContent {
 
     private final String name;
     private final LocalDateTime dateTime;
     private final String host;
-    @Nullable private final String[] description;
+    @Nullable
+    private final String[] description;
+    @Nullable
+    private String ip;
+    private final DateComparationContext ctx;
 
-    private CommunityEvent(@Nullable String name, LocalDateTime dateTime, @Nullable String host, @Nullable String[] description) {
+    private CommunityEvent(@Nullable String name, LocalDateTime dateTime, @Nullable String host, @Nullable String[] description, @Nullable String ip) {
         this.name = name != null && !name.isEmpty() ? name : "Unnamed event";
         this.dateTime = Objects.requireNonNull(dateTime, "Undefined event schedule");
         this.host = host != null && !host.isEmpty() ? host : "Unkown";
         this.description = description;
+        this.ip = ip;
+        this.ctx = DateComparationContext.from(LocalDateTime.now(Clock.systemUTC()), dateTime);
+    }
+
+    public static CommunityEvent deserialize(JsonObject object, JsonDeserializationContext ctx) {
+        String name = object.get("name").getAsString();
+        String host = object.get("host").getAsString();
+        JsonArray description = object.getAsJsonArray("description");
+        int pos = 0;
+        String[] strings = new String[description.size()];
+        for (JsonElement element : description) {
+            strings[pos] = element.getAsString();
+            ++pos;
+        }
+        LocalDateTime dateTime = LocalDateTime.parse(object.get("date").getAsString());
+        String ip = object.has("ip") ? object.get("ip").getAsString() : null;
+        return new CommunityEvent(name, dateTime, host, strings, ip);
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    @Override
+    public Component createComponent(int x, int y, int width, int height) {
+        return new EventComponent(x, y, width, height, this);
     }
 
     public String getName() {
@@ -42,22 +76,20 @@ public class CommunityEvent {
         return description != null && description.length > 0;
     }
 
-    public static class Deserializer implements JsonDeserializer<CommunityEvent> {
+    public boolean isLive() {
+        return ip != null && !ip.isEmpty();
+    }
 
-        @Override
-        public CommunityEvent deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            JsonObject object = json.getAsJsonObject();
-            String name = object.get("name").getAsString();
-            String host = object.get("host").getAsString();
-            JsonArray description = object.getAsJsonArray("description");
-            int pos = 0;
-            String[] strings = new String[description.size()];
-            for (JsonElement element : description) {
-                strings[pos] = element.getAsString();
-                ++pos;
-            }
-            LocalDateTime dateTime = LocalDateTime.parse(object.get("date").getAsString());
-            return new CommunityEvent(name, dateTime, host, strings);
-        }
+    @Nullable
+    public String getIP() {
+        return ip;
+    }
+
+    public void setIp(@Nullable String ip) {
+        this.ip = ip;
+    }
+
+    public DateComparationContext getComparationContext() {
+        return ctx;
     }
 }

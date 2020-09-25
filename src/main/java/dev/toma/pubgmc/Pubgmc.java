@@ -30,8 +30,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.DeferredWorkQueue;
-import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.*;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -41,9 +40,11 @@ import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.minecraftforge.versions.forge.ForgeVersion;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Optional;
 import java.util.Random;
 
 import static dev.toma.pubgmc.init.PMCContainers.CONTAINER_TYPES;
@@ -55,11 +56,9 @@ public class Pubgmc {
     public static final String MODID = "pubgmc";
     public static final Logger pubgmcLog = LogManager.getLogger("pubgmc");
     public static final Random rand = new Random();
-
-    public static FactoryCraftingRecipes recipeManager = new FactoryCraftingRecipes();
-    public static ContentManager contentManager = new ContentManager();
-    public static LootManager lootManager = new LootManager();
-
+    private static FactoryCraftingRecipes recipeManager;
+    private static ContentManager contentManager;
+    private static LootManager lootManager;
     public static GameRules.RuleKey<GameRules.BooleanValue> WEAPON_GRIEFING = GameRules.register("weaponGriefing", GameRules.BooleanValue.create(true));
 
     public Pubgmc() {
@@ -75,6 +74,9 @@ public class Pubgmc {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.COMMON);
         Config.load(Config.CLIENT, FMLPaths.CONFIGDIR.get().resolve("pubgmc-client.toml"));
         Config.load(Config.COMMON, FMLPaths.CONFIGDIR.get().resolve("pubgmc-common.toml"));
+        recipeManager = new FactoryCraftingRecipes();
+        lootManager = new LootManager();
+        contentManager = new ContentManager();
     }
 
     private void setupClient(FMLClientSetupEvent event) {
@@ -120,6 +122,29 @@ public class Pubgmc {
         pubgmcLog.error(message, objects);
         pubgmcLog.error("");
         pubgmcLog.error("-------------------------------------------------");
+    }
+
+    public static boolean isOutdated() {
+        Optional<? extends ModContainer> container = ModList.get().getModContainerById(MODID);
+        if(!container.isPresent()) {
+            return false;
+        }
+        ModContainer modContainer = container.get();
+        VersionChecker.CheckResult checkResult = VersionChecker.getResult(modContainer.getModInfo());
+        VersionChecker.Status status = checkResult.status;
+        return status == VersionChecker.Status.OUTDATED || status == VersionChecker.Status.BETA_OUTDATED;
+    }
+
+    public static FactoryCraftingRecipes getRecipeManager() {
+        return recipeManager;
+    }
+
+    public static LootManager getLootManager() {
+        return lootManager;
+    }
+
+    public static ContentManager getContentManager() {
+        return contentManager;
     }
 
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
