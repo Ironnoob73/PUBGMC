@@ -20,10 +20,11 @@ public class SelectContentTypeScreen extends ComponentScreen {
 
     @Override
     public void initComponents() {
+        boolean canDivide = width % 2 == 0;
         CenteredTextButtonComponent content = new CenteredTextButtonComponent(0, 0, width / 2, height - 50, "Community Content", pc -> {});
         content.setEnabled(false);
         addComponent(content);
-        addComponent(new CenteredTextButtonComponent(width/2, 0, width/2, height-50, "My Worlds", pc -> minecraft.displayGuiScreen(new WorldSelectionScreen(this))));
+        addComponent(new CenteredTextButtonComponent(width/2, 0, width/2 + (canDivide ? 0 : 1), height-50, "My Worlds", pc -> minecraft.displayGuiScreen(new WorldSelectionScreen(this))));
         addComponent(new CenteredTextButtonComponent(0, height - 50, width, 50, "Back to menu", pc -> minecraft.displayGuiScreen(lastScreen)));
     }
 

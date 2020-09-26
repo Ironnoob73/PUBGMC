@@ -3,13 +3,19 @@ package dev.toma.pubgmc.common.entity.vehicle;
 import dev.toma.pubgmc.common.entity.IControllableEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Predicate;
 
 public abstract class AbstractControllableEntity extends Entity implements IControllableEntity {
 
+    public static final DamageSource VEHICLE_DAMAGE = new DamageSource("vehicleCollide");
     public boolean forwardKey;
     public boolean backwardKey;
     public boolean rightKey;
@@ -66,6 +72,28 @@ public abstract class AbstractControllableEntity extends Entity implements ICont
         if(!rotorAccelerate && rotorSlowndown) {
             this.onRotorSlowndown();
         }
+    }
+
+    public Entity collidedWith(Vec3d start, Vec3d end, AxisAlignedBB aabb) {
+        return collidedWith(start, end, aabb, entity -> !entity.isSpectator() && entity.isAlive() && entity.canBeCollidedWith() && !isPassenger(entity));
+    }
+
+    public Entity collidedWith(Vec3d start, Vec3d end, AxisAlignedBB aabb, Predicate<Entity> filter) {
+        double distance = Double.MAX_VALUE;
+        Entity entity = null;
+        for(Entity e : world.getEntitiesInAABBexcluding(this, aabb, filter)) {
+            AxisAlignedBB alignedBB = e.getBoundingBox();
+            Optional<Vec3d> optionalVec3d = alignedBB.rayTrace(start, end);
+            if(optionalVec3d.isPresent()) {
+                Vec3d vec3d = optionalVec3d.get();
+                double distanceToEntity = start.squareDistanceTo(vec3d);
+                if(distanceToEntity < distance) {
+                    entity = e;
+                    distance = distanceToEntity;
+                }
+            }
+        }
+        return entity;
     }
 
     /** Called before {@link Entity#tick()} is called */

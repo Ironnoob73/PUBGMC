@@ -1,8 +1,14 @@
 package dev.toma.pubgmc.common.entity.vehicle;
 
-import dev.toma.pubgmc.games.object.GameKeyHolder;
+import com.mojang.blaze3d.platform.GlStateManager;
+import dev.toma.pubgmc.util.RenderHelper;
 import dev.toma.pubgmc.util.UsefulFunctions;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.MainWindow;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MoverType;
@@ -10,6 +16,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -17,8 +24,13 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import net.minecraftforge.fml.network.NetworkHooks;
+import org.lwjgl.opengl.GL11;
+
+import java.util.Optional;
 
 public abstract class DriveableEntity extends AbstractControllableEntity implements IEntityAdditionalSpawnData {
 
@@ -129,6 +141,19 @@ public abstract class DriveableEntity extends AbstractControllableEntity impleme
     }
 
     @Override
+    protected void updateEntityPre() {
+        Vec3d at = this.getPositionVec();
+        Vec3d next = at.add(this.getMotion());
+        Entity entity = collidedWith(at, next, getBoundingBox().expand(getMotion()).grow(1.0D));
+        if(entity != null) {
+            float damage = currentSpeed < 0.15F ? 0.0F : currentSpeed * 20.0F;
+            if(damage > 0)
+                entity.attackEntityFrom(VEHICLE_DAMAGE, damage);
+            entity.setMotion(getMotion().inverse().add(0, currentSpeed, 0));
+        }
+    }
+
+    @Override
     protected void updateEntityPost() {
         this.setMotion(this.getMotion().x, -0.25, this.getMotion().z);
         move(MoverType.SELF, this.getMotion());
@@ -138,16 +163,39 @@ public abstract class DriveableEntity extends AbstractControllableEntity impleme
         }
         if(this.collidedHorizontally) {
             float damage = currentSpeed < 0.3F ? 0.0F : currentSpeed * 20.0F;
-            System.out.println(damage);
             this.attackEntityFrom(DamageSource.FALL, damage);
             for(Entity entity : this.getPassengers()) {
                 if(!entity.isInvulnerable()) {
-                    entity.attackEntityFrom(DamageSource.FALL, damage / 2.0F);
+                    entity.attackEntityFrom(VEHICLE_DAMAGE, damage / 2.0F);
                 }
             }
             this.currentSpeed = 0.0F;
             this.setMotion(0, 0, 0);
         }
+        this.handleParticles();
+    }
+
+    public void handleParticles() {
+        if(world.isRemote) {
+            float healthPct = health / data.maxHealth;
+            if(healthPct <= 0.35f) {
+                Optional<Vec3d> engine = Optional.of(this.getEngineVector());
+                engine.ifPresent(vec -> {
+                    Vec3d vec3d = vec.rotateYaw(-rotationYaw * 0.0175F - ((float) Math.PI / 2.0F));
+                    world.addParticle(ParticleTypes.LARGE_SMOKE, true, posX + vec3d.x, posY + vec3d.y, posZ + vec3d.z, 0, 0.075d, 0);
+                    if(healthPct <= 0.15f) {
+                        double offsetX = (rand.nextDouble() - rand.nextDouble()) * 0.1D;
+                        double offsetZ = (rand.nextDouble() - rand.nextDouble()) * 0.1D;
+                        world.addParticle(ParticleTypes.FLAME, true, posX + vec3d.x, posY + vec3d.y, posZ + vec3d.z, offsetX, 0.1D, offsetZ);
+                        world.addParticle(ParticleTypes.LARGE_SMOKE, true, posX + vec3d.x, posY + vec3d.y, posZ + vec3d.z, -offsetX, 0.075d, -offsetZ);
+                    }
+                });
+            }
+        }
+    }
+
+    public Vec3d getEngineVector() {
+        return null;
     }
 
     @Override
@@ -248,6 +296,37 @@ public abstract class DriveableEntity extends AbstractControllableEntity impleme
 
     @Override
     protected void registerData() {
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    @Override
+    public void drawOnScreen(Minecraft mc, MainWindow window) {
+        int left = 15;
+        int top = window.getScaledHeight() - 30;
+        int width = window.getScaledWidth() / 5;
+        Vec3d motion = this.getMotion();
+        double speed = Math.sqrt(motion.x * motion.x + motion.z * motion.z) * 20;
+        String speedString =  (int)(speed * 3.6d) + " km/h";
+        mc.fontRenderer.drawStringWithShadow(speedString, left, top - 8, 0xFFFFFF);
+        mc.fontRenderer.drawStringWithShadow("E", left - 7, top + 1, 0xBB0000);
+        mc.fontRenderer.drawStringWithShadow("F", left + width + 2, top + 1, 0x00BB00);
+        RenderHelper.drawColoredShape(left, top, left + width, top + 10, 0.4F, 0.4F, 0.4F, 0.5F);
+        float fuel = this.fuel / this.data.getMaxFuel();
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder builder = tessellator.getBuffer();
+        GlStateManager.disableTexture();
+        GlStateManager.shadeModel(GL11.GL_SMOOTH);
+        builder.begin(7, DefaultVertexFormats.POSITION_COLOR);
+        builder.pos(left, top + 10, 0).color(1.0F, 0.0F, 0.0F, 1.0F).endVertex();
+        builder.pos(left + width * fuel, top + 10, 0).color(1.0F - fuel, fuel, 0.0F, 1.0F).endVertex();
+        builder.pos(left + width * fuel, top, 0).color(1.0F - fuel, fuel, 0.0F, 1.0F).endVertex();
+        builder.pos(left, top, 0).color(1.0F, 0.0F, 0.0F, 1.0F).endVertex();
+        tessellator.draw();
+        GlStateManager.shadeModel(GL11.GL_FLAT);
+        GlStateManager.enableTexture();
+        RenderHelper.drawColoredShape(left, top + 10, left + width, top + 20, 0.0F, 0.0F, 0.0F, 0.5F);
+        float health = this.health / this.data.getMaxHealth();
+        RenderHelper.drawColoredShape(left, top + 10, (int)(left + width * health), top + 20, 1.0F, health, health, 1.0F);
     }
 
     public boolean hasFuel() {
