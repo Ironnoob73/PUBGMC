@@ -1,6 +1,7 @@
 package dev.toma.pubgmc.common.entity.vehicle;
 
 import dev.toma.pubgmc.init.PMCEntities;
+import dev.toma.pubgmc.init.PMCSounds;
 import dev.toma.pubgmc.util.RenderHelper;
 import dev.toma.pubgmc.util.UsefulFunctions;
 import net.minecraft.client.MainWindow;
@@ -72,6 +73,8 @@ public abstract class AirDriveableEntity extends DriveableEntity {
             this.setMotion(0, 0, 0);
         }
         this.handleParticles();
+        this.lastSpeed = this.currentSpeed;
+        this.lastState = this.currentState;
     }
 
     @Override
@@ -168,6 +171,7 @@ public abstract class AirDriveableEntity extends DriveableEntity {
 
         public static final DriveableData DATA = new DriveableData(50F, 100.0F, 1.4F, 0.01F, 0.2F);
         private static final Vec3d ENGINE = new Vec3d(-2.6D, 1.25D, 0.0D);
+        private static final VehicleSoundStorage SOUND_STORAGE = new VehicleSoundStorage(PMCSounds.GLIDER_ACCELERATE, PMCSounds.GLIDER_BRAKE, PMCSounds.GLIDER_CRUISE, PMCSounds.GLIDER_IDLE);
 
         public GliderDriveable(EntityType<?> type, World world) {
             super(type, world);
@@ -200,6 +204,11 @@ public abstract class AirDriveableEntity extends DriveableEntity {
         @Override
         public Vec3d getEngineVector() {
             return ENGINE;
+        }
+
+        @Override
+        public VehicleSoundStorage getSoundStorage() {
+            return SOUND_STORAGE;
         }
     }
 }

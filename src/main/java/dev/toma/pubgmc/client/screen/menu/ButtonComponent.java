@@ -22,6 +22,6 @@ public class ButtonComponent extends PressableComponent {
             RenderHelper.drawColoredShape(x, y, x + width, y + height, 1.0F, 1.0F, 1.0F, 0.5F);
         }
         int w = mc.fontRenderer.getStringWidth(displayString);
-        mc.fontRenderer.drawStringWithShadow(displayString, x + (width - w) / 2.0f, y + 6, hovered ? 0xffff00 : 0xffffff);
+        mc.fontRenderer.drawStringWithShadow(displayString, x + (width - w) / 2.0f, y + (height - mc.fontRenderer.FONT_HEIGHT) / 2.0f, hovered ? 0xffff00 : 0xffffff);
     }
 }

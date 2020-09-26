@@ -12,4 +12,12 @@ public class PMCSounds {
     public static final SoundEvent P92_SHOOT_SILENT = null;
     public static final SoundEvent P92_RELOAD = null;
     public static final SoundEvent P92_RELOAD_FAST = null;
+    public static final SoundEvent UAZ_IDLE = null;
+    public static final SoundEvent UAZ_ACCELERATE = null;
+    public static final SoundEvent UAZ_BRAKE = null;
+    public static final SoundEvent UAZ_CRUISE = null;
+    public static final SoundEvent GLIDER_IDLE = null;
+    public static final SoundEvent GLIDER_ACCELERATE = null;
+    public static final SoundEvent GLIDER_BRAKE = null;
+    public static final SoundEvent GLIDER_CRUISE = null;
 }

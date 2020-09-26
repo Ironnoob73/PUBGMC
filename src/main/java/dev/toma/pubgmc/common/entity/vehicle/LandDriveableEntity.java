@@ -1,6 +1,7 @@
 package dev.toma.pubgmc.common.entity.vehicle;
 
 import dev.toma.pubgmc.init.PMCEntities;
+import dev.toma.pubgmc.init.PMCSounds;
 import net.minecraft.entity.EntityType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -44,6 +45,7 @@ public abstract class LandDriveableEntity extends DriveableEntity {
 
         public static final DriveableData UAZ_DATA = new DriveableData(100.0F, 150.0F, 1.8F, 0.005F, 0.05F);
         private static final Vec3d ENGINE = new Vec3d(1.9, 1.2, 0);
+        private static final VehicleSoundStorage SOUND_STORAGE = new VehicleSoundStorage(PMCSounds.UAZ_ACCELERATE, PMCSounds.UAZ_BRAKE, PMCSounds.UAZ_CRUISE, PMCSounds.UAZ_IDLE);
 
         public UAZDriveable(EntityType<?> type, World world) {
             super(type, world);
@@ -76,6 +78,11 @@ public abstract class LandDriveableEntity extends DriveableEntity {
         @Override
         public Vec3d getEngineVector() {
             return ENGINE;
+        }
+
+        @Override
+        public VehicleSoundStorage getSoundStorage() {
+            return SOUND_STORAGE;
         }
     }
 }

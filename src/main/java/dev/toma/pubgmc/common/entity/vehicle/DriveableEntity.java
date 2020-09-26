@@ -1,11 +1,13 @@
 package dev.toma.pubgmc.common.entity.vehicle;
 
 import com.mojang.blaze3d.platform.GlStateManager;
+import dev.toma.pubgmc.client.ClientManager;
 import dev.toma.pubgmc.util.RenderHelper;
 import dev.toma.pubgmc.util.UsefulFunctions;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.EntityTickableSound;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -40,7 +42,11 @@ public abstract class DriveableEntity extends AbstractControllableEntity impleme
     protected float fuel;
     protected float health;
     protected float currentSpeed;
+    protected float lastSpeed;
     protected float turnModifier;
+    protected VehicleState currentState = VehicleState.IDLE, lastState;
+    @OnlyIn(Dist.CLIENT)
+    public EntityTickableSound sound;
 
     public DriveableEntity(EntityType<?> type, World world) {
         super(type, world);
@@ -71,6 +77,12 @@ public abstract class DriveableEntity extends AbstractControllableEntity impleme
     }
 
     public void checkHealthState() {
+        this.currentState = VehicleState.getState(this);
+        if(currentState != lastState) {
+            if(world.isRemote) {
+                ClientManager.playVehicleSound(this);
+            }
+        }
         if(!world.isRemote && this.health <= 0.0F) {
             this.removePassengers();
             world.createExplosion(this, posX, posY, posZ, 5.0F, Explosion.Mode.NONE);
@@ -79,6 +91,8 @@ public abstract class DriveableEntity extends AbstractControllableEntity impleme
     }
 
     public abstract int maxUserAmount();
+
+    public abstract VehicleSoundStorage getSoundStorage();
 
     protected double getPassengerX(int index) {
         return 0;
@@ -173,6 +187,8 @@ public abstract class DriveableEntity extends AbstractControllableEntity impleme
             this.setMotion(0, 0, 0);
         }
         this.handleParticles();
+        this.lastSpeed = this.currentSpeed;
+        this.lastState = this.currentState;
     }
 
     public void handleParticles() {
@@ -240,6 +256,10 @@ public abstract class DriveableEntity extends AbstractControllableEntity impleme
         }
     }
 
+    public VehicleState getCurrentState() {
+        return currentState;
+    }
+
     @Override
     public boolean canBeCollidedWith() {
         return true;
@@ -251,7 +271,9 @@ public abstract class DriveableEntity extends AbstractControllableEntity impleme
         compound.putFloat("fuel", fuel);
         compound.putFloat("health", health);
         compound.putFloat("speed", currentSpeed);
+        compound.putFloat("lastSpeed", lastSpeed);
         compound.putFloat("turn", turnModifier);
+        compound.putInt("state", currentState.ordinal());
     }
 
     @Override
@@ -261,7 +283,10 @@ public abstract class DriveableEntity extends AbstractControllableEntity impleme
         fuel = compound.getFloat("fuel");
         health = compound.getFloat("health");
         currentSpeed = compound.getFloat("speed");
+        lastSpeed = compound.getFloat("lastSpeed");
         turnModifier = compound.getFloat("turn");
+        currentState = VehicleState.values()[compound.getInt("state")];
+        lastState = VehicleState.IDLE;
     }
 
     @Override

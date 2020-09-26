@@ -200,7 +200,15 @@ public class RegistryHandler {
                     sound("p92_shoot"),
                     sound("p92_shoot_silent"),
                     sound("p92_reload"),
-                    sound("p92_reload_fast")
+                    sound("p92_reload_fast"),
+                    sound("uaz_idle"),
+                    sound("uaz_accelerate"),
+                    sound("uaz_brake"),
+                    sound("uaz_cruise"),
+                    sound("glider_idle"),
+                    sound("glider_accelerate"),
+                    sound("glider_brake"),
+                    sound("glider_cruise")
             );
         }
 

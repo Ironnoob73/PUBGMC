@@ -10,6 +10,7 @@ import dev.toma.pubgmc.common.entity.throwable.GrenadeEntity;
 import dev.toma.pubgmc.common.entity.throwable.MolotovEntity;
 import dev.toma.pubgmc.common.entity.throwable.SmokeEntity;
 import dev.toma.pubgmc.common.entity.vehicle.AirDriveableEntity;
+import dev.toma.pubgmc.common.entity.vehicle.DriveableEntity;
 import dev.toma.pubgmc.common.entity.vehicle.LandDriveableEntity;
 import dev.toma.pubgmc.common.item.wearable.GhillieSuitItem;
 import dev.toma.pubgmc.common.tileentity.LootSpawnerTileEntity;
@@ -17,6 +18,7 @@ import dev.toma.pubgmc.init.PMCItems;
 import dev.toma.pubgmc.util.UsefulFunctions;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.EntityTickableSound;
 import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.renderer.GameRenderer;
@@ -88,6 +90,17 @@ public class ClientManager {
             int ticks = (int) ((dist / 34) * 5);
             handler.playDelayed(sound, ticks);
         });
+    }
+
+    public static void playVehicleSound(DriveableEntity entity) {
+        SoundHandler handler = Minecraft.getInstance().getSoundHandler();
+        SoundEvent event = entity.getCurrentState().getSound(entity.getSoundStorage());
+        if(entity.sound != null && handler.isPlaying(entity.sound)) {
+            handler.stop(entity.sound);
+        }
+        EntityTickableSound tickableSound = new EntityTickableSound(event, SoundCategory.NEUTRAL, entity);
+        entity.sound = tickableSound;
+        handler.play(tickableSound);
     }
 
     @Mod.EventBusSubscriber(modid = Pubgmc.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)

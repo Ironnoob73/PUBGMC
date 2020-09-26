@@ -73,7 +73,7 @@ public class ContentManager {
                 Pubgmc.pubgmcLog.info(marker, "Data parsing successfull");
             }
         } catch (Exception ex) {
-            Pubgmc.pubgmcLog.fatal(marker, "Couldn't parse received data: " + ex.getMessage());
+            Pubgmc.pubgmcLog.fatal(marker, "Couldn't parse received data: " + ex.toString());
             if(!hasFailed) {
                 hasFailed = true;
                 if(task != null) {

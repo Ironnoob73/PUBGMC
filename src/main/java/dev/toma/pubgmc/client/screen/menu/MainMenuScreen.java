@@ -70,7 +70,7 @@ public class MainMenuScreen extends ComponentScreen implements RefreshListener {
             lowestPoint = 220;
         }
         // news panel
-        addComponent(new InfoPanelComponent(15 + 2 * wd4, 20, 2 * wd4 - 30, lowestPoint - 20 + initialHeight));
+        addComponent(new InfoPanelComponent(15 + 2 * wd4, 20, 2 * wd4 - 30, lowestPoint - 20 + initialHeight, this));
         // title
         if(!splitModsAndQuitButtons) addComponent(new Component(40, 25, w - 50, 50) {
             @Override
@@ -99,10 +99,9 @@ public class MainMenuScreen extends ComponentScreen implements RefreshListener {
     static class InfoPanelComponent extends Component {
 
         private final List<ITextComponent> textComponents = new ArrayList<>();
-        private int scrollIndex;
-        private final int displayedAmount;
+        private final Screen parent;
 
-        public InfoPanelComponent(int x, int y, int width, int height) {
+        public InfoPanelComponent(int x, int y, int width, int height, Screen screen) {
             super(x, y, width, height);
             ContentResult result = Pubgmc.getContentManager().getCachedResult();
             String[] strings = new String[0];
@@ -121,43 +120,32 @@ public class MainMenuScreen extends ComponentScreen implements RefreshListener {
                 StringTextComponent stc = new StringTextComponent(TextFormatting.RED + "Unable to receive latest news, check your internet connection");
                 textComponents.addAll(RenderComponentsUtil.splitText(stc, max, renderer, true, true));
             }
-            this.displayedAmount = height / (renderer.FONT_HEIGHT + 1) - 1;
+            int lineLimit = height / (renderer.FONT_HEIGHT + 1) - 1;
+            boolean flag = false;
+            if(textComponents.size() > lineLimit) {
+                lineLimit -= 1;
+                flag = true;
+            }
+            while (textComponents.size() > lineLimit) {
+                textComponents.remove(textComponents.size() - 1);
+            }
+            if(flag) textComponents.add(new StringTextComponent(TextFormatting.YELLOW.toString() + TextFormatting.ITALIC + "Click to read more..."));
+            this.parent = screen;
         }
 
         @Override
         public void draw(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
             RenderHelper.drawColoredShape(x, y, x + width, y + height, 0.0F, 0.0F, 0.0F, isMouseOver(mouseX, mouseY) ? 0.7F : 0.5F);
-            for(int i = scrollIndex; i < scrollIndex + displayedAmount; i++) {
+            for(int i = 0; i < textComponents.size(); i++) {
                 if(i >= textComponents.size()) break;
                 ITextComponent component = textComponents.get(i);
-                int j = i - scrollIndex;
-                mc.fontRenderer.drawString(component.getFormattedText(), x + 8, y + 5 + j * 10, 0xffffff);
-            }
-            if(textComponents.size() > displayedAmount) {
-                drawScrollbar();
-            }
-        }
-
-        private void drawScrollbar() {
-            RenderHelper.drawColoredShape(x + width - 2, y, x + width, y + height, 0.0F, 0.0F, 0.0F, 1.0F);
-            double step = height / (double) textComponents.size();
-            double start = scrollIndex * step;
-            double end = Math.min(height, (scrollIndex + displayedAmount) * step);
-            RenderHelper.drawColoredShape(x + width - 2, y + (int)start, x + width, y + (int) end, 1.0F, 1.0F, 1.0F, 1.0F);
-        }
-
-        @Override
-        public void handleScrolled(double mouseX, double mouseY, double amount) {
-            int n = -(int) amount;
-            int next = scrollIndex + n;
-            if(next >= 0 && next <= textComponents.size() - displayedAmount) {
-                scrollIndex = next;
+                mc.fontRenderer.drawString(component.getFormattedText(), x + 8, y + 5 + i * 10, 0xffffff);
             }
         }
 
         @Override
-        public boolean allowUnhoveredScrolling() {
-            return true;
+        public void handleClicked(double mouseX, double mouseY, int mouseButton) {
+            Minecraft.getInstance().displayGuiScreen(new NewsScreen(parent, Pubgmc.getContentManager()));
         }
     }
 
