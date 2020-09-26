@@ -3,6 +3,8 @@ package dev.toma.pubgmc.client;
 import com.mojang.blaze3d.platform.GlStateManager;
 import dev.toma.pubgmc.Pubgmc;
 import dev.toma.pubgmc.capability.IPlayerCap;
+import dev.toma.pubgmc.capability.InventoryFactory;
+import dev.toma.pubgmc.capability.PMCInventoryHandler;
 import dev.toma.pubgmc.capability.player.BoostStats;
 import dev.toma.pubgmc.capability.player.PlayerCapFactory;
 import dev.toma.pubgmc.client.animation.AnimationManager;
@@ -11,9 +13,11 @@ import dev.toma.pubgmc.client.animation.HandAnimate;
 import dev.toma.pubgmc.client.animation.types.SprintAnimation;
 import dev.toma.pubgmc.client.render.OverlayGameRenderer;
 import dev.toma.pubgmc.common.entity.IControllableEntity;
+import dev.toma.pubgmc.common.inventory.SlotType;
 import dev.toma.pubgmc.common.item.gun.Firemode;
 import dev.toma.pubgmc.common.item.gun.GunItem;
 import dev.toma.pubgmc.common.item.gun.attachment.AttachmentCategory;
+import dev.toma.pubgmc.common.item.utility.BackpackSlotItem;
 import dev.toma.pubgmc.common.item.wearable.IPMCArmor;
 import dev.toma.pubgmc.config.Config;
 import dev.toma.pubgmc.network.NetworkManager;
@@ -321,7 +325,12 @@ public class ClientEventHandler {
             if(vest.getItem() instanceof IPMCArmor) {
                 ((IPMCArmor) vest.getItem()).renderIcon(left + 18, top - 18, left + 34, top - 2, vest);
             }
-            // TODO backpack
+            PMCInventoryHandler handler = InventoryFactory.getInventoryHandler(player);
+            ItemStack backpackStack = handler.getStackInSlot(SlotType.BACKPACK.ordinal());
+            if(!backpackStack.isEmpty() && backpackStack.getItem() instanceof BackpackSlotItem) {
+                int id = 1 + ((BackpackSlotItem) backpackStack.getItem()).getType().ordinal();
+                RenderHelper.x32Blit(left + 36, top - 18, left + 52, top - 2, id, 2, 1, 1);
+            }
             ItemStack stack = player.getHeldItemMainhand();
             if(stack.getItem() instanceof GunItem) {
                 GunItem gun = (GunItem) stack.getItem();
