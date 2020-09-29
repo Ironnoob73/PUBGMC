@@ -33,6 +33,9 @@ import dev.toma.pubgmc.common.item.wearable.BulletProofArmor;
 import dev.toma.pubgmc.common.item.wearable.GhillieSuitItem;
 import dev.toma.pubgmc.common.tileentity.AirdropTileEntity;
 import dev.toma.pubgmc.common.tileentity.FlareAirdropTileEntity;
+import dev.toma.pubgmc.games.DeathmatchGame;
+import dev.toma.pubgmc.games.GameType;
+import dev.toma.pubgmc.games.args.ArgumentProvider;
 import dev.toma.pubgmc.init.PMCItems;
 import dev.toma.pubgmc.init.PMCSounds;
 import net.minecraft.block.Block;
@@ -53,8 +56,7 @@ import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,6 +64,8 @@ import java.util.Map;
 import java.util.Objects;
 
 public class RegistryHandler {
+
+    public static IForgeRegistry<GameType<?>> GAMES;
 
     @Mod.EventBusSubscriber(modid = Pubgmc.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class CommonHandler {
@@ -210,6 +214,27 @@ public class RegistryHandler {
                     sound("glider_brake"),
                     sound("glider_cruise")
             );
+        }
+
+        @SubscribeEvent
+        public static void onGameRegister(RegistryEvent.Register<GameType<?>> event) {
+            event.getRegistry().registerAll(
+                    GameType.Builder.create(DeathmatchGame::new)
+                            .name("deathmatch")
+                            .addArgument(map -> map.putInt(ArgumentProvider.DURATION, 12000))
+                            .build().setRegistryName("deathmatch")
+            );
+        }
+
+        @SuppressWarnings("unchecked")
+        @SubscribeEvent
+        public static void createRegistries(RegistryEvent.NewRegistry event) {
+            newRegistry(Pubgmc.makeResource("games"), GameType.class).create();
+            GAMES = RegistryManager.ACTIVE.getRegistry(GameType.class);
+        }
+
+        private static <V extends IForgeRegistryEntry<V>> RegistryBuilder<V> newRegistry(ResourceLocation location, Class<V> type) {
+            return new RegistryBuilder<V>().setName(location).setType(type).setMaxID(Integer.MAX_VALUE - 1);
         }
 
         private static SoundEvent sound(String key) {

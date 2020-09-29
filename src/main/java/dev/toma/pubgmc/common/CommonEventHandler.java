@@ -1,10 +1,7 @@
 package dev.toma.pubgmc.common;
 
 import dev.toma.pubgmc.Pubgmc;
-import dev.toma.pubgmc.capability.IPlayerCap;
-import dev.toma.pubgmc.capability.InventoryFactory;
-import dev.toma.pubgmc.capability.InventoryProvider;
-import dev.toma.pubgmc.capability.PMCInventoryHandler;
+import dev.toma.pubgmc.capability.*;
 import dev.toma.pubgmc.capability.player.PlayerCapFactory;
 import dev.toma.pubgmc.capability.player.PlayerCapProvider;
 import dev.toma.pubgmc.common.inventory.SlotType;
@@ -78,12 +75,16 @@ public class CommonEventHandler {
     }
 
     @SubscribeEvent
+    public static void attachWorldCap(AttachCapabilitiesEvent<World> event) {
+        event.addCapability(Pubgmc.makeResource("world_data"), new WorldDataProvider(event.getObject()));
+    }
+
+    @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if(event.phase == TickEvent.Phase.END) {
             PlayerEntity player = event.player;
             IPlayerCap cap = PlayerCapFactory.get(player);
             cap.onTick();
-
             PMCInventoryHandler handler = InventoryFactory.getInventoryHandler(player);
             if(!player.world.isRemote) {
                 sync(player, handler);

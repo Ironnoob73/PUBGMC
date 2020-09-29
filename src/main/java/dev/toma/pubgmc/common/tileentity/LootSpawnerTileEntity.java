@@ -5,7 +5,7 @@ import dev.toma.pubgmc.common.container.LootSpawnerContainer;
 import dev.toma.pubgmc.data.loot.LootManager;
 import dev.toma.pubgmc.data.loot.LootTable;
 import dev.toma.pubgmc.data.loot.LootTableConstants;
-import dev.toma.pubgmc.games.object.LootGenerator;
+import dev.toma.pubgmc.games.interfaces.LootGenerator;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;

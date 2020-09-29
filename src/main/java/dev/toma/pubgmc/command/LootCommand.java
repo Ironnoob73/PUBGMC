@@ -8,7 +8,7 @@ import dev.toma.pubgmc.common.tileentity.AbstractInventoryTileEntity;
 import dev.toma.pubgmc.data.loot.LootManager;
 import dev.toma.pubgmc.data.loot.LootTable;
 import dev.toma.pubgmc.data.loot.LootTableConstants;
-import dev.toma.pubgmc.games.object.LootGenerator;
+import dev.toma.pubgmc.games.interfaces.LootGenerator;
 import dev.toma.pubgmc.network.NetworkManager;
 import dev.toma.pubgmc.network.packet.CPacketDisplayLootSpawners;
 import net.minecraft.block.BlockState;

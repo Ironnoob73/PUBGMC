@@ -1,4 +1,4 @@
-package dev.toma.pubgmc.games.object;
+package dev.toma.pubgmc.games.interfaces;
 
 import java.util.function.Predicate;
 

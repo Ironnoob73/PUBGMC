@@ -1,8 +1,9 @@
-package dev.toma.pubgmc.games.object;
+package dev.toma.pubgmc.games.interfaces;
 
 import dev.toma.pubgmc.Pubgmc;
 import dev.toma.pubgmc.common.item.gun.AmmoType;
 import dev.toma.pubgmc.common.item.gun.GunItem;
+import dev.toma.pubgmc.games.interfaces.ChunkLoadListener;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunk;

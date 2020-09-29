@@ -1,6 +1,6 @@
 package dev.toma.pubgmc;
 
-import dev.toma.pubgmc.capability.IPlayerCap;
+import dev.toma.pubgmc.capability.*;
 import dev.toma.pubgmc.capability.player.PlayerCapFactory;
 import dev.toma.pubgmc.capability.player.PlayerCapStorage;
 import dev.toma.pubgmc.client.ClientManager;
@@ -8,15 +8,13 @@ import dev.toma.pubgmc.client.ModKeybinds;
 import dev.toma.pubgmc.client.animation.Animations;
 import dev.toma.pubgmc.client.animation.builder.BuilderMain;
 import dev.toma.pubgmc.client.screen.*;
+import dev.toma.pubgmc.command.GameCommand;
 import dev.toma.pubgmc.command.LootCommand;
 import dev.toma.pubgmc.common.item.gun.attachment.AttachmentCategory;
 import dev.toma.pubgmc.config.Config;
 import dev.toma.pubgmc.content.ContentManager;
 import dev.toma.pubgmc.data.loot.LootManager;
 import dev.toma.pubgmc.init.PMCContainers;
-import dev.toma.pubgmc.capability.InventoryFactory;
-import dev.toma.pubgmc.capability.InventoryProvider;
-import dev.toma.pubgmc.capability.PMCInventoryHandler;
 import dev.toma.pubgmc.network.NetworkManager;
 import dev.toma.pubgmc.util.recipe.FactoryCraftingRecipes;
 import net.minecraft.client.gui.ScreenManager;
@@ -40,7 +38,6 @@ import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
-import net.minecraftforge.versions.forge.ForgeVersion;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -99,6 +96,7 @@ public class Pubgmc {
         NetworkManager.init();
         CapabilityManager.INSTANCE.register(IPlayerCap.class, new PlayerCapStorage(), () -> new PlayerCapFactory(null));
         CapabilityManager.INSTANCE.register(PMCInventoryHandler.class, new InventoryProvider.Storage(), InventoryFactory::new);
+        CapabilityManager.INSTANCE.register(IWorldCap.class, new WorldDataFactory.Storage(), WorldDataFactory::new);
     }
 
     private void serverInit(FMLServerAboutToStartEvent event) {
@@ -110,6 +108,7 @@ public class Pubgmc {
 
     private void serverStart(FMLServerStartingEvent event) {
         LootCommand.register(event.getCommandDispatcher());
+        GameCommand.register(event.getCommandDispatcher());
     }
 
     public static ResourceLocation makeResource(String path) {

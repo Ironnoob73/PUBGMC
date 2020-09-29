@@ -1,4 +1,4 @@
-package dev.toma.pubgmc.games.object;
+package dev.toma.pubgmc.games.interfaces;
 
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunk;

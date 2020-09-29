@@ -1,6 +1,6 @@
 package dev.toma.pubgmc.common.entity;
 
-import dev.toma.pubgmc.games.object.LootGenerator;
+import dev.toma.pubgmc.games.interfaces.LootGenerator;
 import dev.toma.pubgmc.init.PMCBlocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
