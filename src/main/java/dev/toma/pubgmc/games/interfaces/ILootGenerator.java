@@ -4,12 +4,10 @@ import dev.toma.pubgmc.Pubgmc;
 import dev.toma.pubgmc.common.item.gun.AmmoType;
 import dev.toma.pubgmc.common.item.gun.GunItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
-import net.minecraft.world.chunk.IChunk;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 
-public interface LootGenerator extends ChunkLoadListener {
+public interface ILootGenerator extends ITileLoadHandler {
 
     /**
      * Method for loot generation
@@ -31,26 +29,22 @@ public interface LootGenerator extends ChunkLoadListener {
     }
 
     /**
-     * Override method provided by {@link ChunkLoadListener} to automatically update
+     * Override method provided by {@link ITileLoadHandler} to automatically update
      * game ID and generate loot
-     *
-     * @param chunk - chunk which has been loaded
-     * @param world - the world where chunk is at
      */
     @Override
-    default void loadChunk(IChunk chunk, World world) {
-        long id = -1; // todo get actual game id
-        if(!test(id)) { // if ids are different
+    default void load(long key) {
+        if(!test(key)) { // if ids are different
             generateLoot(); // generate loot content
-            setGameID(id); // set new id to prevent duplicate loot gen calls in same game
+            setGameID(key); // set new id to prevent duplicate loot gen calls in same game
         }
     }
 
     /**
      * Generates ammo for weapons based on their {@link AmmoType}
-     * @param stack - the stack which has been generated
-     * @param index - current index in inventory
-     * @param inventory - inventory holder
+     * @param stack The stack which has been generated
+     * @param index Current index in inventory
+     * @param inventory Inventory holder
      * @return index of last item in inventory
      */
     default int postItemGenerated(ItemStack stack, int index, LazyOptional<? extends IItemHandler> inventory) {

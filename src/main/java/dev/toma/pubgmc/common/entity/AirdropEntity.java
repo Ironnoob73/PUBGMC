@@ -1,6 +1,6 @@
 package dev.toma.pubgmc.common.entity;
 
-import dev.toma.pubgmc.games.interfaces.LootGenerator;
+import dev.toma.pubgmc.games.interfaces.ILootGenerator;
 import dev.toma.pubgmc.init.PMCBlocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -48,8 +48,8 @@ public class AirdropEntity extends Entity implements IEntityAdditionalSpawnData 
                world.setBlockState(getPosition(), PMCBlocks.FLARE_AIRDROP.getDefaultState(), 3);
             }
             TileEntity tileEntity = world.getTileEntity(getPosition());
-            if(tileEntity instanceof LootGenerator) {
-                ((LootGenerator) tileEntity).generateLoot();
+            if(tileEntity instanceof ILootGenerator) {
+                ((ILootGenerator) tileEntity).generateLoot();
             }
             remove();
         }

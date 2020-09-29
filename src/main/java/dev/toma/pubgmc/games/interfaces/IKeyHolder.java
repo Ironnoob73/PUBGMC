@@ -2,7 +2,7 @@ package dev.toma.pubgmc.games.interfaces;
 
 import java.util.function.Predicate;
 
-public interface GameKeyHolder extends Predicate<Long> {
+public interface IKeyHolder extends Predicate<Long> {
 
     /**
      * Used to update held gameID in this object

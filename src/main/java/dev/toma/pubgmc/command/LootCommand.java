@@ -8,7 +8,7 @@ import dev.toma.pubgmc.common.tileentity.AbstractInventoryTileEntity;
 import dev.toma.pubgmc.data.loot.LootManager;
 import dev.toma.pubgmc.data.loot.LootTable;
 import dev.toma.pubgmc.data.loot.LootTableConstants;
-import dev.toma.pubgmc.games.interfaces.LootGenerator;
+import dev.toma.pubgmc.games.interfaces.ILootGenerator;
 import dev.toma.pubgmc.network.NetworkManager;
 import dev.toma.pubgmc.network.packet.CPacketDisplayLootSpawners;
 import net.minecraft.block.BlockState;
@@ -53,10 +53,10 @@ public class LootCommand {
         );
     }
 
-    private static <T extends TileEntity & LootGenerator> int executeDestroy(CommandContext<CommandSource> ctx) {
+    private static <T extends TileEntity & ILootGenerator> int executeDestroy(CommandContext<CommandSource> ctx) {
         World world = ctx.getSource().getWorld();
         for (T tileEntity : world.loadedTileEntityList.stream()
-                .filter(te -> te instanceof LootGenerator && ((LootGenerator) te).shouldDestroyByCommand())
+                .filter(te -> te instanceof ILootGenerator && ((ILootGenerator) te).shouldDestroyByCommand())
                 .map(te -> (T) te)
                 .collect(Collectors.toList())) {
             BlockPos pos = tileEntity.getPos();
@@ -66,11 +66,11 @@ public class LootCommand {
         return 0;
     }
 
-    private static <T extends TileEntity & LootGenerator> int executeGen(CommandContext<CommandSource> ctx) {
+    private static <T extends TileEntity & ILootGenerator> int executeGen(CommandContext<CommandSource> ctx) {
         World world = ctx.getSource().getWorld();
         LootTable table = LootManager.getLootTable(LootTableConstants.LOOT_BLOCK);
         world.loadedTileEntityList.stream()
-                .filter(te -> te instanceof LootGenerator)
+                .filter(te -> te instanceof ILootGenerator)
                 .map(te -> (T) te)
                 .forEach(te -> {
                     BlockState state = world.getBlockState(te.getPos());
@@ -81,10 +81,10 @@ public class LootCommand {
         return 0;
     }
 
-    private static <T extends AbstractInventoryTileEntity & LootGenerator> int executeClear(CommandContext<CommandSource> ctx) {
+    private static <T extends AbstractInventoryTileEntity & ILootGenerator> int executeClear(CommandContext<CommandSource> ctx) {
         World world = ctx.getSource().getWorld();
         world.loadedTileEntityList.stream()
-                .filter(te -> te instanceof AbstractInventoryTileEntity && te instanceof LootGenerator)
+                .filter(te -> te instanceof AbstractInventoryTileEntity && te instanceof ILootGenerator)
                 .map(te -> (T) te)
                 .forEach(te -> {
                     BlockState state = world.getBlockState(te.getPos());

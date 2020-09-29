@@ -1,6 +1,7 @@
 package dev.toma.pubgmc.games;
 
 import dev.toma.pubgmc.games.args.ArgumentProvider;
+import dev.toma.pubgmc.games.interfaces.IObjectManager;
 import dev.toma.pubgmc.games.interfaces.IPlayerManager;
 import dev.toma.pubgmc.games.util.Area;
 import dev.toma.pubgmc.init.Games;
@@ -12,13 +13,16 @@ import java.util.List;
 
 public final class DeathmatchGame extends Game {
 
-    private final IPlayerManager.DefaultImpl playerManager;
+    private final IPlayerManager playerManager;
+    private final IObjectManager objectManager;
     private boolean isRunning;
     private int ticksleft;
 
     public DeathmatchGame(World world) {
         super(Games.DEATHMATCH, world);
         this.playerManager = new IPlayerManager.DefaultImpl();
+        this.objectManager = new IObjectManager.DefaultImpl(this);
+        this.addListener(playerManager);
     }
 
     @Override
@@ -57,5 +61,10 @@ public final class DeathmatchGame extends Game {
     @Override
     public IPlayerManager getPlayerManager() {
         return playerManager;
+    }
+
+    @Override
+    public IObjectManager getObjectManager() {
+        return objectManager;
     }
 }

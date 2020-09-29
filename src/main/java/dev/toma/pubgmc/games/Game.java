@@ -1,22 +1,26 @@
 package dev.toma.pubgmc.games;
 
+import com.google.common.collect.Sets;
 import dev.toma.pubgmc.capability.IWorldCap;
 import dev.toma.pubgmc.capability.world.WorldDataFactory;
-import dev.toma.pubgmc.games.interfaces.DataHolder;
-import dev.toma.pubgmc.games.interfaces.IPlayerManager;
+import dev.toma.pubgmc.games.interfaces.*;
 import dev.toma.pubgmc.games.util.GameStorage;
+import dev.toma.pubgmc.network.NetworkManager;
+import dev.toma.pubgmc.network.packet.CPacketSyncWorldData;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.INBTSerializable;
 
 import java.util.Objects;
 import java.util.Random;
+import java.util.Set;
 
-public abstract class Game implements INBTSerializable<CompoundNBT> {
+public abstract class Game implements INBTSerializable<CompoundNBT>, IKeyHolder, GameManager {
 
     public final World world;
     protected final IWorldCap worldData;
     protected final GameType<?> type;
+    private final Set<IStateListener> stateListeners = Sets.newHashSet();
     private long gameID;
 
     public Game(GameType<?> type, World world) {
@@ -32,8 +36,8 @@ public abstract class Game implements INBTSerializable<CompoundNBT> {
     public final void exec_GameStart(CompoundNBT arguments) {
         IPlayerManager manager = this.getPlayerManager();
         manager.gatherPlayers(world);
-        if(this instanceof DataHolder<?>) {
-            ((DataHolder<?>) this).resetData();
+        if(this instanceof IDataHolder<?>) {
+            ((IDataHolder<?>) this).resetData();
         }
         GameType<?> type = this.getType();
         if(type.hasArguments()) {
@@ -43,10 +47,35 @@ public abstract class Game implements INBTSerializable<CompoundNBT> {
     }
 
     public final void exec_GameStop() {
-        if(this instanceof DataHolder<?>) {
-            ((DataHolder<?>) this).resetData();
+        if(this instanceof IDataHolder<?>) {
+            ((IDataHolder<?>) this).resetData();
         }
         this.onStop();
+    }
+
+    public final void exec_GameTick() {
+        boolean sync = false;
+        for (IStateListener listener : stateListeners) {
+            if(listener.isChanged()) {
+                listener.clear();
+                sync = true;
+            }
+        }
+        if(sync) {
+            sync();
+        }
+        this.onTick();
+    }
+
+    public final void addListener(IStateListener listener) {
+        this.stateListeners.add(listener);
+    }
+
+    public final void sync() {
+        if(!world.isRemote) {
+            CompoundNBT nbt = serializeNBT();
+            NetworkManager.sendToAll(world, new CPacketSyncWorldData(nbt));
+        }
     }
 
     /* =============================================================================================================================== */
@@ -59,16 +88,16 @@ public abstract class Game implements INBTSerializable<CompoundNBT> {
 
     public abstract boolean isRunning();
 
-    public abstract IPlayerManager getPlayerManager();
-
     public GameType<?> getType() {
         return type;
     }
 
-    public final long getGameID() {
+    @Override
+    public long getGameID() {
         return gameID;
     }
 
+    @Override
     public void setGameID(long gameID) {
         this.gameID = gameID;
     }

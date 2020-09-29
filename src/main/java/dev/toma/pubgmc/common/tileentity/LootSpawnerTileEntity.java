@@ -5,7 +5,7 @@ import dev.toma.pubgmc.common.container.LootSpawnerContainer;
 import dev.toma.pubgmc.data.loot.LootManager;
 import dev.toma.pubgmc.data.loot.LootTable;
 import dev.toma.pubgmc.data.loot.LootTableConstants;
-import dev.toma.pubgmc.games.interfaces.LootGenerator;
+import dev.toma.pubgmc.games.interfaces.ILootGenerator;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -18,7 +18,7 @@ import java.util.List;
 
 import static dev.toma.pubgmc.init.PMCTileEntities.LOOT_SPAWNER;
 
-public class LootSpawnerTileEntity extends AbstractInventoryTileEntity implements LootGenerator {
+public class LootSpawnerTileEntity extends AbstractInventoryTileEntity implements ILootGenerator {
 
     private long id = -1;
 

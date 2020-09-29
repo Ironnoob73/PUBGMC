@@ -1,6 +1,6 @@
 package dev.toma.pubgmc.games.interfaces;
 
-public interface DataHolder<H extends IDataHandler<?, ?>> {
+public interface IDataHolder<H extends IDataHandler<?, ?>> {
 
     H getData();
 

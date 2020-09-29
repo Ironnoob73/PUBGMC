@@ -6,7 +6,9 @@ import dev.toma.pubgmc.games.Game;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -33,7 +35,7 @@ public class GameEventHandler {
         @SubscribeEvent
         public static void onWorldTick(TickEvent.WorldTickEvent event) {
             if(event.phase == TickEvent.Phase.END) {
-                executeWhenRunning(event.world, Game::onTick);
+                executeWhenRunning(event.world, Game::exec_GameTick);
             }
         }
 
@@ -45,6 +47,16 @@ public class GameEventHandler {
         @SubscribeEvent
         public static void onLogOut(PlayerEvent.PlayerLoggedOutEvent event) {
             executeWhenRunning(event.getPlayer().world, game -> game.getPlayerManager().handleLogOut(event.getPlayer()));
+        }
+
+        @SubscribeEvent
+        public static void onEntityJoinWorld(EntityJoinWorldEvent event) {
+            executeWhenRunning(event.getWorld(), game -> game.getObjectManager().handleEntityJoin(event.getEntity()));
+        }
+
+        @SubscribeEvent
+        public static void onChunkLoad(ChunkEvent.Load event) {
+            executeWhenRunning((World) event.getWorld(), game -> game.getObjectManager().handleChunkLoad(event.getChunk()));
         }
     }
 
