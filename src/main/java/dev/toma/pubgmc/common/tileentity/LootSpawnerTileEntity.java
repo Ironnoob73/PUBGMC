@@ -14,7 +14,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
-
 import java.util.List;
 
 import static dev.toma.pubgmc.init.PMCTileEntities.LOOT_SPAWNER;

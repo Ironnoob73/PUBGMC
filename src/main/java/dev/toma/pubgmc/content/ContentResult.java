@@ -2,7 +2,6 @@ package dev.toma.pubgmc.content;
 
 import com.google.gson.*;
 import dev.toma.pubgmc.client.screen.menu.RefreshListener;
-import dev.toma.pubgmc.util.UsefulFunctions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.JSONUtils;
 

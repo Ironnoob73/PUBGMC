@@ -1,7 +1,7 @@
 package dev.toma.pubgmc.common.container;
 
-import dev.toma.pubgmc.capability.InventoryFactory;
 import dev.toma.pubgmc.capability.PMCInventoryHandler;
+import dev.toma.pubgmc.capability.player.InventoryFactory;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;

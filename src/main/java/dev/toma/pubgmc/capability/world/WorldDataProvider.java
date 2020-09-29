@@ -1,5 +1,6 @@
-package dev.toma.pubgmc.capability;
+package dev.toma.pubgmc.capability.world;
 
+import dev.toma.pubgmc.capability.IWorldCap;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.world.World;

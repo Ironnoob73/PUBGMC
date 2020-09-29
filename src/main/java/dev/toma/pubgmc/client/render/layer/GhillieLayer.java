@@ -2,7 +2,7 @@ package dev.toma.pubgmc.client.render.layer;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import dev.toma.pubgmc.Pubgmc;
-import dev.toma.pubgmc.capability.InventoryFactory;
+import dev.toma.pubgmc.capability.player.InventoryFactory;
 import dev.toma.pubgmc.common.inventory.SlotType;
 import dev.toma.pubgmc.common.item.utility.GhillieSlotItem;
 import net.minecraft.client.renderer.entity.IEntityRenderer;

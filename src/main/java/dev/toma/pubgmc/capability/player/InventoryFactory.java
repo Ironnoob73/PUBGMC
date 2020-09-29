@@ -1,10 +1,9 @@
-package dev.toma.pubgmc.capability;
+package dev.toma.pubgmc.capability.player;
 
+import dev.toma.pubgmc.capability.PMCInventoryHandler;
 import dev.toma.pubgmc.common.inventory.MyInventoryWrapper;
 import dev.toma.pubgmc.common.inventory.SlotType;
 import dev.toma.pubgmc.common.item.utility.BackpackSlotItem;
-import dev.toma.pubgmc.network.NetworkManager;
-import dev.toma.pubgmc.network.packet.CPacketSyncInventory;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;

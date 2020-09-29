@@ -1,7 +1,7 @@
 package dev.toma.pubgmc.games;
 
 import dev.toma.pubgmc.capability.IWorldCap;
-import dev.toma.pubgmc.capability.WorldDataFactory;
+import dev.toma.pubgmc.capability.world.WorldDataFactory;
 import dev.toma.pubgmc.games.interfaces.DataHolder;
 import dev.toma.pubgmc.games.interfaces.IPlayerManager;
 import dev.toma.pubgmc.games.util.GameStorage;

@@ -1,5 +1,6 @@
-package dev.toma.pubgmc.capability;
+package dev.toma.pubgmc.capability.player;
 
+import dev.toma.pubgmc.capability.PMCInventoryHandler;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;

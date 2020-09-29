@@ -5,15 +5,10 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import dev.toma.pubgmc.Pubgmc;
-import dev.toma.pubgmc.common.item.gun.AmmoType;
-import dev.toma.pubgmc.common.item.gun.GunItem;
 import net.minecraft.client.resources.JsonReloadListener;
-import net.minecraft.item.ItemStack;
 import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.IItemHandler;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 

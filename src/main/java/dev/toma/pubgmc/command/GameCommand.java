@@ -9,7 +9,7 @@ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import dev.toma.pubgmc.RegistryHandler;
 import dev.toma.pubgmc.capability.IWorldCap;
-import dev.toma.pubgmc.capability.WorldDataFactory;
+import dev.toma.pubgmc.capability.world.WorldDataFactory;
 import dev.toma.pubgmc.games.Game;
 import dev.toma.pubgmc.games.GameType;
 import dev.toma.pubgmc.games.util.Area;

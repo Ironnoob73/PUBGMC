@@ -1,7 +1,6 @@
 package dev.toma.pubgmc.common.item.gun.attachment;
 
 import dev.toma.pubgmc.util.UsefulFunctions;
-import net.minecraft.item.ItemStack;
 
 import java.util.HashMap;
 import java.util.Map;

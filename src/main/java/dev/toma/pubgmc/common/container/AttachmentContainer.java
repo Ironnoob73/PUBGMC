@@ -1,7 +1,7 @@
 package dev.toma.pubgmc.common.container;
 
-import dev.toma.pubgmc.capability.InventoryFactory;
 import dev.toma.pubgmc.capability.PMCInventoryHandler;
+import dev.toma.pubgmc.capability.player.InventoryFactory;
 import dev.toma.pubgmc.common.inventory.AttachmentInventory;
 import dev.toma.pubgmc.common.item.gun.GunItem;
 import dev.toma.pubgmc.common.item.gun.attachment.AttachmentCategory;

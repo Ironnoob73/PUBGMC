@@ -12,7 +12,6 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
-
 import java.util.List;
 
 import static dev.toma.pubgmc.init.PMCTileEntities.FLARE_AIRDROP;

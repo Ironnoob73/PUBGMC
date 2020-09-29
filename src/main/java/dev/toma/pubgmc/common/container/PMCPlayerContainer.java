@@ -1,7 +1,7 @@
 package dev.toma.pubgmc.common.container;
 
-import dev.toma.pubgmc.capability.InventoryFactory;
 import dev.toma.pubgmc.capability.PMCInventoryHandler;
+import dev.toma.pubgmc.capability.player.InventoryFactory;
 import dev.toma.pubgmc.common.inventory.PMCInventoryItem;
 import dev.toma.pubgmc.common.inventory.SlotType;
 import dev.toma.pubgmc.init.PMCContainers;

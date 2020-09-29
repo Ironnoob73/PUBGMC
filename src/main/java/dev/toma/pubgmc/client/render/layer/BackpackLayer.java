@@ -1,7 +1,7 @@
 package dev.toma.pubgmc.client.render.layer;
 
-import dev.toma.pubgmc.capability.InventoryFactory;
 import dev.toma.pubgmc.capability.PMCInventoryHandler;
+import dev.toma.pubgmc.capability.player.InventoryFactory;
 import dev.toma.pubgmc.common.item.utility.BackpackSlotItem;
 import dev.toma.pubgmc.common.item.utility.GhillieSlotItem;
 import net.minecraft.client.renderer.entity.IEntityRenderer;

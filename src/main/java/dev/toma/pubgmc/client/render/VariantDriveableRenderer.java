@@ -1,7 +1,7 @@
 package dev.toma.pubgmc.client.render;
 
-import dev.toma.pubgmc.common.entity.vehicle.IVariantVehicle;
 import dev.toma.pubgmc.common.entity.vehicle.DriveableEntity;
+import dev.toma.pubgmc.common.entity.vehicle.IVariantVehicle;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.util.ResourceLocation;
 

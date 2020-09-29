@@ -1,8 +1,6 @@
 package dev.toma.pubgmc.network;
 
 import dev.toma.pubgmc.Pubgmc;
-import dev.toma.pubgmc.network.packet.CPacketSyncInventory;
-import dev.toma.pubgmc.network.packet.SPacketOpenPlayerInventory;
 import dev.toma.pubgmc.network.packet.*;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.world.World;

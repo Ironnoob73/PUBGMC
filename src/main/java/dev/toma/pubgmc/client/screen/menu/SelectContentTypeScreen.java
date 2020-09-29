@@ -2,7 +2,6 @@ package dev.toma.pubgmc.client.screen.menu;
 
 import dev.toma.pubgmc.util.RenderHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.WorldSelectionScreen;
 import net.minecraft.util.text.StringTextComponent;

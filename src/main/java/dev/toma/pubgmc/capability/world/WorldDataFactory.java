@@ -1,5 +1,6 @@
-package dev.toma.pubgmc.capability;
+package dev.toma.pubgmc.capability.world;
 
+import dev.toma.pubgmc.capability.IWorldCap;
 import dev.toma.pubgmc.games.Game;
 import dev.toma.pubgmc.games.GameType;
 import dev.toma.pubgmc.games.util.GameStorage;

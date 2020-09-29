@@ -1,8 +1,13 @@
 package dev.toma.pubgmc;
 
-import dev.toma.pubgmc.capability.*;
+import dev.toma.pubgmc.capability.IPlayerCap;
+import dev.toma.pubgmc.capability.IWorldCap;
+import dev.toma.pubgmc.capability.PMCInventoryHandler;
+import dev.toma.pubgmc.capability.player.InventoryFactory;
+import dev.toma.pubgmc.capability.player.InventoryProvider;
 import dev.toma.pubgmc.capability.player.PlayerCapFactory;
 import dev.toma.pubgmc.capability.player.PlayerCapStorage;
+import dev.toma.pubgmc.capability.world.WorldDataFactory;
 import dev.toma.pubgmc.client.ClientManager;
 import dev.toma.pubgmc.client.ModKeybinds;
 import dev.toma.pubgmc.client.animation.Animations;

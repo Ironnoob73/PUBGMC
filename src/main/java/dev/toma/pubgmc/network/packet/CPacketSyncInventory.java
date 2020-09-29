@@ -1,7 +1,7 @@
 package dev.toma.pubgmc.network.packet;
 
-import dev.toma.pubgmc.capability.InventoryFactory;
 import dev.toma.pubgmc.capability.PMCInventoryHandler;
+import dev.toma.pubgmc.capability.player.InventoryFactory;
 import dev.toma.pubgmc.network.NetworkPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;

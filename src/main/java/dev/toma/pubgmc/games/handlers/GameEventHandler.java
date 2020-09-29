@@ -1,7 +1,7 @@
 package dev.toma.pubgmc.games.handlers;
 
 import dev.toma.pubgmc.Pubgmc;
-import dev.toma.pubgmc.capability.WorldDataFactory;
+import dev.toma.pubgmc.capability.world.WorldDataFactory;
 import dev.toma.pubgmc.games.Game;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;

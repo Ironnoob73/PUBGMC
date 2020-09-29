@@ -1,9 +1,13 @@
 package dev.toma.pubgmc.common;
 
 import dev.toma.pubgmc.Pubgmc;
-import dev.toma.pubgmc.capability.*;
+import dev.toma.pubgmc.capability.IPlayerCap;
+import dev.toma.pubgmc.capability.PMCInventoryHandler;
+import dev.toma.pubgmc.capability.player.InventoryFactory;
+import dev.toma.pubgmc.capability.player.InventoryProvider;
 import dev.toma.pubgmc.capability.player.PlayerCapFactory;
 import dev.toma.pubgmc.capability.player.PlayerCapProvider;
+import dev.toma.pubgmc.capability.world.WorldDataProvider;
 import dev.toma.pubgmc.common.inventory.SlotType;
 import dev.toma.pubgmc.common.item.gun.GunItem;
 import dev.toma.pubgmc.common.item.utility.BackpackSlotItem;
