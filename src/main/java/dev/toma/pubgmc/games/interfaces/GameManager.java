@@ -5,4 +5,6 @@ public interface GameManager {
     IPlayerManager getPlayerManager();
 
     IObjectManager getObjectManager();
+
+    IZone getZone();
 }

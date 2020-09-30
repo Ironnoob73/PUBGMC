@@ -1,6 +1,5 @@
 package dev.toma.pubgmc.games.interfaces;
 
-import dev.toma.pubgmc.games.Game;
 import dev.toma.pubgmc.games.util.Area;
 import dev.toma.pubgmc.games.util.GameStorage;
 import net.minecraft.entity.player.PlayerEntity;
@@ -63,6 +62,7 @@ public interface IPlayerManager extends IStateListener {
         @Override
         public void handlePlayerDeath(PlayerEntity player, DamageSource source) {
             playerList.remove(player);
+            markForUpdate();
         }
 
         @Override
@@ -72,6 +72,7 @@ public interface IPlayerManager extends IStateListener {
                 Area area = storage.getArena();
                 BlockPos pos = area.getRandomPosition(player.world, true);
                 player.setPositionAndUpdate(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
+                markForUpdate();
             } else {
                 BlockPos pos = storage.getLobby().getLocation();
                 player.setPositionAndUpdate(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
@@ -87,12 +88,14 @@ public interface IPlayerManager extends IStateListener {
         public void handleLogIn(PlayerEntity entity) {
             if(!entity.isSpectator()) {
                 playerList.add(entity);
+                markForUpdate();
             }
         }
 
         @Override
         public void handleLogOut(PlayerEntity entity) {
             playerList.remove(entity);
+            markForUpdate();
         }
 
         @Override
@@ -108,6 +111,7 @@ public interface IPlayerManager extends IStateListener {
                     playerList.add(playerEntity);
                 }
             }
+            markForUpdate();
         }
 
         @Override
