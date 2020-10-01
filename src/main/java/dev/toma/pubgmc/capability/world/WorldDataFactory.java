@@ -21,7 +21,7 @@ public class WorldDataFactory implements IWorldCap {
 
     private final World world;
     private Game game;
-    private GameStorage storage = new GameStorage();
+    private final GameStorage storage = new GameStorage();
 
     public WorldDataFactory(World world) {
         this.world = world;

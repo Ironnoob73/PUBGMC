@@ -27,4 +27,8 @@ public abstract class GameArgument<T> {
     public T getValue() {
         return value == null ? value = fallback : value;
     }
+
+    public T getFallback() {
+        return fallback;
+    }
 }

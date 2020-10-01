@@ -53,10 +53,6 @@ public class GameType<G extends Game> extends ForgeRegistryEntry<GameType<?>> {
         return argumentMap;
     }
 
-    public <T> T getArgumentValue(Function<GameType<?>, T> getterFunction) {
-        return getterFunction.apply(this);
-    }
-
     /**
      * Handles creation of new game instances
      * when new game is started or when game is

@@ -12,6 +12,7 @@ import dev.toma.pubgmc.capability.IWorldCap;
 import dev.toma.pubgmc.capability.world.WorldDataFactory;
 import dev.toma.pubgmc.games.Game;
 import dev.toma.pubgmc.games.GameType;
+import dev.toma.pubgmc.games.interfaces.IKeyHolder;
 import dev.toma.pubgmc.games.util.Area;
 import dev.toma.pubgmc.games.util.GameStorage;
 import net.minecraft.command.CommandSource;
@@ -20,13 +21,19 @@ import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.command.arguments.BlockPosArgument;
 import net.minecraft.command.arguments.NBTCompoundTagArgument;
 import net.minecraft.command.arguments.ResourceLocationArgument;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
 import net.minecraftforge.registries.IForgeRegistryEntry;
+
+import java.util.List;
 
 public class GameCommand {
 
@@ -140,6 +147,21 @@ public class GameCommand {
         try {
             newGame.exec_GameStart(nbt);
             cap.setGame(newGame);
+            long id = Game.createGameID();
+            newGame.setGameID(id);
+            World world = context.getSource().getWorld();
+            BlockPos pos = storage.getArena().getLocation();
+            int size = storage.getArena().getRadius();
+            AxisAlignedBB aabb = new AxisAlignedBB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1);
+            List<Entity> entities = world.getEntitiesWithinAABB(Entity.class, aabb.grow(size, 250, size));
+            for(Entity entity : entities) {
+                if(entity instanceof IKeyHolder) {
+                    IKeyHolder keyHolder = (IKeyHolder) entity;
+                    if(keyHolder.getGameID() > 0 && !keyHolder.test(id)) {
+                        entity.remove();
+                    }
+                }
+            }
             context.getSource().sendFeedback(new StringTextComponent(TextFormatting.GREEN + "Game started"), false);
         } catch (Exception exception) {
             throw CANNOT_START.create(exception);

@@ -37,6 +37,10 @@ public class ArgumentMap {
         put(identifier, new StringArgument(data));
     }
 
+    public void putIntArray(String identifier, int... data) {
+        put(identifier, new IntArrayArgument(data));
+    }
+
     public void put(String identifier, GameArgument<?> argument) {
         if(isLocked) {
             throw new UnsupportedOperationException("You cannot add arguments when registration is finished!");
@@ -63,6 +67,10 @@ public class ArgumentMap {
 
     public String getString(String identifier) {
         return get(identifier, "");
+    }
+
+    public int[] getIntArray(String identifier) {
+        return get(identifier, new int[0]);
     }
 
     @SuppressWarnings("unchecked")

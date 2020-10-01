@@ -33,6 +33,7 @@ import dev.toma.pubgmc.common.item.wearable.BulletProofArmor;
 import dev.toma.pubgmc.common.item.wearable.GhillieSuitItem;
 import dev.toma.pubgmc.common.tileentity.AirdropTileEntity;
 import dev.toma.pubgmc.common.tileentity.FlareAirdropTileEntity;
+import dev.toma.pubgmc.games.BattleRoyaleGame;
 import dev.toma.pubgmc.games.DeathmatchGame;
 import dev.toma.pubgmc.games.GameType;
 import dev.toma.pubgmc.games.args.ArgumentProvider;
@@ -222,7 +223,13 @@ public class RegistryHandler {
                     GameType.Builder.create(DeathmatchGame::new)
                             .name("deathmatch")
                             .addArgument(map -> map.putInt(ArgumentProvider.DURATION, 12000))
-                            .build().setRegistryName("deathmatch")
+                            .build().setRegistryName("deathmatch"),
+                    GameType.Builder.create(BattleRoyaleGame::new)
+                            .name("battle_royale")
+                            .addArgument(map -> map.putInt(ArgumentProvider.TEAM_SIZE, 1))
+                            .addArgument(map -> map.putIntArray(ArgumentProvider.ZONE_SHRINK_TIMES, 4200, 2000, 1800, 1500, 1200, 1000, 800, 600))
+                            .addArgument(map -> map.putInt(ArgumentProvider.AIRDROP_AMOUNT, 8))
+                            .build().setRegistryName("battle_royale")
             );
         }
 

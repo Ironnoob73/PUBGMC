@@ -47,7 +47,7 @@ public final class DeathmatchGame extends Game {
     @Override
     public void onStart() {
         isRunning = true;
-        ticksleft = type.getArgumentValue(ArgumentProvider.DURATION_ARGUMENT);
+        ticksleft = this.getArgumentValue(ArgumentProvider.DURATION_ARGUMENT);
         List<PlayerEntity> players = playerManager.getPlayerList();
         Area area = getStorage().getArena();
         for (PlayerEntity player : players) {

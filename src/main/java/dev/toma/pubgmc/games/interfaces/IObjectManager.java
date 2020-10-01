@@ -14,6 +14,8 @@ public interface IObjectManager {
 
     void handleChunkLoad(IChunk chunk);
 
+    void handleTileEntityUpdate(TileEntity tileEntity);
+
     class DefaultImpl implements IObjectManager {
 
         protected final IKeyHolder keyHolder;
@@ -38,10 +40,15 @@ public interface IObjectManager {
             Set<BlockPos> positions = chunk.getTileEntitiesPos();
             for (BlockPos pos : positions) {
                 TileEntity tileEntity = chunk.getTileEntity(pos);
-                if (tileEntity instanceof ITileLoadHandler) {
-                    ITileLoadHandler loadHandler = (ITileLoadHandler) tileEntity;
-                    loadHandler.load(this.keyHolder.getGameID());
-                }
+                handleTileEntityUpdate(tileEntity);
+            }
+        }
+
+        @Override
+        public void handleTileEntityUpdate(TileEntity tileEntity) {
+            if(tileEntity instanceof ITileLoadHandler) {
+                ITileLoadHandler loadHandler = (ITileLoadHandler) tileEntity;
+                loadHandler.load(this.keyHolder.getGameID());
             }
         }
     }

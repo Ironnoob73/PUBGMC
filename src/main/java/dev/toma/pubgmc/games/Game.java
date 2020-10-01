@@ -4,22 +4,25 @@ import com.google.common.collect.Sets;
 import dev.toma.pubgmc.capability.IWorldCap;
 import dev.toma.pubgmc.capability.world.WorldDataFactory;
 import dev.toma.pubgmc.capability.world.WorldDataProvider;
+import dev.toma.pubgmc.games.args.ArgumentMap;
 import dev.toma.pubgmc.games.interfaces.*;
 import dev.toma.pubgmc.games.util.GameStorage;
-import dev.toma.pubgmc.network.NetworkManager;
-import dev.toma.pubgmc.network.packet.CPacketSyncWorldData;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.INBTSerializable;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
+import java.util.function.Function;
 
 public abstract class Game implements INBTSerializable<CompoundNBT>, IKeyHolder, GameManager {
 
+    public static final Marker marker = MarkerManager.getMarker("Games");
     public final World world;
-    protected final GameType<?> type;
+    private final GameType<?> type;
     private final Set<IStateListener> stateListeners = Sets.newHashSet();
     private long gameID;
     private IZone zone;
@@ -45,6 +48,7 @@ public abstract class Game implements INBTSerializable<CompoundNBT>, IKeyHolder,
             this.getType().getGameArguments().updateValues(arguments);
         }
         this.onStart();
+        this.sync();
     }
 
     public final void exec_GameStop() {
@@ -52,6 +56,7 @@ public abstract class Game implements INBTSerializable<CompoundNBT>, IKeyHolder,
             ((IDataHolder<?>) this).resetData();
         }
         this.onStop();
+        this.sync();
     }
 
     public final void exec_GameTick() {
@@ -140,6 +145,10 @@ public abstract class Game implements INBTSerializable<CompoundNBT>, IKeyHolder,
             zone.deserializeNBT(nbt.getCompound("zone"));
         }
         readData(nbt);
+    }
+
+    public <T> T getArgumentValue(Function<ArgumentMap, T> getterFunction) {
+        return getterFunction.apply(this.getType().getGameArguments());
     }
 
     public static long createGameID() {

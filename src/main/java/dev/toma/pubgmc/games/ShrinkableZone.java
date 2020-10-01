@@ -10,8 +10,8 @@ import java.util.Random;
 public class ShrinkableZone extends StaticZone {
 
     protected final float pct;
-    private int shrinkIndex;
-    private boolean shrinking;
+    protected int shrinkIndex;
+    protected boolean shrinking;
 
     private Vector2d nextMin;
     private Vector2d nextMax;
@@ -29,7 +29,8 @@ public class ShrinkableZone extends StaticZone {
         shrinking = true;
         double d = getMax().x - getMin().x;
         double d1 = d * pct;
-        if(d1 < 20 || shrinkIndex++ > 7) {
+        if(d1 < 20 || shrinkIndex++ > 6) {
+            this.shrinkIndex = Math.min(8, shrinkIndex);
             double c = d / 2d;
             double px = getMin().x + c;
             double pz = getMin().y + c;
@@ -72,6 +73,10 @@ public class ShrinkableZone extends StaticZone {
     @Override
     public boolean isShrinking() {
         return shrinking;
+    }
+
+    public boolean isMaxIndex() {
+        return shrinkIndex == 7;
     }
 
     private boolean isSmallestCircle() {
