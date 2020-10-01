@@ -2,11 +2,16 @@ package dev.toma.pubgmc.games.interfaces;
 
 import dev.toma.pubgmc.games.Game;
 import dev.toma.pubgmc.games.util.Area;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.util.INBTSerializable;
 
 import javax.vecmath.Vector2d;
+import java.util.Random;
 
-public interface IZone {
+public interface IZone extends INBTSerializable<CompoundNBT> {
 
     DamageSource ZONE_DAMAGE = new DamageSource("zone").setDamageBypassesArmor().setDamageIsAbsolute();
 
@@ -24,28 +29,12 @@ public interface IZone {
 
     void setSize(Area area);
 
-    void startShrinking(int ticks);
+    void startShrinking(Random random, int time);
 
     void tick(Game game);
 
     boolean isShrinking();
 
-    class Bounds {
-
-        Vector2d min;
-        Vector2d max;
-
-        public Bounds(Vector2d min, Vector2d max) {
-            this.min = min;
-            this.max = max;
-        }
-
-        public Vector2d getMin() {
-            return min;
-        }
-
-        public Vector2d getMax() {
-            return max;
-        }
-    }
+    @OnlyIn(Dist.CLIENT)
+    IZoneRenderer getRenderer();
 }

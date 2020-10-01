@@ -2,11 +2,17 @@ package dev.toma.pubgmc.games;
 
 import dev.toma.pubgmc.games.interfaces.IPlayerManager;
 import dev.toma.pubgmc.games.interfaces.IZone;
+import dev.toma.pubgmc.games.interfaces.IZoneRenderer;
 import dev.toma.pubgmc.games.util.Area;
 import dev.toma.pubgmc.games.util.GameStorage;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.vecmath.Vector2d;
+import java.util.Random;
 
 public class StaticZone implements IZone {
 
@@ -44,8 +50,14 @@ public class StaticZone implements IZone {
     }
 
     @Override
-    public void startShrinking(int ticks) {
+    public void startShrinking(Random random, int time) {
 
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    @Override
+    public IZoneRenderer getRenderer() {
+        return IZoneRenderer.BASIC;
     }
 
     @Override
@@ -57,6 +69,35 @@ public class StaticZone implements IZone {
                 player.attackEntityFrom(ZONE_DAMAGE, 4.0F);
             }
         }
+    }
+
+    @Override
+    public CompoundNBT serializeNBT() {
+        CompoundNBT nbt = new CompoundNBT();
+        nbt.put("min", saveVector(min));
+        nbt.put("max", saveVector(max));
+        nbt.put("minLast", saveVector(minLast));
+        nbt.put("maxLast", saveVector(maxLast));
+        return nbt;
+    }
+
+    @Override
+    public void deserializeNBT(CompoundNBT nbt) {
+        min = loadVector(nbt.getCompound("min"));
+        max = loadVector(nbt.getCompound("max"));
+        minLast = loadVector(nbt.getCompound("minLast"));
+        maxLast = loadVector(nbt.getCompound("maxLast"));
+    }
+
+    public CompoundNBT saveVector(Vector2d vector2d) {
+        CompoundNBT nbt = new CompoundNBT();
+        nbt.putDouble("x", vector2d.x);
+        nbt.putDouble("y", vector2d.y);
+        return nbt;
+    }
+
+    public Vector2d loadVector(CompoundNBT nbt) {
+        return new Vector2d(nbt.getDouble("x"), nbt.getDouble("y"));
     }
 
     @Override
@@ -74,8 +115,8 @@ public class StaticZone implements IZone {
 
     @Override
     public void setSize(Area area) {
-        double x = area.getLocation().getX();
-        double z = area.getLocation().getZ();
+        double x = area.getLocation().getX() + 0.5;
+        double z = area.getLocation().getZ() + 0.5;
         int size = area.getRadius();
         setSize(new Vector2d(x - size, z - size), new Vector2d(x + size, z + size));
     }

@@ -3,9 +3,12 @@ package dev.toma.pubgmc.games;
 import dev.toma.pubgmc.games.args.ArgumentProvider;
 import dev.toma.pubgmc.games.interfaces.IObjectManager;
 import dev.toma.pubgmc.games.interfaces.IPlayerManager;
+import dev.toma.pubgmc.games.interfaces.IZone;
 import dev.toma.pubgmc.games.util.Area;
+import dev.toma.pubgmc.games.util.GameStorage;
 import dev.toma.pubgmc.init.Games;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -66,5 +69,22 @@ public final class DeathmatchGame extends Game {
     @Override
     public IObjectManager getObjectManager() {
         return objectManager;
+    }
+
+    @Override
+    public void writeData(CompoundNBT nbt) {
+        nbt.putBoolean("running", isRunning);
+        nbt.putInt("ticksLeft", ticksleft);
+    }
+
+    @Override
+    public void readData(CompoundNBT nbt) {
+        isRunning = nbt.getBoolean("running");
+        ticksleft = nbt.getInt("ticksLeft");
+    }
+
+    @Override
+    public IZone newZoneInstance(GameStorage storage) {
+        return new StaticZone(storage);
     }
 }

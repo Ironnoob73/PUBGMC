@@ -6,6 +6,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.chunk.IChunk;
 
+import java.util.Set;
+
 public interface IObjectManager {
 
     void handleEntityJoin(Entity entity);
@@ -33,10 +35,12 @@ public interface IObjectManager {
         @Override
         public void handleChunkLoad(IChunk chunk) {
             IWorld world = chunk.getWorldForge();
-            for(BlockPos pos : chunk.getTileEntitiesPos()) {
-                TileEntity tileEntity = world.getTileEntity(pos);
-                if(tileEntity instanceof ITileLoadHandler) {
-                    ((ITileLoadHandler) tileEntity).load(keyHolder.getGameID());
+            Set<BlockPos> positions = chunk.getTileEntitiesPos();
+            for (BlockPos pos : positions) {
+                TileEntity tileEntity = chunk.getTileEntity(pos);
+                if (tileEntity instanceof ITileLoadHandler) {
+                    ITileLoadHandler loadHandler = (ITileLoadHandler) tileEntity;
+                    loadHandler.load(this.keyHolder.getGameID());
                 }
             }
         }

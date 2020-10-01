@@ -15,4 +15,6 @@ public interface IWorldCap extends INBTSerializable<CompoundNBT> {
     void setGame(Game game);
 
     GameStorage getStorage();
+
+    void sync();
 }

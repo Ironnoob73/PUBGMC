@@ -2,9 +2,14 @@ package dev.toma.pubgmc.games.handlers;
 
 import dev.toma.pubgmc.Pubgmc;
 import dev.toma.pubgmc.capability.world.WorldDataFactory;
+import dev.toma.pubgmc.capability.world.WorldDataProvider;
 import dev.toma.pubgmc.games.Game;
+import dev.toma.pubgmc.games.interfaces.IZone;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -41,7 +46,16 @@ public class GameEventHandler {
 
         @SubscribeEvent
         public static void onLogIn(PlayerEvent.PlayerLoggedInEvent event) {
-            executeWhenRunning(event.getPlayer().world, game -> game.getPlayerManager().handleLogIn(event.getPlayer()));
+            World world = event.getPlayer().world;
+            world.getCapability(WorldDataProvider.CAP).ifPresent(cap -> {
+                Game game = cap.getGame();
+                if(game != null) {
+                    if(game.isRunning()) {
+                        game.getPlayerManager().handleLogIn(event.getPlayer());
+                    }
+                    cap.sync();
+                }
+            });
         }
 
         @SubscribeEvent
@@ -56,12 +70,28 @@ public class GameEventHandler {
 
         @SubscribeEvent
         public static void onChunkLoad(ChunkEvent.Load event) {
-            executeWhenRunning((World) event.getWorld(), game -> game.getObjectManager().handleChunkLoad(event.getChunk()));
+            World world = (World) event.getChunk().getWorldForge();
+            if(world == null || world.isRemote)
+                return;
+            world.getCapability(WorldDataProvider.CAP).ifPresent(cap -> {
+                Game game = cap.getGame();
+                if(game != null && game.isRunning()) {
+                    game.getObjectManager().handleChunkLoad(event.getChunk());
+                }
+            });
         }
     }
 
     @Mod.EventBusSubscriber(modid = Pubgmc.MODID, value = Dist.CLIENT)
     public static class Client {
 
+        @SubscribeEvent
+        public static void renderWorldEvent(RenderWorldLastEvent event) {
+            ClientWorld world = Minecraft.getInstance().world;
+            executeWhenRunning(world, game -> {
+                IZone zone = game.getZone();
+                zone.getRenderer().doRender(zone, event.getPartialTicks());
+            });
+        }
     }
 }

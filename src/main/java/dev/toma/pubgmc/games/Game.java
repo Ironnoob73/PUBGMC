@@ -3,6 +3,7 @@ package dev.toma.pubgmc.games;
 import com.google.common.collect.Sets;
 import dev.toma.pubgmc.capability.IWorldCap;
 import dev.toma.pubgmc.capability.world.WorldDataFactory;
+import dev.toma.pubgmc.capability.world.WorldDataProvider;
 import dev.toma.pubgmc.games.interfaces.*;
 import dev.toma.pubgmc.games.util.GameStorage;
 import dev.toma.pubgmc.network.NetworkManager;
@@ -18,15 +19,15 @@ import java.util.Set;
 public abstract class Game implements INBTSerializable<CompoundNBT>, IKeyHolder, GameManager {
 
     public final World world;
-    protected final IWorldCap worldData;
     protected final GameType<?> type;
     private final Set<IStateListener> stateListeners = Sets.newHashSet();
     private long gameID;
+    private IZone zone;
 
     public Game(GameType<?> type, World world) {
         this.type = Objects.requireNonNull(type, "Game type must be nonnull");
         this.world = Objects.requireNonNull(world, "Game's world must be nonnull");
-        this.worldData = WorldDataFactory.getData(world);
+        this.zone = newZoneInstance(WorldDataFactory.getData(world).getStorage());
     }
 
     /* =============================================================================================================================== */
@@ -72,10 +73,7 @@ public abstract class Game implements INBTSerializable<CompoundNBT>, IKeyHolder,
     }
 
     public final void sync() {
-        if(!world.isRemote) {
-            CompoundNBT nbt = serializeNBT();
-            NetworkManager.sendToAll(world, new CPacketSyncWorldData(nbt));
-        }
+        world.getCapability(WorldDataProvider.CAP).ifPresent(IWorldCap::sync);
     }
 
     /* =============================================================================================================================== */
@@ -88,8 +86,15 @@ public abstract class Game implements INBTSerializable<CompoundNBT>, IKeyHolder,
 
     public abstract boolean isRunning();
 
+    public abstract IZone newZoneInstance(GameStorage storage);
+
     public GameType<?> getType() {
         return type;
+    }
+
+    @Override
+    public IZone getZone() {
+        return zone;
     }
 
     @Override
@@ -119,6 +124,7 @@ public abstract class Game implements INBTSerializable<CompoundNBT>, IKeyHolder,
         CompoundNBT nbt = new CompoundNBT();
         nbt.putLong("gameID", gameID);
         nbt.put("players", getPlayerManager().writeData());
+        nbt.put("zone", getZone().serializeNBT());
         writeData(nbt);
         return nbt;
     }
@@ -128,6 +134,10 @@ public abstract class Game implements INBTSerializable<CompoundNBT>, IKeyHolder,
         gameID = nbt.getLong("gameID");
         if(nbt.contains("players")) {
             getPlayerManager().readData(world, nbt.get("players"));
+        }
+        if(nbt.contains("zone")) {
+            zone = newZoneInstance(WorldDataFactory.getData(world).getStorage());
+            zone.deserializeNBT(nbt.getCompound("zone"));
         }
         readData(nbt);
     }
