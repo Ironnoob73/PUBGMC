@@ -2,6 +2,7 @@ package dev.toma.pubgmc.games.interfaces;
 
 import dev.toma.pubgmc.games.Game;
 import dev.toma.pubgmc.games.util.Area;
+import net.minecraft.entity.Entity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.api.distmarker.Dist;
@@ -16,6 +17,8 @@ public interface IZone extends INBTSerializable<CompoundNBT> {
     DamageSource ZONE_DAMAGE = new DamageSource("zone").setDamageBypassesArmor().setDamageIsAbsolute();
 
     boolean isIn(double x, double y);
+
+    boolean isIn(Entity entity);
 
     Vector2d getMin();
 

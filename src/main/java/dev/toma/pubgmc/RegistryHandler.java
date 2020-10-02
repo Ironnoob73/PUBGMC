@@ -39,6 +39,7 @@ import dev.toma.pubgmc.games.GameType;
 import dev.toma.pubgmc.games.args.ArgumentProvider;
 import dev.toma.pubgmc.init.PMCItems;
 import dev.toma.pubgmc.init.PMCSounds;
+import dev.toma.pubgmc.util.UsefulFunctions;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -52,6 +53,7 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.event.RegistryEvent;
@@ -223,12 +225,24 @@ public class RegistryHandler {
                     GameType.Builder.create(DeathmatchGame::new)
                             .name("deathmatch")
                             .addArgument(map -> map.putInt(ArgumentProvider.DURATION, 12000))
+                            .description(
+                                    new StringTextComponent("Standart deathmacth game. Get the highest score"),
+                                    new StringTextComponent("Supported arguments:"),
+                                    new StringTextComponent(UsefulFunctions.addArgumentDesc("duration", "Set match length [ticks:int]"))
+                            )
                             .build().setRegistryName("deathmatch"),
                     GameType.Builder.create(BattleRoyaleGame::new)
                             .name("battle_royale")
                             .addArgument(map -> map.putInt(ArgumentProvider.TEAM_SIZE, 1))
-                            .addArgument(map -> map.putIntArray(ArgumentProvider.ZONE_SHRINK_TIMES, 4200, 2000, 1800, 1500, 1200, 1000, 800, 600))
+                            .addArgument(map -> map.putIntArray(ArgumentProvider.ZONE_SHRINK_TIMES, 200, 2000, 1800, 1500, 1200, 1000, 800, 600))
                             .addArgument(map -> map.putInt(ArgumentProvider.AIRDROP_AMOUNT, 8))
+                            .description(
+                                    new StringTextComponent("Battle royale mode. Be the last one standing"),
+                                    new StringTextComponent("Supported arguments:"),
+                                    new StringTextComponent(UsefulFunctions.addArgumentDesc("teamSize", "Team size [size:int]")),
+                                    new StringTextComponent(UsefulFunctions.addArgumentDesc("zoneShrinkTimes", "Set zone shrink delays [times:int[8]]")),
+                                    new StringTextComponent(UsefulFunctions.addArgumentDesc("airdropCount", "Amount of airdrops which will spawn [count:int]"))
+                            )
                             .build().setRegistryName("battle_royale")
             );
         }

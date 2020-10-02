@@ -1,5 +1,6 @@
 package dev.toma.pubgmc.games.util;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
@@ -39,6 +40,10 @@ public class Area {
         return dx <= radius && dy <= radius && dz <= radius;
     }
 
+    public boolean contains(Entity entity) {
+        return contains(entity.getPosition());
+    }
+
     public BlockPos getLocation() {
         return location;
     }
@@ -69,7 +74,7 @@ public class Area {
     public BlockPos getRandomPosition(World world, boolean onTop) {
         int minX = location.getX() - radius;
         int minZ = location.getZ() - radius;
-        int dist = radius * 2;
+        int dist = Math.max(1, radius * 2);
         int genX = minX + world.rand.nextInt(dist);
         int genZ = minZ + world.rand.nextInt(dist);
         return new BlockPos(genX, onTop ? world.getHeight(Heightmap.Type.WORLD_SURFACE, genX, genZ) : location.getY(), genZ);

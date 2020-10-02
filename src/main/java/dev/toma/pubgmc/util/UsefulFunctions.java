@@ -5,6 +5,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
+import net.minecraft.util.text.TextFormatting;
 
 import java.util.Collection;
 import java.util.Map;
@@ -76,5 +77,9 @@ public class UsefulFunctions {
             }
         }
         return false;
+    }
+
+    public static String addArgumentDesc(String key, String info) {
+        return String.format("%s- %s%s --> %s", TextFormatting.YELLOW, key, TextFormatting.AQUA, info);
     }
 }

@@ -5,6 +5,7 @@ import dev.toma.pubgmc.games.interfaces.IZone;
 import dev.toma.pubgmc.games.interfaces.IZoneRenderer;
 import dev.toma.pubgmc.games.util.Area;
 import dev.toma.pubgmc.games.util.GameStorage;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -124,5 +125,10 @@ public class StaticZone implements IZone {
     @Override
     public boolean isIn(double x, double z) {
         return x > min.x && x < max.x && z > min.y && z < max.y;
+    }
+
+    @Override
+    public boolean isIn(Entity entity) {
+        return isIn(entity.posX, entity.posZ);
     }
 }

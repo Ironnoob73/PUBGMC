@@ -9,11 +9,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.world.ChunkEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -91,6 +93,31 @@ public class GameEventHandler {
             executeWhenRunning(world, game -> {
                 IZone zone = game.getZone();
                 zone.getRenderer().doRender(zone, event.getPartialTicks());
+            });
+        }
+
+        @SubscribeEvent(priority = EventPriority.HIGH)
+        public static void renderOverlayPost(RenderGameOverlayEvent event) {
+            if(event.getType() == RenderGameOverlayEvent.ElementType.ALL) {
+                Minecraft.getInstance().world.getCapability(WorldDataProvider.CAP).ifPresent(cap -> {
+                    Game game = cap.getGame();
+                    if(game != null && game.isRunning()) {
+                        game.renderGameOverlay(event.getWindow(), event.getPartialTicks());
+                    }
+                });
+            }
+        }
+
+        @SubscribeEvent
+        public static void clientTick(TickEvent.ClientTickEvent event) {
+            ClientWorld world = Minecraft.getInstance().world;
+            if(world == null || event.phase == TickEvent.Phase.START)
+                return;
+            world.getCapability(WorldDataProvider.CAP).ifPresent(cap -> {
+                Game game = cap.getGame();
+                if(game != null && game.isRunning()) {
+                    game.exec_GameTick();
+                }
             });
         }
     }

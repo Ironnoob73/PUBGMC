@@ -7,7 +7,7 @@ public class ArgumentProvider {
     // IDENTIFIERS
     public static final String DURATION = "duration";
     public static final String TEAM_SIZE = "teamSize";
-    public static final String ZONE_SHRINK_TIMES = "zoneshrinkTimes";
+    public static final String ZONE_SHRINK_TIMES = "zoneShrinkTimes";
     public static final String AIRDROP_AMOUNT = "airdropCount";
     // ARGUMENT GETTERS
     public static final Function<ArgumentMap, Integer> DURATION_ARGUMENT = map -> map.getInt(DURATION);

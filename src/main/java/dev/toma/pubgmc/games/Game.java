@@ -7,8 +7,11 @@ import dev.toma.pubgmc.capability.world.WorldDataProvider;
 import dev.toma.pubgmc.games.args.ArgumentMap;
 import dev.toma.pubgmc.games.interfaces.*;
 import dev.toma.pubgmc.games.util.GameStorage;
+import net.minecraft.client.MainWindow;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.INBTSerializable;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
@@ -61,6 +64,7 @@ public abstract class Game implements INBTSerializable<CompoundNBT>, IKeyHolder,
 
     public final void exec_GameTick() {
         boolean sync = false;
+        this.getZone().tick(this);
         for (IStateListener listener : stateListeners) {
             if(listener.isChanged()) {
                 listener.clear();
@@ -145,6 +149,11 @@ public abstract class Game implements INBTSerializable<CompoundNBT>, IKeyHolder,
             zone.deserializeNBT(nbt.getCompound("zone"));
         }
         readData(nbt);
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public void renderGameOverlay(MainWindow window, float partialTicks) {
+
     }
 
     public <T> T getArgumentValue(Function<ArgumentMap, T> getterFunction) {

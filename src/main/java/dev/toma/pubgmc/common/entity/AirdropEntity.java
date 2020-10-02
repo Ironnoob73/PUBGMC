@@ -1,7 +1,11 @@
 package dev.toma.pubgmc.common.entity;
 
+import dev.toma.pubgmc.capability.world.WorldDataProvider;
+import dev.toma.pubgmc.games.Game;
+import dev.toma.pubgmc.games.interfaces.IKeyHolder;
 import dev.toma.pubgmc.games.interfaces.ILootGenerator;
 import dev.toma.pubgmc.init.PMCBlocks;
+import dev.toma.pubgmc.init.PMCEntities;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MoverType;
@@ -15,10 +19,11 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import net.minecraftforge.fml.network.NetworkHooks;
 
-public class AirdropEntity extends Entity implements IEntityAdditionalSpawnData {
+public class AirdropEntity extends Entity implements IEntityAdditionalSpawnData, IKeyHolder {
 
     private float fallSpeed;
     private AirdropType type;
+    private long gameID;
 
     public AirdropEntity(EntityType<?> type, World world) {
         super(type, world);
@@ -27,7 +32,7 @@ public class AirdropEntity extends Entity implements IEntityAdditionalSpawnData 
     }
 
     public AirdropEntity(World world, BlockPos pos, AirdropType type) {
-        this(null, world);
+        this(PMCEntities.AIRDROP, world);
         setPosition(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
         this.type = type;
     }
@@ -41,7 +46,7 @@ public class AirdropEntity extends Entity implements IEntityAdditionalSpawnData 
         Vec3d actualMotion = new Vec3d(motion.x, -fallSpeed, motion.z);
         move(MoverType.SELF, actualMotion);
         super.tick();
-        if(onGround) {
+        if(!world.isAirBlock(getPosition().down())) {
             if(type == AirdropType.NORMAL) {
                 world.setBlockState(getPosition(), PMCBlocks.AIRDROP.getDefaultState(), 3);
             } else {
@@ -68,12 +73,28 @@ public class AirdropEntity extends Entity implements IEntityAdditionalSpawnData 
     protected void readAdditional(CompoundNBT compound) {
         type = AirdropType.values()[compound.getInt("airdropType")];
         fallSpeed = compound.getFloat("fallSpeed");
+        gameID = compound.getLong("gameID");
     }
 
     @Override
     protected void writeAdditional(CompoundNBT compound) {
         compound.putInt("airdropType", type.ordinal());
         compound.putFloat("fallSpeed", fallSpeed);
+        compound.putLong("gameID", gameID);
+    }
+
+    @Override
+    public void onAddedToWorld() {
+        super.onAddedToWorld();
+        if(gameID <= 0) return;
+        world.getCapability(WorldDataProvider.CAP).ifPresent(cap -> {
+            Game game = cap.getGame();
+            if(game != null && game.isRunning()) {
+                if(!game.test(gameID)) {
+                    AirdropEntity.this.remove();
+                }
+            }
+        });
     }
 
     @Override
@@ -91,6 +112,16 @@ public class AirdropEntity extends Entity implements IEntityAdditionalSpawnData 
     @Override
     public boolean isInRangeToRenderDist(double distance) {
         return true;
+    }
+
+    @Override
+    public void setGameID(long gameID) {
+        this.gameID = gameID;
+    }
+
+    @Override
+    public long getGameID() {
+        return gameID;
     }
 
     public AirdropType getAirdropType() {

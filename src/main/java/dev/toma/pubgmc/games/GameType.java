@@ -1,15 +1,13 @@
 package dev.toma.pubgmc.games;
 
 import dev.toma.pubgmc.games.args.ArgumentMap;
+import dev.toma.pubgmc.games.args.GameArgument;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.registries.ForgeRegistryEntry;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class GameType<G extends Game> extends ForgeRegistryEntry<GameType<?>> {
 
@@ -22,7 +20,7 @@ public class GameType<G extends Game> extends ForgeRegistryEntry<GameType<?>> {
         this.factory = builder.factory;
         this.name = builder.name;
         this.argumentMap = builder.map;
-        this.description = null;
+        this.description = builder.description;
     }
 
     /**
@@ -71,9 +69,9 @@ public class GameType<G extends Game> extends ForgeRegistryEntry<GameType<?>> {
      */
     public static class Builder<G extends Game> {
 
-        static final Marker marker = MarkerManager.getMarker("Game Builder");
         final GameInstanceFactory<G> factory;
         ITextComponent name;
+        ITextComponent[] description;
         ArgumentMap map;
 
         /**
@@ -104,6 +102,15 @@ public class GameType<G extends Game> extends ForgeRegistryEntry<GameType<?>> {
         }
 
         /**
+         * Adds description to this game
+         * @param components - description lines
+         */
+        public Builder<G> description(ITextComponent... components) {
+            this.description = components;
+            return this;
+        }
+
+        /**
          * Sets display name
          * @param name Name substring - complete name is going to be {@link TranslationTextComponent} in format <code>game.yourStringHere</code>
          */
@@ -111,6 +118,10 @@ public class GameType<G extends Game> extends ForgeRegistryEntry<GameType<?>> {
             return name(new TranslationTextComponent(String.format("game.%s", name)));
         }
 
+        /**
+         * Registers new argument for this game
+         * @param mapConsumer - use this to register your argument ({@link ArgumentMap#put(String, GameArgument)})
+         */
         public Builder<G> addArgument(Consumer<ArgumentMap> mapConsumer) {
             if(map == null) {
                 map = new ArgumentMap();
