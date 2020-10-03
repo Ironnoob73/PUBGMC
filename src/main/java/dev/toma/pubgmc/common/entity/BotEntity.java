@@ -18,16 +18,19 @@ import net.minecraft.world.World;
 public class BotEntity extends CreatureEntity implements IKeyHolder {
 
     private long gameID;
+    private Game game;
     private final InventoryManager botInventory;
+    private byte variant;
 
     public BotEntity(EntityType<? extends CreatureEntity> type, World world) {
         super(type, world);
         this.botInventory = new InventoryManager();
         IWorldCap cap = WorldDataFactory.getData(world);
-        Game game = cap.getGame();
+        game = cap.getGame();
         if(game != null && game.isRunning()) {
             this.gameID = game.getGameID();
         }
+        variant = (byte) world.rand.nextInt(4);
     }
 
     @Override
@@ -60,6 +63,7 @@ public class BotEntity extends CreatureEntity implements IKeyHolder {
     protected void registerAttributes() {
         super.registerAttributes();
         this.getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(64.0);
+        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.25D);
     }
 
     @Override
@@ -93,7 +97,11 @@ public class BotEntity extends CreatureEntity implements IKeyHolder {
         return botInventory;
     }
 
-    static class InventoryManager implements EquipmentHolder {
+    public byte getVariant() {
+        return variant;
+    }
+
+    public static class InventoryManager implements EquipmentHolder {
 
         private final Inventory equipmentInventory = new Inventory(3);
         private final Inventory mainInventory = new Inventory(9);

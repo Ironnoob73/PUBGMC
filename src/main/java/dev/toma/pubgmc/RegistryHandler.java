@@ -12,6 +12,7 @@ import dev.toma.pubgmc.common.block.PMCHorizontalBlock;
 import dev.toma.pubgmc.common.block.crafting.AmmoFactoryBlock;
 import dev.toma.pubgmc.common.block.crafting.WeaponFactoryBlock;
 import dev.toma.pubgmc.common.entity.AirdropEntity;
+import dev.toma.pubgmc.common.entity.BotEntity;
 import dev.toma.pubgmc.common.entity.BulletEntity;
 import dev.toma.pubgmc.common.entity.ParachuteEntity;
 import dev.toma.pubgmc.common.entity.throwable.FlashEntity;
@@ -194,7 +195,8 @@ public class RegistryHandler {
                     registerEntity("uaz", trackBuilder(LandDriveableEntity.UAZDriveable::new, EntityClassification.MISC, 64).size(2.25F, 2.0F)),
                     registerEntity("glider", trackBuilder(AirDriveableEntity.GliderDriveable::new, EntityClassification.MISC, 64).size(2.5F, 2.0F)),
                     registerEntity("bullet", trackBuilder(BulletEntity::new, EntityClassification.MISC, 64).size(0.1F, 0.1F)),
-                    registerEntity("airdrop", trackBuilder(AirdropEntity::new, EntityClassification.MISC, 256).size(1.0F, 1.0F))
+                    registerEntity("airdrop", trackBuilder(AirdropEntity::new, EntityClassification.MISC, 256).size(1.0F, 1.0F)),
+                    registerEntity("bot", builder(BotEntity::new, EntityClassification.MONSTER).setTrackingRange(256).setUpdateInterval(3).setShouldReceiveVelocityUpdates(true).size(0.6F, 1.95F))
             );
         }
 
