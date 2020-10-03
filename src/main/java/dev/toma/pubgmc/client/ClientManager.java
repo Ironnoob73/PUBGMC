@@ -1,9 +1,11 @@
 package dev.toma.pubgmc.client;
 
 import dev.toma.pubgmc.Pubgmc;
+import dev.toma.pubgmc.client.model.entity.BotModel;
 import dev.toma.pubgmc.client.render.block.LootSpawnerRenderer;
 import dev.toma.pubgmc.client.render.entity.*;
 import dev.toma.pubgmc.common.entity.AirdropEntity;
+import dev.toma.pubgmc.common.entity.BotEntity;
 import dev.toma.pubgmc.common.entity.ParachuteEntity;
 import dev.toma.pubgmc.common.entity.throwable.FlashEntity;
 import dev.toma.pubgmc.common.entity.throwable.GrenadeEntity;
@@ -71,6 +73,7 @@ public class ClientManager {
         RenderingRegistry.registerEntityRenderingHandler(LandDriveableEntity.UAZDriveable.class, UAZRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(AirDriveableEntity.GliderDriveable.class, GliderRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(AirdropEntity.class, AirdropRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(BotEntity.class, BotRenderer::new);
         ClientRegistry.bindTileEntitySpecialRenderer(LootSpawnerTileEntity.class, new LootSpawnerRenderer());
     }
 

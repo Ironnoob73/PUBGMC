@@ -36,8 +36,8 @@ public class GameStorage implements INBTSerializable<CompoundNBT> {
         pois.add(PoI);
     }
 
-    public PointOfInterest removePoI(int index) {
-        return pois.remove(index);
+    public void removePoI(int index) {
+        pois.remove(index);
     }
 
     public List<PointOfInterest> getPois() {

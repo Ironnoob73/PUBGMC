@@ -108,5 +108,20 @@ public class InventoryProvider implements ICapabilitySerializable<CompoundNBT> {
         public ItemStack getStackInSlot(int slot) {
             return ItemStack.EMPTY;
         }
+
+        @Override
+        public ItemStack getBackpack() {
+            return getStackInSlot(0);
+        }
+
+        @Override
+        public ItemStack getGhillie() {
+            return getStackInSlot(0);
+        }
+
+        @Override
+        public ItemStack getNightVision() {
+            return getStackInSlot(0);
+        }
     }
 }

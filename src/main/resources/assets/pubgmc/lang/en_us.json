@@ -9,5 +9,8 @@
     "pubgmc.heal.painkillers.success": "§aSuccessfully used Painkillers",
     "pubgmc.heal.adrenaline_syringe.success": "§aSuccessfully used Adrenaline Syringe",
     "pubgmc.fuelcan.fail.vehicle": "§cYou can only use this item in vehicle!",
-    "pubgmc.fuelcan.fail.movement": "§cVehicle must be stationary!"
+    "pubgmc.fuelcan.fail.movement": "§cVehicle must be stationary!",
+    "game.deathmatch": "Deathmatch",
+    "game.battle_royale": "Battle Royale",
+    "death.attack.zone": "%1$s has died outside of zone"
 }

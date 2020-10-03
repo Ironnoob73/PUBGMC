@@ -1,14 +1,24 @@
 package dev.toma.pubgmc.games;
 
 import com.google.common.collect.Sets;
+import com.mojang.blaze3d.platform.GlStateManager;
 import dev.toma.pubgmc.capability.IWorldCap;
 import dev.toma.pubgmc.capability.world.WorldDataFactory;
 import dev.toma.pubgmc.capability.world.WorldDataProvider;
+import dev.toma.pubgmc.common.entity.BotEntity;
 import dev.toma.pubgmc.games.args.ArgumentMap;
 import dev.toma.pubgmc.games.interfaces.*;
 import dev.toma.pubgmc.games.util.GameStorage;
+import dev.toma.pubgmc.games.util.PointOfInterest;
 import net.minecraft.client.MainWindow;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.entity.Entity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -16,6 +26,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
@@ -97,7 +108,7 @@ public abstract class Game implements INBTSerializable<CompoundNBT>, IKeyHolder,
 
     public abstract IZone newZoneInstance(GameStorage storage);
 
-    public GameType<?> getType() {
+    public final GameType<?> getType() {
         return type;
     }
 
@@ -151,9 +162,60 @@ public abstract class Game implements INBTSerializable<CompoundNBT>, IKeyHolder,
         readData(nbt);
     }
 
+    public void processBotSpawn(BotEntity bot) {
+
+    }
+
     @OnlyIn(Dist.CLIENT)
     public void renderGameOverlay(MainWindow window, float partialTicks) {
 
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public void renderInWorldStuff(Tessellator tessellator, BufferBuilder bufferBuilder, IWorldCap cap, float partialTicks) {
+        List<PointOfInterest> points = cap.getStorage().getPois();
+        if(!points.isEmpty()) {
+            Minecraft mc = Minecraft.getInstance();
+            double maxRenderDist = mc.gameSettings.renderDistanceChunks * 16;
+            Entity entity = mc.getRenderViewEntity();
+            FontRenderer renderer = mc.fontRenderer;
+            for (PointOfInterest point : points) {
+                if(point.distanceTo(entity.posX, entity.posZ) <= maxRenderDist) {
+                    GlStateManager.pushMatrix();
+                    BlockPos pos = point.getLocation();
+                    GlStateManager.translated(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
+                    GlStateManager.rotatef(-entity.rotationYaw, 0.0F, 1.0F, 0.0F);
+                    GlStateManager.disableCull();
+                    GlStateManager.disableTexture();
+                    float nameWidth = renderer.getStringWidth(point.getName()) / 2.0F;
+                    double minX = -nameWidth + 1.0;
+                    bufferBuilder.begin(7, DefaultVertexFormats.POSITION_COLOR);
+                    bufferBuilder.pos(minX, 22.0, 0.5).color(0.0F, 0.0F, 0.0F, 1.0F).endVertex();
+                    bufferBuilder.pos(nameWidth, 22.0, 0.5).color(0.0F, 0.0F, 0.0F, 1.0F).endVertex();
+                    bufferBuilder.pos(nameWidth, 13.0, 0.5).color(0.0F, 0.0F, 0.0F, 1.0F).endVertex();
+                    bufferBuilder.pos(minX, 13.0, 0.5).color(0.0F, 0.0F, 0.0F, 1.0F).endVertex();
+                    bufferBuilder.pos(minX, 13.0, 0.5).color(1.0F, 1.0F, 1.0F, 1.0F).endVertex();
+                    bufferBuilder.pos(nameWidth, 13.0, 0.5).color(1.0F, 1.0F, 1.0F, 1.0F).endVertex();
+                    bufferBuilder.pos(nameWidth, 12.0, 0.5).color(1.0F, 1.0F, 1.0F, 1.0F).endVertex();
+                    bufferBuilder.pos(minX, 12.0, 0.5).color(1.0F, 1.0F, 1.0F, 1.0F).endVertex();
+                    double center = (minX + nameWidth) / 2.0;
+                    bufferBuilder.pos(center - 0.5, 12.0, 0.5).color(1.0F, 1.0F, 1.0F, 1.0F).endVertex();
+                    bufferBuilder.pos(center + 0.5, 12.0, 0.5).color(1.0F, 1.0F, 1.0F, 1.0F).endVertex();
+                    bufferBuilder.pos(center + 0.5, -2.0, 0.5).color(1.0F, 1.0F, 1.0F, 1.0F).endVertex();
+                    bufferBuilder.pos(center - 0.5, -2.0, 0.5).color(1.0F, 1.0F, 1.0F, 1.0F).endVertex();
+                    tessellator.draw();
+                    GlStateManager.enableTexture();
+                    GlStateManager.pushMatrix();
+                    GlStateManager.translated((double) nameWidth / 2.0, 19.5, 0.45);
+                    GlStateManager.rotated(180.0F, 0.0F, 0.0F, 1.0F);
+                    GlStateManager.scaled(0.5, 0.5, 0.5);
+                    mc.fontRenderer.drawString(point.getName(), 0, 0, 0xffffff);
+                    GlStateManager.popMatrix();
+                    GlStateManager.enableCull();
+                    GlStateManager.popMatrix();
+                }
+            }
+        }
     }
 
     public <T> T getArgumentValue(Function<ArgumentMap, T> getterFunction) {

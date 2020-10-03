@@ -48,6 +48,7 @@ public class GunItem extends PMCItem implements HandAnimate {
     protected final float gravityEffect;
     protected final int gravityResistantTime;
     protected final int firerate;
+    protected final GunCategory gunCategory;
     protected final Firemode defaultFiremode;
     protected final Function<Firemode, Firemode> firemodeSwitchFunction;
     protected final ReloadManager reloadManager;
@@ -73,6 +74,7 @@ public class GunItem extends PMCItem implements HandAnimate {
         this.gravityEffect = builder.gravity;
         this.gravityResistantTime = builder.gravityResistance;
         this.firerate = builder.firerate;
+        this.gunCategory = builder.category;
         this.defaultFiremode = builder.defaultFiremode;
         this.firemodeSwitchFunction = builder.firemodeSwitchFunction;
         this.reloadManager = builder.reloadManager;
@@ -272,6 +274,7 @@ public class GunItem extends PMCItem implements HandAnimate {
         private int firerate;
         private float verticalRecoil;
         private float horizontalRecoil;
+        private GunCategory category = GunCategory.MISC;
         private Firemode defaultFiremode = Firemode.SINGLE;
         private Function<Firemode, Firemode> firemodeSwitchFunction = Firemode::allModes;
         private ReloadManager reloadManager = ReloadManager.Magazine.instance;
@@ -288,9 +291,9 @@ public class GunItem extends PMCItem implements HandAnimate {
         private Bool2FloatFunction shootVolumeFunction = silent -> silent ? 6.0F : 12.0F;
         private ScopeInfo customScopeFactory;
 
-        private static <T> T nonullOrCorrectAndLog(T t, T other, String message, String name) {
+        private static <T> T nonnullOrCorrectAndLog(T t, T other, String message, String name) {
             if (t == null) {
-                log.warn("{} - Corrected {} -> {}: {}", name, t, other, message);
+                log.warn("{} - Corrected null -> {}: {}", name, other, message);
                 return other;
             }
             return t;
@@ -344,6 +347,11 @@ public class GunItem extends PMCItem implements HandAnimate {
 
         public GunBuilder firerate(int delayBetweenShots) {
             this.firerate = delayBetweenShots;
+            return this;
+        }
+
+        public GunBuilder category(GunCategory category) {
+            this.category = category;
             return this;
         }
 
@@ -416,10 +424,11 @@ public class GunItem extends PMCItem implements HandAnimate {
             gravity = validOrCorrectAndLog(gravity, 0.0F, 2.0F, name, "gravity");
             gravityResistance = validOrCorrectAndLog(gravityResistance, 0, Integer.MAX_VALUE, name, "gravityResistantTime");
             firerate = validOrCorrectAndLog(firerate, 1, 500, name, "firerate");
+            category = nonnullOrCorrectAndLog(category, GunCategory.MISC, "Weapon category cannot be null", name);
             defaultFiremode = nonnullOrThrow(defaultFiremode, "Default firemode cannot be null!", name);
             firemodeSwitchFunction = nonnullOrThrow(firemodeSwitchFunction, "No function defined for switching firemodes. This is bad", name);
             shootManager = nonnullOrThrow(shootManager, "Undefined shoot action!", name);
-            reloadManager = nonullOrCorrectAndLog(reloadManager, ReloadManager.Magazine.instance, "Cannot use invalid reload manager", name);
+            reloadManager = nonnullOrCorrectAndLog(reloadManager, ReloadManager.Magazine.instance, "Cannot use invalid reload manager", name);
             reloadTime = nonnullOrThrow(reloadTime, "Undefined reload time", name);
             ammoType = nonnullOrThrow(ammoType, "Ammo type is undefined!", name);
             ammoLimit = nonnullOrThrow(ammoLimit, "Unknown max ammo amount", name);

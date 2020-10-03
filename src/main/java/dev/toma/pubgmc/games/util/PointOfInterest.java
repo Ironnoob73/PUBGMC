@@ -19,6 +19,12 @@ public class PointOfInterest {
         this.name = nbt.getString("name");
     }
 
+    public double distanceTo(double x, double z) {
+        double d0 = x - location.getX();
+        double d1 = z - location.getZ();
+        return Math.sqrt(d0 * d0 + d1 * d1);
+    }
+
     public BlockPos getLocation() {
         return location;
     }

@@ -1,5 +1,6 @@
 package dev.toma.pubgmc;
 
+import dev.toma.pubgmc.capability.player.InventoryFactory;
 import dev.toma.pubgmc.client.render.layer.BackpackLayer;
 import dev.toma.pubgmc.client.render.layer.GhillieLayer;
 import net.minecraft.client.renderer.entity.LivingRenderer;
@@ -14,8 +15,8 @@ public class PubgmcHooks {
     public static void onLivingRenderCreated(LivingRenderer<?, ?> renderer) {
         if(renderer instanceof PlayerRenderer) {
             PlayerRenderer playerRenderer = (PlayerRenderer) renderer;
-            playerRenderer.addLayer(new GhillieLayer<>(playerRenderer));
-            playerRenderer.addLayer(new BackpackLayer<>(playerRenderer));
+            playerRenderer.addLayer(new GhillieLayer<>(playerRenderer, InventoryFactory::getInventoryHandler));
+            playerRenderer.addLayer(new BackpackLayer<>(playerRenderer, InventoryFactory::getInventoryHandler));
         }
     }
 }

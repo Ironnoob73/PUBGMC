@@ -135,6 +135,21 @@ public class InventoryFactory extends ItemStackHandler implements PMCInventoryHa
         setChanged(slot, true);
     }
 
+    @Override
+    public ItemStack getNightVision() {
+        return getStackInSlot(0);
+    }
+
+    @Override
+    public ItemStack getGhillie() {
+        return getStackInSlot(1);
+    }
+
+    @Override
+    public ItemStack getBackpack() {
+        return getStackInSlot(2);
+    }
+
     private void dropInventoryContents(World world, PlayerInventory inventory, int from) {
         for(int i = 0; i < from; i++) {
             int idx = i + 9;

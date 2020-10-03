@@ -12,7 +12,6 @@ import java.util.Random;
 
 public class ShrinkableZone extends StaticZone {
 
-    protected final float pct;
     protected int shrinkIndex;
     protected boolean shrinking;
     private double sx1, sx2, sz1, sz2;
@@ -23,7 +22,6 @@ public class ShrinkableZone extends StaticZone {
 
     public ShrinkableZone(GameStorage storage) {
         super(storage);
-        this.pct = Math.abs((2250.0F - (storage.getArena().getRadius() * 2)) / 2250.0F);
     }
 
     @Override
@@ -47,13 +45,18 @@ public class ShrinkableZone extends StaticZone {
     }
 
     @Override
-    public void startShrinking(Random random, int time) {
+    protected float getZoneDamage() {
+        return 0.075F * (float)(Math.pow(2, shrinkIndex));
+    }
+
+    @Override
+    public void startShrinking(Random random, int time, boolean center, double modifier) {
         if(isSmallestCircle() || shrinking) {
             return;
         }
         shrinking = true;
         double d0 = getMax().x - getMin().x;
-        double d1 = d0 / 1.5d;
+        double d1 = d0 / modifier;
         double d2 = 1.0D / time;
         this.shrinkTicksLeft = time;
         if(d1 < 1 || shrinkIndex++ > 6) {
@@ -64,13 +67,23 @@ public class ShrinkableZone extends StaticZone {
             this.nextMin = new Vector2d(px, pz);
             this.nextMax = new Vector2d(px + 0.01, pz + 0.01);
         } else {
-            int l = (int)(d0 - d1);
-            double x1 = getMin().x + random.nextInt(l);
-            double z1 = getMin().y + random.nextInt(l);
-            double x2 = x1 + d1;
-            double z2 = z1 + d1;
-            this.nextMin = new Vector2d(x1, z1);
-            this.nextMax = new Vector2d(x2, z2);
+            if(center) {
+                double r = (d0 - d1) / 2;
+                double x1 = min.x + r;
+                double z1 = min.y + r;
+                double x2 = x1 + d1;
+                double z2 = z1 + d1;
+                this.nextMin = new Vector2d(x1, z1);
+                this.nextMax = new Vector2d(x2, z2);
+            } else {
+                int l = (int)(d0 - d1);
+                double x1 = getMin().x + random.nextInt(l);
+                double z1 = getMin().y + random.nextInt(l);
+                double x2 = x1 + d1;
+                double z2 = z1 + d1;
+                this.nextMin = new Vector2d(x1, z1);
+                this.nextMax = new Vector2d(x2, z2);
+            }
         }
         this.sx1 = Math.abs((min.x - nextMin.x) * d2);
         this.sx2 = Math.abs((nextMax.x - max.x) * d2);

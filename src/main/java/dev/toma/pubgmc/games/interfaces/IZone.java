@@ -32,7 +32,7 @@ public interface IZone extends INBTSerializable<CompoundNBT> {
 
     void setSize(Area area);
 
-    void startShrinking(Random random, int time);
+    void startShrinking(Random random, int time, boolean center, double modifier);
 
     void tick(Game game);
 

@@ -43,6 +43,8 @@ public class BattleRoyaleGame extends Game {
     private int teamSize;
     private int[] zoneShrinkTimes;
     private int airdropCount;
+    private boolean centered;
+    private double zoneModifier;
 
     public BattleRoyaleGame(World world) {
         super(Games.BATTLE_ROYALE, world);
@@ -59,6 +61,8 @@ public class BattleRoyaleGame extends Game {
         this.teamSize = this.getArgumentValue(ArgumentProvider.TEAM_SIZE_ARGUMENT);
         this.zoneShrinkTimes = this.getArgumentValue(ArgumentProvider.ZONE_SHRINK_TIMES_ARGUMENT);
         this.airdropCount = this.getArgumentValue(ArgumentProvider.AIRDROP_AMOUNT_ARGUMENT);
+        this.centered = this.getArgumentValue(ArgumentProvider.CENTERED_ARGUMENT);
+        this.zoneModifier = this.getArgumentValue(ArgumentProvider.ZONE_MODIFIER_ARGUMENT);
         if(airdropCount > 0) {
             int timePool = 0;
             for(int i = 0; i < Math.max(zoneShrinkTimes.length - 2, 0); i++) {
@@ -72,7 +76,8 @@ public class BattleRoyaleGame extends Game {
                 this.airdropDelay = timePool / this.airdropCount;
             }
         }
-        this.ticksBeforeShrinking = 200;
+        actualAirdropDelay = airdropDelay;
+        this.ticksBeforeShrinking = 20;
         this.getPlayerManager().getPlayerList().forEach(player -> player.sendStatusMessage(new StringTextComponent("Starting in 10 seconds, get ready!"), true));
     }
 
@@ -82,9 +87,9 @@ public class BattleRoyaleGame extends Game {
         if(stage.isPlaying()) {
             if(!zone.isShrinking() && !zone.isMaxIndex() && --ticksBeforeShrinking <= 0) {
                 if(!zone.isMaxIndex()) {
-                    if(--ticksBeforeShrinking <= 0) {
+                    if(--ticksBeforeShrinking <= 0 && !world.isRemote) {
                         int shrinkTime = (int)(zoneShrinkTimes[zone.shrinkIndex] * 0.7);
-                        zone.startShrinking(world.rand, shrinkTime);
+                        zone.startShrinking(world.rand, shrinkTime, centered, zoneModifier);
                         if(!zone.isMaxIndex()) {
                             ticksBeforeShrinking = zoneShrinkTimes[zone.shrinkIndex];
                         }
@@ -94,17 +99,17 @@ public class BattleRoyaleGame extends Game {
                     // wait for people to die and advance to last game stage
                 }
             }
-            if(!world.isRemote && airdropCount > 0 && --airdropDelay <= 0) {
+            if(!world.isRemote && airdropCount > 0 && --actualAirdropDelay <= 0) {
                 spawnAirdrop();
                 --airdropCount;
-                airdropDelay = actualAirdropDelay;
+                actualAirdropDelay = airdropDelay;
             }
         } else {
             if(stage.isPreparing()) {
                 if(!world.isRemote && --ticksBeforeShrinking <= 0) {
                     stage = stage.advance();
                     ticksBeforeShrinking = zoneShrinkTimes[0];
-                    airdropDelay = actualAirdropDelay;
+                    actualAirdropDelay = airdropDelay;
                     GameStorage storage = getStorage();
                     List<PointOfInterest> list = new ArrayList<>(storage.getPois());
                     List<PlayerEntity> players = getPlayerManager().getPlayerList();
@@ -168,6 +173,8 @@ public class BattleRoyaleGame extends Game {
         nbt.putInt("teamSize", teamSize);
         nbt.putInt("airdropsLeft", airdropCount);
         nbt.putIntArray("zoneTiming", zoneShrinkTimes);
+        nbt.putBoolean("centered", centered);
+        nbt.putDouble("zoneModifier", zoneModifier);
     }
 
     @Override
@@ -180,6 +187,8 @@ public class BattleRoyaleGame extends Game {
         teamSize = nbt.getInt("teamSize");
         airdropCount = nbt.getInt("airdropsLeft");
         zoneShrinkTimes = nbt.getIntArray("zoneTiming");
+        centered = nbt.getBoolean("centered");
+        zoneModifier = nbt.getDouble("zoneModifier");
     }
 
     @OnlyIn(Dist.CLIENT)

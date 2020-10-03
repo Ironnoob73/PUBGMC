@@ -8,7 +8,6 @@ import dev.toma.pubgmc.games.util.GameStorage;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -51,7 +50,7 @@ public class StaticZone implements IZone {
     }
 
     @Override
-    public void startShrinking(Random random, int time) {
+    public void startShrinking(Random random, int time, boolean center, double modifier) {
 
     }
 
@@ -67,9 +66,14 @@ public class StaticZone implements IZone {
         long time = game.world.getGameTime();
         if(time % 30L == 0L) {
             for (PlayerEntity player : manager.getPlayerList()) {
-                player.attackEntityFrom(ZONE_DAMAGE, 4.0F);
+                if(!isIn(player))
+                    player.attackEntityFrom(ZONE_DAMAGE, this.getZoneDamage());
             }
         }
+    }
+
+    protected float getZoneDamage() {
+        return 4.0F;
     }
 
     @Override

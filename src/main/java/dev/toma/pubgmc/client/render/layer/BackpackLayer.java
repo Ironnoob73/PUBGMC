@@ -1,56 +1,52 @@
 package dev.toma.pubgmc.client.render.layer;
 
-import dev.toma.pubgmc.capability.PMCInventoryHandler;
-import dev.toma.pubgmc.capability.player.InventoryFactory;
+import dev.toma.pubgmc.client.render.entity.EquipmentLayer;
+import dev.toma.pubgmc.common.entity.EquipmentHolder;
 import dev.toma.pubgmc.common.item.utility.BackpackSlotItem;
 import dev.toma.pubgmc.common.item.utility.GhillieSlotItem;
 import net.minecraft.client.renderer.entity.IEntityRenderer;
-import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.client.renderer.entity.model.RendererModel;
 import net.minecraft.client.renderer.model.ModelBox;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 
-@SuppressWarnings({"unchecked", "rawtypes"})
-public class BackpackLayer<T extends LivingEntity, M extends BipedModel<T>> extends LayerRenderer<T, M> {
+import java.util.function.Function;
 
-    private final BipedModel[] models = {new SmallBackpackModel<T>(), new MediumBackpackModel<T>(), new LargeBackpackModel<T>()};
+@SuppressWarnings({"rawtypes", "unchecked"})
+public class BackpackLayer<T extends LivingEntity, M extends BipedModel<T>> extends EquipmentLayer<T, M> {
 
-    public BackpackLayer(IEntityRenderer<T, M> renderer) {
-        super(renderer);
-    }
+    private static final BipedModel[] MODELS = {new SmallBackpackModel<>(), new MediumBackpackModel<>(), new LargeBackpackModel<>()};
 
-    @Override
-    public boolean shouldCombineTextures() {
-        return false;
+    public BackpackLayer(IEntityRenderer<T, M> renderer, Function<T, EquipmentHolder> inventory) {
+        super(renderer, inventory);
     }
 
     @Override
     public void render(T entityIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float headYaw, float headPitch, float scale) {
-        if(entityIn instanceof PlayerEntity) {
-            PMCInventoryHandler handler = InventoryFactory.getInventoryHandler((PlayerEntity) entityIn);
-            ItemStack stack = handler.getStackInSlot(1);
-            if(!stack.isEmpty()) {
-                if(stack.getItem() instanceof GhillieSlotItem && ((GhillieSlotItem) stack.getItem()).blocksBackpackRender()) {
-                    return;
-                }
-            }
-            ItemStack itemStack = handler.getStackInSlot(2);
-            if(itemStack.getItem() instanceof BackpackSlotItem) {
-                BackpackSlotItem slotItem = (BackpackSlotItem) itemStack.getItem();
-                BipedModel<T> model = getModel(slotItem);
-                getEntityModel().func_217148_a(model);
-                model.setLivingAnimations(entityIn, limbSwing, limbSwingAmount, partialTicks);
-                bindTexture(slotItem.getBackpackTexture());
-                model.render(entityIn, limbSwing, limbSwingAmount, ageInTicks, headYaw, headPitch, scale);
-            }
+        EquipmentHolder holder = this.getInventory(entityIn);
+        if(holder == null)
+            return;
+        this.renderModel(entityIn, holder.getGhillie(), holder.getBackpack(), limbSwing, limbSwingAmount, ageInTicks, headYaw, headPitch, scale, partialTicks);
+    }
+
+    private void renderModel(T entity, ItemStack ghillie, ItemStack backpack,
+                                 float limbSwing, float limbSwingAmount, float ageInTicks, float headYaw, float headPitch, float scale, float partialTicks) {
+        if(!ghillie.isEmpty() && ghillie.getItem() instanceof GhillieSlotItem && ((GhillieSlotItem) ghillie.getItem()).blocksBackpackRender()) {
+            return;
+        }
+        if(backpack.getItem() instanceof BackpackSlotItem) {
+            BackpackSlotItem bsi = (BackpackSlotItem) backpack.getItem();
+            BipedModel<T> model = getModel(bsi);
+            this.getEntityModel().func_217148_a(model);
+            model.setLivingAnimations(entity, limbSwing, limbSwingAmount, partialTicks);
+            bindTexture(bsi.getBackpackTexture());
+            model.render(entity, limbSwing, limbSwingAmount, ageInTicks, headYaw, headPitch, scale);
         }
     }
 
     private BipedModel<T> getModel(BackpackSlotItem slotItem) {
-        return models[slotItem.getType().ordinal()];
+        return MODELS[slotItem.getType().ordinal()];
     }
 
     static class SmallBackpackModel<T extends LivingEntity> extends BipedModel<T> {

@@ -4,11 +4,11 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import dev.toma.pubgmc.capability.world.WorldDataProvider;
 import dev.toma.pubgmc.games.Game;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.opengl.GL11;
@@ -29,15 +29,17 @@ public interface IZoneRenderer {
         public void doRender(IZone zone, float partialTicks) {
             Minecraft mc = Minecraft.getInstance();
             Entity entity = mc.getRenderViewEntity();
-            double intX = interpolate(entity.posX, entity.lastTickPosX, partialTicks);
-            double intY = interpolate(entity.posY, entity.lastTickPosY, partialTicks);
-            double intZ = interpolate(entity.posZ, entity.lastTickPosZ, partialTicks);
+            ActiveRenderInfo renderInfo = mc.gameRenderer.activeRender;
+            double intX = renderInfo.getProjectedView().x;
+            double intY = renderInfo.getProjectedView().y;
+            double intZ = renderInfo.getProjectedView().z;
             mc.world.getCapability(WorldDataProvider.CAP).ifPresent(cap -> {
                 double maxRenderDist = mc.gameSettings.renderDistanceChunks * 16;
                 if(this.isClose(entity, zone, maxRenderDist)) {
+                    GlStateManager.pushMatrix();
+                    GlStateManager.translated(-intX, -intY, -intZ);
                     Tessellator tessellator = Tessellator.getInstance();
                     BufferBuilder builder = tessellator.getBuffer();
-                    builder.setTranslation(-intX, -intY, -intZ);
                     Game game = cap.getGame();
                     float r = 0.0F;
                     float g = 0.2F;
@@ -59,47 +61,36 @@ public interface IZoneRenderer {
                     GlStateManager.disableCull();
                     GlStateManager.disableTexture();
                     if(intX > px2 - maxRenderDist) {
-                        double d0 = px2 - intX;
-                        double d1 = MathHelper.clamp(d0, -300.0F, 300.0F);
-                        float f = (float) (1.0F - Math.abs(d1 / 300.0F));
-                        builder.pos(px2, maxY, minPosZ).color(r, g, b, a * f).endVertex();
-                        builder.pos(px2, maxY, maxPosZ).color(r, g, b, a * f).endVertex();
-                        builder.pos(px2, minY, maxPosZ).color(r, g, b, a * f).endVertex();
-                        builder.pos(px2, minY, minPosZ).color(r, g, b, a * f).endVertex();
+                        builder.pos(px2, maxY, minPosZ).color(r, g, b, a).endVertex();
+                        builder.pos(px2, maxY, maxPosZ).color(r, g, b, a).endVertex();
+                        builder.pos(px2, minY, maxPosZ).color(r, g, b, a).endVertex();
+                        builder.pos(px2, minY, minPosZ).color(r, g, b, a).endVertex();
                     }
                     if(intX < px1 + maxRenderDist) {
-                        double d0 = px1 - intX;
-                        double d1 = MathHelper.clamp(d0, -300.0F, 300.0F);
-                        float f = (float) (1.0F - Math.abs(d1 / 300.0F));
-                        builder.pos(px1, maxY, minPosZ).color(r, g, b, a * f).endVertex();
-                        builder.pos(px1, maxY, maxPosZ).color(r, g, b, a * f).endVertex();
-                        builder.pos(px1, minY, maxPosZ).color(r, g, b, a * f).endVertex();
-                        builder.pos(px1, minY, minPosZ).color(r, g, b, a * f).endVertex();
+                        builder.pos(px1, maxY, minPosZ).color(r, g, b, a).endVertex();
+                        builder.pos(px1, maxY, maxPosZ).color(r, g, b, a).endVertex();
+                        builder.pos(px1, minY, maxPosZ).color(r, g, b, a).endVertex();
+                        builder.pos(px1, minY, minPosZ).color(r, g, b, a).endVertex();
                     }
                     if(intZ > pz2 - maxRenderDist) {
-                        double d0 = pz2 - intZ;
-                        double d1 = MathHelper.clamp(d0, -300.0F, 300.0F);
-                        float f = (float) (1.0F - Math.abs(d1 / 300.0F));
-                        builder.pos(minPosX, maxY, pz2).color(r, g, b, a * f).endVertex();
-                        builder.pos(maxPosX, maxY, pz2).color(r, g, b, a * f).endVertex();
-                        builder.pos(maxPosX, minY, pz2).color(r, g, b, a * f).endVertex();
-                        builder.pos(minPosX, minY, pz2).color(r, g, b, a * f).endVertex();
+                        builder.pos(minPosX, maxY, pz2).color(r, g, b, a).endVertex();
+                        builder.pos(maxPosX, maxY, pz2).color(r, g, b, a).endVertex();
+                        builder.pos(maxPosX, minY, pz2).color(r, g, b, a).endVertex();
+                        builder.pos(minPosX, minY, pz2).color(r, g, b, a).endVertex();
                     }
                     if(intZ < pz1 + maxRenderDist) {
-                        double d0 = pz1 - intZ;
-                        double d1 = MathHelper.clamp(d0, -300.0F, 300.0F);
-                        float f = (float) (1.0F - Math.abs(d1 / 300.0F));
-                        builder.pos(minPosX, maxY, pz1).color(r, g, b, a * f).endVertex();
-                        builder.pos(maxPosX, maxY, pz1).color(r, g, b, a * f).endVertex();
-                        builder.pos(maxPosX, minY, pz1).color(r, g, b, a * f).endVertex();
-                        builder.pos(minPosX, minY, pz1).color(r, g, b, a * f).endVertex();
+                        builder.pos(minPosX, maxY, pz1).color(r, g, b, a).endVertex();
+                        builder.pos(maxPosX, maxY, pz1).color(r, g, b, a).endVertex();
+                        builder.pos(maxPosX, minY, pz1).color(r, g, b, a).endVertex();
+                        builder.pos(minPosX, minY, pz1).color(r, g, b, a).endVertex();
                     }
                     builder.sortVertexData((float) entity.posX, (float) entity.posY, (float) entity.posZ);
                     tessellator.draw();
-                    builder.setTranslation(0, 0, 0);
                     GlStateManager.enableTexture();
                     GlStateManager.enableCull();
                     GlStateManager.disableBlend();
+                    game.renderInWorldStuff(tessellator, builder, cap, partialTicks);
+                    GlStateManager.popMatrix();
                 }
             });
         }

@@ -79,7 +79,7 @@ public class UsefulFunctions {
         return false;
     }
 
-    public static String addArgumentDesc(String key, String info) {
-        return String.format("%s- %s%s --> %s", TextFormatting.YELLOW, key, TextFormatting.AQUA, info);
+    public static String addArgumentDesc(String key, String info, String format) {
+        return String.format("%s- %s%s:%s%s --> %s", TextFormatting.GREEN, key, TextFormatting.RED, format, TextFormatting.AQUA, info);
     }
 }
