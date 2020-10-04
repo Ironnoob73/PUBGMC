@@ -5,6 +5,8 @@ import dev.toma.pubgmc.client.render.layer.BackpackLayer;
 import dev.toma.pubgmc.client.render.layer.GhillieLayer;
 import net.minecraft.client.renderer.entity.LivingRenderer;
 import net.minecraft.client.renderer.entity.PlayerRenderer;
+import net.minecraft.client.renderer.entity.model.BipedModel;
+import net.minecraft.entity.LivingEntity;
 
 public class PubgmcHooks {
 
@@ -18,5 +20,9 @@ public class PubgmcHooks {
             playerRenderer.addLayer(new GhillieLayer<>(playerRenderer, InventoryFactory::getInventoryHandler));
             playerRenderer.addLayer(new BackpackLayer<>(playerRenderer, InventoryFactory::getInventoryHandler));
         }
+    }
+
+    public static void onSetupRotationAngles(BipedModel<?> model, LivingEntity entity) {
+
     }
 }

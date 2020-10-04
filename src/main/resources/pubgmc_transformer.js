@@ -77,6 +77,35 @@ function initializeCoreMod() {
 			    }
 			    return methodNode;
 			}
+		},
+		'bipedModel': {
+		    'target': {
+		        'type': 'METHOD',
+		        'class': 'net.minecraft.client.renderer.entity.model.BipedModel',
+		        'methodName': 'func_212844_a_',
+		        'methodDesc': '(Lnet/minecraft/entity/LivingEntity;FFFFFF)V'
+		    },
+		    'transformer': function(methodNode) {
+		        var instructions = methodNode.instructions;
+		        for(var i = instructions.size() - 1; i >= 0; i--) {
+		            var instruction = instructions.get(i);
+		            if(instruction.getOpcode() == RETURN) {
+		                var list = new InsnList();
+		                list.add(new VarInsnNode(ALOAD, 0));
+		                list.add(new VarInsnNode(ALOAD, 1));
+		                list.add(new MethodInsnNode(
+		                    INVOKESTATIC,
+		                    'dev/toma/pubgmc/PubgmcHooks',
+		                    'onSetupRotationAngles',
+		                    '(Lnet/minecraft/client/renderer/entity/model/BipedModel;Lnet/minecraft/entity/LivingEntity;)V',
+		                    false
+		                ));
+		                instructions.insertBefore(instruction, list);
+		                break;
+		            }
+		        }
+		        return methodNode;
+		    }
 		}
 	}
 }

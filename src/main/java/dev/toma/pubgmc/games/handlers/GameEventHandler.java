@@ -110,8 +110,9 @@ public class GameEventHandler {
 
         @SubscribeEvent
         public static void clientTick(TickEvent.ClientTickEvent event) {
-            ClientWorld world = Minecraft.getInstance().world;
-            if(world == null || event.phase == TickEvent.Phase.START)
+            Minecraft mc = Minecraft.getInstance();
+            ClientWorld world = mc.world;
+            if(world == null || event.phase == TickEvent.Phase.START || mc.isGamePaused())
                 return;
             world.getCapability(WorldDataProvider.CAP).ifPresent(cap -> {
                 Game game = cap.getGame();
