@@ -214,6 +214,14 @@ public class GunItem extends PMCItem implements HandAnimate {
         return ammoLimit.apply(this, stack);
     }
 
+    public GunCategory getCategory() {
+        return gunCategory;
+    }
+
+    public float getGunDamage() {
+        return damage;
+    }
+
     @OnlyIn(Dist.CLIENT)
     @Override
     public void renderRightArm() {

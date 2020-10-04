@@ -38,6 +38,8 @@ public interface IZone extends INBTSerializable<CompoundNBT> {
 
     boolean isShrinking();
 
+    float getZoneDamage();
+
     @OnlyIn(Dist.CLIENT)
     IZoneRenderer getRenderer();
 }

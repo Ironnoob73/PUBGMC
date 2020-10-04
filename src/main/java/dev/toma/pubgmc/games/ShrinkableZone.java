@@ -45,7 +45,7 @@ public class ShrinkableZone extends StaticZone {
     }
 
     @Override
-    protected float getZoneDamage() {
+    public float getZoneDamage() {
         return 0.075F * (float)(Math.pow(2, shrinkIndex));
     }
 

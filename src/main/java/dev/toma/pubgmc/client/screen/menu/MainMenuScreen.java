@@ -8,10 +8,7 @@ import dev.toma.pubgmc.util.RenderHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.RenderComponentsUtil;
-import net.minecraft.client.gui.screen.ConfirmOpenLinkScreen;
-import net.minecraft.client.gui.screen.MultiplayerScreen;
-import net.minecraft.client.gui.screen.OptionsScreen;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.*;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Util;
 import net.minecraft.util.text.ITextComponent;
@@ -52,9 +49,16 @@ public class MainMenuScreen extends ComponentScreen implements RefreshListener {
         // anouncements
         addComponent(new EventPanelComponent(15, initialHeight + 20, w, 68));
         // singleplayer
-        addComponent(new ButtonComponent(15, initialHeight + 100, w, 20, "Singleplayer", c -> minecraft.displayGuiScreen(new SelectContentTypeScreen(this))));
+        int hw = w / 2;
+        // TODO
+        ButtonComponent community = new ButtonComponent(15, initialHeight + 100, hw, 20, "Community maps", c -> minecraft.displayGuiScreen(new SelectContentTypeScreen(this)));
+        ButtonComponent myWorlds = new ButtonComponent(15 + hw, initialHeight + 100, hw, 20, "My Worlds", c -> minecraft.displayGuiScreen(new WorldSelectionScreen(this)));
+        addComponent(new HoverSplitButton(15, initialHeight + 100, w, 20, "Singleplayer", community, myWorlds));
         // multiplayer
-        addComponent(new ButtonComponent(15, initialHeight + 125, w, 20, "Multiplayer", c -> minecraft.displayGuiScreen(new MultiplayerScreen(this))));
+        // TODO
+        ButtonComponent official = new ButtonComponent(15, initialHeight + 125, hw, 20, "Official servers", c -> minecraft.displayGuiScreen(new SelectContentTypeScreen(this)));
+        ButtonComponent myServers = new ButtonComponent(15 + hw, initialHeight + 125, hw, 20, "Server list", c -> minecraft.displayGuiScreen(new MultiplayerScreen(this)));
+        addComponent(new HoverSplitButton(15, initialHeight + 125, w, 20, "Multiplayer", official, myServers));
         // settings
         addComponent(new ButtonComponent(15, initialHeight + 150, w, 20, "Settings", c -> minecraft.displayGuiScreen(new OptionsScreen(this, minecraft.gameSettings))));
         int lowestPoint;
@@ -94,6 +98,40 @@ public class MainMenuScreen extends ComponentScreen implements RefreshListener {
         RenderHelper.drawTexturedShape(0, 0, width, height);
         super.render(mouseX, mouseY, partialTicks);
         renderer.drawString("Copyright Mojang AB. Do not distribute!", width - 200, height - 10, 0xffffff);
+    }
+
+    static class HoverSplitButton extends ButtonComponent {
+
+        private final ButtonComponent b1, b2;
+
+        public HoverSplitButton(int x, int y, int w, int h, String text, ButtonComponent b1, ButtonComponent b2) {
+            super(x, y, w, h, text, null);
+            this.b1 = b1;
+            this.b2 = b2;
+        }
+
+        @Override
+        public void draw(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
+            boolean hovered = isMouseOver(mouseX, mouseY);
+            if(hovered) {
+                b1.draw(mc, mouseX, mouseY, partialTicks);
+                b2.draw(mc, mouseX, mouseY, partialTicks);
+            } else {
+                RenderHelper.drawColoredShape(x, y, x + width, y + height, 0.0F, 0.0F, 0.0F, 0.5F);
+                if(hovered && isEnabled()) {
+                    RenderHelper.drawColoredShape(x, y, x + width, y + height, 1.0F, 1.0F, 1.0F, 0.5F);
+                }
+                int w = mc.fontRenderer.getStringWidth(displayString);
+                mc.fontRenderer.drawStringWithShadow(displayString, x + (width - w) / 2.0f, y + (height - mc.fontRenderer.FONT_HEIGHT) / 2.0f, hovered ? 0xffff00 : 0xffffff);
+            }
+        }
+
+        @Override
+        public void handleClicked(double mouseX, double mouseY, int mouseButton) {
+            if(b1.isMouseOver(mouseX, mouseY)) {
+                b1.handleClicked(mouseX, mouseY, mouseButton);
+            } else b2.handleClicked(mouseX, mouseY, mouseButton);
+        }
     }
 
     static class InfoPanelComponent extends Component {

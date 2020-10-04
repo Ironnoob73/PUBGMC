@@ -72,7 +72,7 @@ public class StaticZone implements IZone {
         }
     }
 
-    protected float getZoneDamage() {
+    public float getZoneDamage() {
         return 4.0F;
     }
 

@@ -3,23 +3,37 @@ package dev.toma.pubgmc.common.entity;
 import dev.toma.pubgmc.capability.IWorldCap;
 import dev.toma.pubgmc.capability.world.WorldDataFactory;
 import dev.toma.pubgmc.capability.world.WorldDataProvider;
+import dev.toma.pubgmc.common.inventory.PMCInventoryItem;
+import dev.toma.pubgmc.common.item.gun.GunCategory;
+import dev.toma.pubgmc.common.item.gun.GunItem;
+import dev.toma.pubgmc.common.item.utility.BackpackSlotItem;
+import dev.toma.pubgmc.common.item.wearable.IPMCArmor;
 import dev.toma.pubgmc.games.Game;
 import dev.toma.pubgmc.games.interfaces.IKeyHolder;
+import dev.toma.pubgmc.games.interfaces.IZone;
+import dev.toma.pubgmc.network.NetworkManager;
+import dev.toma.pubgmc.network.packet.CPacketSyncEntity;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.goal.*;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.INBTSerializable;
 
 public class BotEntity extends CreatureEntity implements IKeyHolder {
 
+    private final InventoryManager botInventory;
+    private GunCategory weaponPreference;
     private long gameID;
     private Game game;
-    private final InventoryManager botInventory;
     private byte variant;
 
     public BotEntity(EntityType<? extends CreatureEntity> type, World world) {
@@ -31,6 +45,18 @@ public class BotEntity extends CreatureEntity implements IKeyHolder {
             this.gameID = game.getGameID();
         }
         variant = (byte) world.rand.nextInt(4);
+        weaponPreference = GunCategory.getRandomBotCategory(world);
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        if(isRunningGame()) {
+            IZone zone = game.getZone();
+            if(!world.isRemote && !zone.isIn(this) && world.getGameTime() % 30 == 0L) {
+                this.attackEntityFrom(IZone.ZONE_DAMAGE, zone.getZoneDamage());
+            }
+        }
     }
 
     @Override
@@ -70,12 +96,16 @@ public class BotEntity extends CreatureEntity implements IKeyHolder {
     public void writeAdditional(CompoundNBT compound) {
         super.writeAdditional(compound);
         compound.putLong("gameID", gameID);
+        compound.put("inventory", botInventory.serializeNBT());
     }
 
     @Override
     public void read(CompoundNBT compound) {
         super.read(compound);
         gameID = compound.getLong("gameID");
+        if(compound.contains("inventory", Constants.NBT.TAG_LIST)) {
+            botInventory.deserializeNBT(compound.getList("inventory", Constants.NBT.TAG_COMPOUND));
+        }
     }
 
     @Override
@@ -93,6 +123,105 @@ public class BotEntity extends CreatureEntity implements IKeyHolder {
         return false;
     }
 
+    @Override
+    public boolean canPickUpLoot() {
+        return true;
+    }
+
+    @Override
+    protected void updateEquipmentIfNeeded(ItemEntity itemEntity) {
+        ItemStack itemstack = itemEntity.getItem();
+        EquipmentSlotType equipmentslottype = getSlotForItemStack(itemstack);
+        ItemStack itemstack1;
+        if(equipmentslottype == EquipmentSlotType.MAINHAND) {
+            itemstack1 = ItemStack.EMPTY;
+            if(itemstack.getItem() instanceof PMCInventoryItem) {
+                itemstack1 = botInventory.getEquipment(((PMCInventoryItem) itemstack.getItem()).getSlotType().ordinal());
+            }
+        } else {
+            itemstack1 = getItemStackFromSlot(equipmentslottype);
+        }
+        boolean flag = this.shouldExchangeEquipment(itemstack, itemstack1, equipmentslottype);
+        if (flag && this.canEquipItem(itemstack)) {
+            double d0 = this.getDropChance(equipmentslottype);
+            if (!itemstack1.isEmpty() && (double)(this.rand.nextFloat() - 0.1F) < d0) {
+                this.entityDropItem(itemstack1);
+            }
+            this.setItemStackToSlot(equipmentslottype, itemstack);
+            switch(equipmentslottype.getSlotType()) {
+                case HAND:
+                    this.inventoryHandsDropChances[equipmentslottype.getIndex()] = 2.0F;
+                    break;
+                case ARMOR:
+                    this.inventoryArmorDropChances[equipmentslottype.getIndex()] = 2.0F;
+            }
+            this.enablePersistence();
+            this.onItemPickup(itemEntity, itemstack.getCount());
+            itemEntity.remove();
+        }
+    }
+
+    @Override
+    public void setItemStackToSlot(EquipmentSlotType slotIn, ItemStack stack) {
+        if(stack.getItem() instanceof PMCInventoryItem) {
+            int i = ((PMCInventoryItem) stack.getItem()).getSlotType().ordinal();
+            this.botInventory.equipmentInventory.setInventorySlotContents(i, stack.copy());
+            if(!world.isRemote) {
+                CompoundNBT nbt = writeWithoutTypeId(new CompoundNBT());
+                NetworkManager.sendToAll(world, new CPacketSyncEntity(this.getEntityId(), nbt));
+            }
+        } else {
+            super.setItemStackToSlot(slotIn, stack);
+        }
+    }
+
+    @Override
+    protected boolean shouldExchangeEquipment(ItemStack candidate, ItemStack existing, EquipmentSlotType slotType) {
+        if(candidate.getItem() instanceof IPMCArmor) {
+            IPMCArmor armor_n = (IPMCArmor) candidate.getItem();
+            if(existing.getItem() instanceof IPMCArmor) {
+                IPMCArmor armor_c = (IPMCArmor) existing.getItem();
+                if(armor_n.damageMultiplier() < armor_c.damageMultiplier()) {
+                    return true;
+                } else return armor_n.damageMultiplier() == armor_c.damageMultiplier() && candidate.getDamage() < existing.getDamage();
+            } else return true;
+        } else if(candidate.getItem() instanceof PMCInventoryItem) {
+            int i = ((PMCInventoryItem) candidate.getItem()).getSlotType().ordinal();
+            ItemStack equipment = botInventory.getEquipment(i);
+            if(i == 2 && candidate.getItem() instanceof BackpackSlotItem) {
+                if(equipment.getItem() instanceof BackpackSlotItem) {
+                    BackpackSlotItem currentBackpack = (BackpackSlotItem) equipment.getItem();
+                    int res = ((BackpackSlotItem) candidate.getItem()).compareTo(currentBackpack);
+                    return res < 0;
+                } else return true;
+            } else {
+                return equipment.isEmpty();
+            }
+        } else if(slotType == EquipmentSlotType.MAINHAND) {
+            if(candidate.getItem() instanceof GunItem) {
+                if(existing.getItem() instanceof GunItem) {
+                    GunItem current = (GunItem) existing.getItem();
+                    GunItem toPick = (GunItem) candidate.getItem();
+                    if(current.getCategory() != weaponPreference) {
+                        return current.getGunDamage() < toPick.getGunDamage();
+                    } else return toPick.getCategory() == weaponPreference && toPick.getGunDamage() > current.getGunDamage();
+                } else {
+                    return true;
+                }
+            }
+        }
+        return super.shouldExchangeEquipment(candidate, existing, slotType);
+    }
+
+    @Override
+    protected float getDropChance(EquipmentSlotType slotIn) {
+        return 1.0F;
+    }
+
+    public boolean isRunningGame() {
+        return game != null && game.isRunning();
+    }
+
     public InventoryManager getInventory() {
         return botInventory;
     }
@@ -101,10 +230,14 @@ public class BotEntity extends CreatureEntity implements IKeyHolder {
         return variant;
     }
 
-    public static class InventoryManager implements EquipmentHolder {
+    public static class InventoryManager implements EquipmentHolder, INBTSerializable<ListNBT> {
 
         private final Inventory equipmentInventory = new Inventory(3);
-        private final Inventory mainInventory = new Inventory(9);
+        private final Inventory storageInventory = new Inventory(9);
+
+        public ItemStack getEquipment(int slot) {
+            return equipmentInventory.getStackInSlot(slot);
+        }
 
         @Override
         public ItemStack getNightVision() {
@@ -119,6 +252,40 @@ public class BotEntity extends CreatureEntity implements IKeyHolder {
         @Override
         public ItemStack getBackpack() {
             return equipmentInventory.getStackInSlot(2);
+        }
+
+        @Override
+        public ListNBT serializeNBT() {
+            ListNBT list = new ListNBT();
+            serializeInventory(equipmentInventory, list, false);
+            serializeInventory(storageInventory, list, true);
+            return list;
+        }
+
+        @Override
+        public void deserializeNBT(ListNBT nbt) {
+            for(int i = 0; i < equipmentInventory.getSizeInventory() + storageInventory.getSizeInventory(); i++) {
+                CompoundNBT slotData = nbt.getCompound(i);
+                int slotIndex = slotData.getInt("index");
+                boolean isStorage = slotData.getBoolean("storage");
+                ItemStack stack = ItemStack.read(slotData.getCompound("item"));
+                Inventory inventory = isStorage ? storageInventory : equipmentInventory;
+                inventory.setInventorySlotContents(slotIndex, stack);
+            }
+        }
+
+        private void serializeInventory(Inventory inventory, ListNBT nbt, boolean isStorage) {
+            for (int i = 0; i < inventory.getSizeInventory(); i++) {
+                ItemStack stack = inventory.getStackInSlot(i);
+                if(!stack.isEmpty()) {
+                    CompoundNBT slot = new CompoundNBT();
+                    CompoundNBT item = stack.serializeNBT();
+                    slot.putBoolean("storage", false);
+                    slot.putInt("index", i);
+                    slot.put("item", item);
+                    nbt.add(slot);
+                }
+            }
         }
     }
 }

@@ -7,6 +7,8 @@ import dev.toma.pubgmc.client.render.layer.GhillieLayer;
 import dev.toma.pubgmc.common.entity.BotEntity;
 import net.minecraft.client.renderer.entity.BipedRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.client.renderer.entity.layers.BipedArmorLayer;
+import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.util.ResourceLocation;
 
 @SuppressWarnings("unchecked")
@@ -23,6 +25,7 @@ public class BotRenderer<B extends BotEntity, M extends BotModel<B>> extends Bip
         super(renderer, m, 0.8F);
         this.addLayer(new BackpackLayer<>(this, BotEntity::getInventory));
         this.addLayer(new GhillieLayer<>(this, BotEntity::getInventory));
+        this.addLayer(new BipedArmorLayer<>(this, new BipedModel<>(0.5F), new BipedModel<>(1.0F)));
     }
 
     public BotRenderer(EntityRendererManager renderer) {
