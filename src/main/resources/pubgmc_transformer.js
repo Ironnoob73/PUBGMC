@@ -106,6 +106,42 @@ function initializeCoreMod() {
 		        }
 		        return methodNode;
 		    }
+		},
+		/*LINENUMBER 99 L31
+            ALOAD 0
+            ALOAD 1
+            FLOAD 9
+            INVOKEVIRTUAL net/minecraft/client/renderer/entity/LivingRenderer.prepareScale (Lnet/minecraft/entity/LivingEntity;F)F
+            FSTORE 16*/
+		'livingRenderer': {
+		    'target': {
+		        'type': 'METHOD',
+		        'class': 'net.minecraft.client.renderer.entity.PlayerRenderer',
+		        'methodName': 'func_77043_a',
+		        'methodDesc': '(Lnet/minecraft/client/entity/player/AbstractClientPlayerEntity;FFF)V'
+		        //'methodName': 'func_76986_a',
+		        //'methodDesc': '(Lnet/minecraft/entity/LivingEntity;DDDFF)V'
+		    },
+		    'transformer': function(methodNode) {
+                var instructions = methodNode.instructions;
+                for(var i = instructions.size() - 1; i >= 0; i--) {
+                    var instruction = instructions.get(i);
+                	if(instruction.getOpcode() == RETURN) {
+                	    var list = new InsnList();
+                		list.add(new VarInsnNode(ALOAD, 1));
+                		list.add(new MethodInsnNode(
+                		    INVOKESTATIC,
+                		    'dev/toma/pubgmc/PubgmcHooks',
+                		    'setupRotations',
+                		    '(Lnet/minecraft/client/entity/player/AbstractClientPlayerEntity;)V',
+                		    false
+                		));
+                		instructions.insertBefore(instruction, list);
+                		break;
+                	}
+                }
+		        return methodNode;
+		    }
 		}
 	}
 }

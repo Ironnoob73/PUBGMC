@@ -64,4 +64,14 @@ public class DummyImpl implements IPlayerCap {
     public void syncAllData() {
 
     }
+
+    @Override
+    public void setProne(boolean prone) {
+
+    }
+
+    @Override
+    public boolean isProne() {
+        return false;
+    }
 }

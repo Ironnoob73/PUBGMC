@@ -18,6 +18,10 @@ public interface IPlayerCap extends INBTSerializable<CompoundNBT> {
 
     CompoundNBT saveNetworkData();
 
+    void setProne(boolean prone);
+
+    boolean isProne();
+
     void loadNetworkData(CompoundNBT nbt);
 
     void syncNetworkData();

@@ -14,6 +14,7 @@ public class PlayerCapFactory implements IPlayerCap {
     private final BoostStats boostStats;
     private final AimInfo aimInfo;
     private final ReloadInfo reloadInfo;
+    private boolean prone;
 
     public PlayerCapFactory(PlayerEntity owner) {
         this.owner = owner;
@@ -46,11 +47,22 @@ public class PlayerCapFactory implements IPlayerCap {
     }
 
     @Override
+    public void setProne(boolean prone) {
+        this.prone = prone;
+    }
+
+    @Override
+    public boolean isProne() {
+        return true; // TODO
+    }
+
+    @Override
     public CompoundNBT saveNetworkData() {
         CompoundNBT nbt = new CompoundNBT();
         nbt.put("boostData", boostStats.save());
         nbt.put("aimInfo", aimInfo.write());
         nbt.put("reloadInfo", reloadInfo.write());
+        nbt.putBoolean("prone", prone);
         return nbt;
     }
 
@@ -59,6 +71,7 @@ public class PlayerCapFactory implements IPlayerCap {
         boostStats.load(nbt.contains("boostData") ? nbt.getCompound("boostData") : new CompoundNBT());
         aimInfo.read(nbt.contains("aimInfo") ? nbt.getCompound("aimInfo") : new CompoundNBT());
         reloadInfo.read(nbt.contains("reloadInfo") ? nbt.getCompound("reloadInfo") : new CompoundNBT());
+        prone = nbt.getBoolean("prone");
     }
 
     @Override
