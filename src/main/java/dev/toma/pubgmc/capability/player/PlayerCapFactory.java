@@ -53,7 +53,7 @@ public class PlayerCapFactory implements IPlayerCap {
 
     @Override
     public boolean isProne() {
-        return true; // TODO
+        return prone;
     }
 
     @Override

@@ -15,7 +15,9 @@ import dev.toma.pubgmc.network.NetworkManager;
 import dev.toma.pubgmc.network.packet.CPacketSendRecipes;
 import dev.toma.pubgmc.network.packet.CPacketSyncInventory;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.Pose;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -24,11 +26,13 @@ import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.CooldownTracker;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
@@ -85,9 +89,17 @@ public class CommonEventHandler {
 
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
+        PlayerEntity player = event.player;
+        IPlayerCap cap = PlayerCapFactory.get(player);
+        if(cap.isProne()) {
+            // TODO don't create new EntitySize every time
+            player.setPose(Pose.STANDING);
+            AxisAlignedBB proneBB = new AxisAlignedBB(player.posX - 0.6, player.posY, player.posZ - 0.6, player.posX + 0.6, player.posY + 0.8, player.posZ + 0.6);
+            player.setBoundingBox(proneBB);
+            player.eyeHeight = 0.6F;
+            player.size = new EntitySize(1.25F, 0.8F, false);
+        }
         if(event.phase == TickEvent.Phase.END) {
-            PlayerEntity player = event.player;
-            IPlayerCap cap = PlayerCapFactory.get(player);
             cap.onTick();
             PMCInventoryHandler handler = InventoryFactory.getInventoryHandler(player);
             if(!player.world.isRemote) {

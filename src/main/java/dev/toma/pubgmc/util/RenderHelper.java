@@ -2,10 +2,16 @@ package dev.toma.pubgmc.util;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import dev.toma.pubgmc.Pubgmc;
+import dev.toma.pubgmc.capability.IPlayerCap;
+import dev.toma.pubgmc.capability.player.PlayerCapFactory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 
 public class RenderHelper {
@@ -209,5 +215,63 @@ public class RenderHelper {
         builder.pos(x2, y2, 0).tex(toU, toV).color(r, g, b, a).endVertex();
         builder.pos(x2, y, 0).tex(toU, fromV).color(r, g, b, a).endVertex();
         builder.pos(x, y, 0).tex(fromU, fromV).color(r, g, b, a).endVertex();
+    }
+
+    public static void processEntityModelRotations(boolean isPlayer, boolean holdingWeapon, LivingEntity entity, BipedModel<?> model) {
+        Minecraft mc = Minecraft.getInstance();
+        Entity entity1 = mc.getRenderViewEntity();
+        if(entity == entity1 && mc.gameSettings.thirdPersonView == 0)
+            return;
+        if(isPlayer) {
+            IPlayerCap cap = PlayerCapFactory.get((PlayerEntity) entity);
+            boolean isProne = cap.isProne();
+            if(isProne) {
+                float f0 = (float) Math.toRadians(180.0F);
+                float f1 = (float) Math.toRadians(10.0F);
+                float f2 = (float) Math.toRadians(-45.0F);
+                model.bipedRightArm.rotateAngleX = f0;
+                model.bipedLeftArm.rotateAngleX = f0;
+                model.bipedRightArm.rotateAngleZ = -f1;
+                model.bipedLeftArm.rotateAngleZ = f1;
+                model.bipedRightLeg.rotateAngleZ = f1;
+                model.bipedLeftLeg.rotateAngleZ = -f1;
+                model.bipedHead.rotateAngleX = model.bipedHead.rotateAngleX + f2;
+                model.bipedHeadwear.rotateAngleX = model.bipedHead.rotateAngleX;
+                entity.limbSwing = 0.0F;
+                entity.limbSwingAmount = 0.0F;
+            } else if(holdingWeapon) {
+                boolean aiming = cap.getAimInfo().isActualAim();
+                float f0;
+                float f1;
+                float f2;
+                if(aiming) {
+                    f0 = (float) Math.toRadians(-90.0F);
+                    f1 = (float) Math.toRadians(-30.0F);
+                    f2 = (float) Math.toRadians(45.0F);
+                    model.bipedRightArm.rotateAngleX = f0;
+                    model.bipedRightArm.rotateAngleY = f1;
+                    model.bipedLeftArm.rotateAngleX = f0;
+                } else {
+                    f0 = (float) Math.toRadians(-55.0F);
+                    f1 = (float) Math.toRadians(-40.0F);
+                    f2 = (float) Math.toRadians(60.0F);
+                    float f3 = (float) Math.toRadians(-60.0F);
+                    model.bipedRightArm.rotateAngleX = f0;
+                    model.bipedLeftArm.rotateAngleX = f3;
+                    model.bipedRightArm.rotateAngleY = f1;
+                }
+                model.bipedLeftArm.rotateAngleY = f2;
+            }
+        } else {
+            if(holdingWeapon) {
+                float f0 = (float) Math.toRadians(-90.0F);
+                float f1 = (float) Math.toRadians(-30.0F);
+                float f2 = (float) Math.toRadians(45.0F);
+                model.bipedRightArm.rotateAngleX = f0;
+                model.bipedRightArm.rotateAngleY = f1;
+                model.bipedLeftArm.rotateAngleX = f0;
+                model.bipedLeftArm.rotateAngleY = f2;
+            }
+        }
     }
 }

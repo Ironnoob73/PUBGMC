@@ -1,16 +1,14 @@
 package dev.toma.pubgmc.client;
 
 import dev.toma.pubgmc.Pubgmc;
+import dev.toma.pubgmc.capability.player.PlayerCapFactory;
 import dev.toma.pubgmc.client.animation.AnimationManager;
 import dev.toma.pubgmc.client.animation.Animations;
 import dev.toma.pubgmc.client.animation.types.FiremodeAnimation;
 import dev.toma.pubgmc.common.item.gun.GunItem;
 import dev.toma.pubgmc.common.item.utility.ThrowableItem;
 import dev.toma.pubgmc.network.NetworkManager;
-import dev.toma.pubgmc.network.packet.SPacketCookThrowable;
-import dev.toma.pubgmc.network.packet.SPacketFiremode;
-import dev.toma.pubgmc.network.packet.SPacketOpenAttachmentMenu;
-import dev.toma.pubgmc.network.packet.SPacketSetReloading;
+import dev.toma.pubgmc.network.packet.*;
 import dev.toma.pubgmc.util.UsefulFunctions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
@@ -31,11 +29,13 @@ public class ModKeybinds {
     public static KeyBinding RELOAD_COOK;
     public static KeyBinding FIREMODE_CHANGE;
     public static KeyBinding EDIT_ATTACHMENTS;
+    public static KeyBinding PRONE;
 
     public static void init() {
         RELOAD_COOK = register("reload", GLFW.GLFW_KEY_R);
         FIREMODE_CHANGE = register("firemode", GLFW.GLFW_KEY_B);
         EDIT_ATTACHMENTS = register("edit_attachments", GLFW.GLFW_KEY_Z);
+        PRONE = register("prone", GLFW.GLFW_KEY_V);
     }
 
     public static KeyBinding register(String key, int code) {
@@ -82,6 +82,9 @@ public class ModKeybinds {
                 } else {
                     player.sendStatusMessage(new StringTextComponent(TextFormatting.RED + "Cannot change attachments on currently held item!"), true);
                 }
+            } else if(PRONE.isPressed()) {
+                boolean isProne = PlayerCapFactory.get(player).isProne();
+                NetworkManager.sendToServer(new SPacketProne(!isProne));
             }
         }
     }
