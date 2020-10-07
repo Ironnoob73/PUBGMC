@@ -19,7 +19,7 @@ public class NetworkManager {
             .simpleChannel();
 
     public static void init() {
-        register(CPacketSendNBT.class, new CPacketSendNBT(null, 0));
+        register(CPacketSendNBT.class, new CPacketSendNBT(null, null, 0));
         register(CPacketSyncEntity.class, new CPacketSyncEntity());
         register(CPacketFlashStatus.class, new CPacketFlashStatus());
         register(CPacketSendRecipes.class, new CPacketSendRecipes());

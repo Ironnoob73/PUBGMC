@@ -13,10 +13,7 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class FactoryCraftingRecipes extends JsonReloadListener {
 
@@ -26,11 +23,19 @@ public class FactoryCraftingRecipes extends JsonReloadListener {
             .registerTypeAdapter(ItemStack.class, new PMCRecipe.StackDeserializer())
             .registerTypeAdapter(new TypeToken<List<ItemStack>>(){}.getType(), new PMCRecipe.ListDeserializer())
             .create();
-    public Map<String, List<PMCRecipe>> recipeMap = new HashMap<>();
+    public Map<RecipeType, List<PMCRecipe>> recipeMap = new HashMap<>();
     private static final Marker MARKER = MarkerManager.getMarker("FactoryCraftingRecipes");
 
     public FactoryCraftingRecipes() {
         super(gson, "factory");
+    }
+
+    public List<PMCRecipe> getWeaponRecipes() {
+        return UsefulFunctions.getNonnullFromMap(recipeMap, RecipeType.WEAPON, Collections.emptyList());
+    }
+
+    public List<PMCRecipe> getAmmoRecipes() {
+        return UsefulFunctions.getNonnullFromMap(recipeMap, RecipeType.AMMO, Collections.emptyList());
     }
 
     @Override
@@ -39,11 +44,7 @@ public class FactoryCraftingRecipes extends JsonReloadListener {
         for(Map.Entry<ResourceLocation, JsonObject> entry : objectMap.entrySet()) {
             try {
                 DeserializationOutput output = gson.fromJson(entry.getValue(), DeserializationOutput.class);
-                if(!recipeMap.containsKey(output.factory)) {
-                    recipeMap.put(output.factory, new ArrayList<>());
-                    Pubgmc.pubgmcLog.info(MARKER, "Created new factory category with key '{}'", output.factory);
-                }
-                recipeMap.get(output.factory).add(output.recipe);
+                recipeMap.computeIfAbsent(output.factory, t -> new ArrayList<>()).add(output.recipe);
             } catch (JsonParseException e) {
                 Pubgmc.pubgmcLog.error(MARKER, "Invalid factory recipe file {}: {}", entry.getKey(), e.getMessage());
             }
@@ -53,10 +54,10 @@ public class FactoryCraftingRecipes extends JsonReloadListener {
 
     private static class DeserializationOutput {
 
-        private final String factory;
+        private final RecipeType factory;
         private final PMCRecipe recipe;
 
-        private DeserializationOutput(String factory, PMCRecipe recipe) {
+        private DeserializationOutput(RecipeType factory, PMCRecipe recipe) {
             this.factory = factory;
             this.recipe = recipe;
         }
@@ -69,11 +70,17 @@ public class FactoryCraftingRecipes extends JsonReloadListener {
                 JsonObject recipe = json.getAsJsonObject();
                 String category = recipe.has("category") ? recipe.getAsJsonPrimitive("category").getAsString() : null;
                 if(category == null) throw new JsonParseException("Error parsing recipe, 'category' property is required!");
+                RecipeType type = RecipeType.valueOf(category.toUpperCase());
                 JsonObject object = recipe.has("recipe") ? recipe.getAsJsonObject("recipe") : null;
                 if(object == null) throw new JsonParseException("Error parsing recipe, 'recipe' property is required!");
                 PMCRecipe impl = context.deserialize(object, PMCRecipe.class);
-                return new DeserializationOutput(category, impl);
+                return new DeserializationOutput(type, impl);
             }
         }
+    }
+
+    public enum RecipeType {
+
+        AMMO, WEAPON;
     }
 }

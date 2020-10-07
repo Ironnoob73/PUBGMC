@@ -1,0 +1,19 @@
+{
+    "category": "ammo",
+    "recipe": {
+        "result": {
+            "item": "pubgmc:crossbow_bolt",
+            "count": 5
+        },
+        "ingredients": [
+            {
+                "item": "minecraft:arrow",
+                "count": 1
+            },
+            {
+                "item": "minecraft:iron_nugget",
+                "count": 3
+            }
+        ]
+    }
+}

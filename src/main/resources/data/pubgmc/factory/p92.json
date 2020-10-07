@@ -1,0 +1,14 @@
+{
+    "category": "weapon",
+    "recipe": {
+        "result": {
+            "item": "pubgmc:p92"
+        },
+        "ingredients": [
+            {
+                "item": "minecraft:iron_ingot",
+                "count": 30
+            }
+        ]
+    }
+}

@@ -2,10 +2,9 @@ package dev.toma.pubgmc.network.packet;
 
 import dev.toma.pubgmc.capability.player.PlayerCapProvider;
 import dev.toma.pubgmc.network.NetworkPacket;
-import net.minecraft.entity.EntitySize;
+import net.minecraft.entity.Pose;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -37,8 +36,8 @@ public class SPacketProne implements NetworkPacket<SPacketProne> {
             player.getCapability(PlayerCapProvider.CAP).ifPresent(cap -> {
                 cap.setProne(instance.prone);
                 if(!instance.prone) {
-                    // forces reset
-                    player.setSneaking(true);
+                    player.setPose(Pose.SNEAKING);
+                    player.setSneaking(false);
                 }
                 cap.syncNetworkData();
             });

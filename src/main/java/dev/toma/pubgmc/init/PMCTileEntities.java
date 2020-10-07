@@ -1,6 +1,7 @@
 package dev.toma.pubgmc.init;
 
 import dev.toma.pubgmc.Pubgmc;
+import dev.toma.pubgmc.common.tileentity.AbstractFactoryTileEntity;
 import dev.toma.pubgmc.common.tileentity.AirdropTileEntity;
 import dev.toma.pubgmc.common.tileentity.FlareAirdropTileEntity;
 import dev.toma.pubgmc.common.tileentity.LootSpawnerTileEntity;
@@ -14,4 +15,6 @@ public class PMCTileEntities {
     public static final RegistryObject<TileEntityType<LootSpawnerTileEntity>> LOOT_SPAWNER = TE_TYPES.register("loot_spawner", () -> TileEntityType.Builder.create(LootSpawnerTileEntity::new, PMCBlocks.LOOT_SPAWNER).build(null));
     public static final RegistryObject<TileEntityType<AirdropTileEntity>> AIRDROP = TE_TYPES.register("airdrop", () -> TileEntityType.Builder.create(AirdropTileEntity::new, PMCBlocks.AIRDROP).build(null));
     public static final RegistryObject<TileEntityType<FlareAirdropTileEntity>> FLARE_AIRDROP = TE_TYPES.register("flare_airdrop", () -> TileEntityType.Builder.create(FlareAirdropTileEntity::new, PMCBlocks.FLARE_AIRDROP).build(null));
+    public static final RegistryObject<TileEntityType<AbstractFactoryTileEntity.Weapon>> WEAPON_FACTORY = TE_TYPES.register("weapon_factory", () -> TileEntityType.Builder.create(AbstractFactoryTileEntity.Weapon::new, PMCBlocks.WEAPON_FACTORY).build(null));
+    public static final RegistryObject<TileEntityType<AbstractFactoryTileEntity.Ammo>> AMMO_FACTORY = TE_TYPES.register("ammo_factory", () -> TileEntityType.Builder.create(AbstractFactoryTileEntity.Ammo::new, PMCBlocks.AMMO_FACTORY).build(null));
 }

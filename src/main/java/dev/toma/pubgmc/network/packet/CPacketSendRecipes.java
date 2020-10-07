@@ -2,6 +2,7 @@ package dev.toma.pubgmc.network.packet;
 
 import dev.toma.pubgmc.Pubgmc;
 import dev.toma.pubgmc.network.NetworkPacket;
+import dev.toma.pubgmc.util.recipe.FactoryCraftingRecipes;
 import dev.toma.pubgmc.util.recipe.PMCRecipe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
@@ -15,22 +16,22 @@ import java.util.function.Supplier;
 
 public class CPacketSendRecipes implements NetworkPacket<CPacketSendRecipes> {
 
-    private Map<String, List<PMCRecipe>> recipeMap;
+    private Map<FactoryCraftingRecipes.RecipeType, List<PMCRecipe>> recipeMap;
 
     public CPacketSendRecipes() {
 
     }
 
-    public CPacketSendRecipes(Map<String, List<PMCRecipe>> recipeMap) {
+    public CPacketSendRecipes(Map<FactoryCraftingRecipes.RecipeType, List<PMCRecipe>> recipeMap) {
         this.recipeMap = recipeMap;
     }
 
     @Override
     public void encode(CPacketSendRecipes instance, PacketBuffer buf) {
         buf.writeVarInt(instance.recipeMap.size());
-        for(String string : instance.recipeMap.keySet()) {
-            buf.writeString(string);
-            List<PMCRecipe> list = instance.recipeMap.get(string);
+        for(FactoryCraftingRecipes.RecipeType type : instance.recipeMap.keySet()) {
+            buf.writeEnumValue(type);
+            List<PMCRecipe> list = instance.recipeMap.get(type);
             int j = list.size();
             buf.writeVarInt(j);
             for(int i = 0; i < j; i++) {
@@ -46,10 +47,10 @@ public class CPacketSendRecipes implements NetworkPacket<CPacketSendRecipes> {
 
     @Override
     public CPacketSendRecipes decode(PacketBuffer buf) {
-        Map<String, List<PMCRecipe>> recipeMap = new HashMap<>();
+        Map<FactoryCraftingRecipes.RecipeType, List<PMCRecipe>> recipeMap = new HashMap<>();
         int keys = buf.readVarInt();
         for(int i = 0; i < keys; i++) {
-            String key = buf.readString();
+            FactoryCraftingRecipes.RecipeType key = buf.readEnumValue(FactoryCraftingRecipes.RecipeType.class);
             int j = buf.readVarInt();
             List<PMCRecipe> list = new ArrayList<>(j);
             for(int k = 0; k < j; k++) {

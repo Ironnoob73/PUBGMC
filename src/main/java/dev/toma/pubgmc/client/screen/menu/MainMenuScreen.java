@@ -51,12 +51,12 @@ public class MainMenuScreen extends ComponentScreen implements RefreshListener {
         // singleplayer
         int hw = w / 2;
         // TODO
-        ButtonComponent community = new ButtonComponent(15, initialHeight + 100, hw, 20, "Community maps", c -> minecraft.displayGuiScreen(new SelectContentTypeScreen(this)));
+        ButtonComponent community = new ButtonComponent(15, initialHeight + 100, hw, 20, "Community maps", c -> minecraft.displayGuiScreen(new WorkInProgressScreen(this)));
         ButtonComponent myWorlds = new ButtonComponent(15 + hw, initialHeight + 100, hw, 20, "My Worlds", c -> minecraft.displayGuiScreen(new WorldSelectionScreen(this)));
         addComponent(new HoverSplitButton(15, initialHeight + 100, w, 20, "Singleplayer", community, myWorlds));
         // multiplayer
         // TODO
-        ButtonComponent official = new ButtonComponent(15, initialHeight + 125, hw, 20, "Official servers", c -> minecraft.displayGuiScreen(new SelectContentTypeScreen(this)));
+        ButtonComponent official = new ButtonComponent(15, initialHeight + 125, hw, 20, "Official servers", c -> minecraft.displayGuiScreen(new WorkInProgressScreen(this)));
         ButtonComponent myServers = new ButtonComponent(15 + hw, initialHeight + 125, hw, 20, "Server list", c -> minecraft.displayGuiScreen(new MultiplayerScreen(this)));
         addComponent(new HoverSplitButton(15, initialHeight + 125, w, 20, "Multiplayer", official, myServers));
         // settings

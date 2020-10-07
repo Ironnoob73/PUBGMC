@@ -31,7 +31,7 @@ public class LootCommand {
     public static void register(CommandDispatcher<CommandSource> dispatcher) {
         dispatcher.register(
                 Commands.literal("loot")
-                        .requires(src -> src.hasPermissionLevel(4))
+                        .requires(src -> src.hasPermissionLevel(2))
                         .then(
                                 Commands.literal("generate")
                                         .executes(LootCommand::executeGen)

@@ -34,6 +34,10 @@ public abstract class AbstractModContainer<T extends TileEntity> extends Contain
         return (T) world.getTileEntity(buffer.readBlockPos());
     }
 
+    public T getTileEntity() {
+        return tileEntity;
+    }
+
     @Override
     public boolean canInteractWith(PlayerEntity playerIn) {
         return isWithinUsableDistance(IWorldPosCallable.of(playerIn.world, tileEntity.getPos()), playerIn, playerIn.world.getBlockState(tileEntity.getPos()).getBlock());

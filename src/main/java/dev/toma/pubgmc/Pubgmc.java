@@ -85,12 +85,12 @@ public class Pubgmc {
         ClientManager.registerEntityRenderers();
         ModKeybinds.init();
         DeferredWorkQueue.runLater(() -> {
-            //ScreenManager.registerFactory(Registry.PMCContainers.WEAPON_FACTORY.get(), null);
             ScreenManager.registerFactory(PMCContainers.LOOT_SPAWNER.get(), LootSpawnerScreen::new);
             ScreenManager.registerFactory(PMCContainers.AIRDROP.get(), AirdropScreen::new);
             ScreenManager.registerFactory(PMCContainers.FLARE_AIRDROP.get(), FlareAirdropScreen::new);
             ScreenManager.registerFactory(PMCContainers.PLAYER_CONTAINER.get(), PMCPlayerInventoryScreen::new);
             ScreenManager.registerFactory(PMCContainers.ATTACHMENT_CONTAINER.get(), AttachmentScreen::new);
+            ScreenManager.registerFactory(PMCContainers.FACTORY.get(), FactoryScreen::new);
         });
         Animations.init();
         contentManager.start();

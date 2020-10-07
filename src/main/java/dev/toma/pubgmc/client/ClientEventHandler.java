@@ -21,10 +21,7 @@ import dev.toma.pubgmc.common.item.utility.BackpackSlotItem;
 import dev.toma.pubgmc.common.item.wearable.IPMCArmor;
 import dev.toma.pubgmc.config.Config;
 import dev.toma.pubgmc.network.NetworkManager;
-import dev.toma.pubgmc.network.packet.SPacketControllableInput;
-import dev.toma.pubgmc.network.packet.SPacketOpenPlayerInventory;
-import dev.toma.pubgmc.network.packet.SPacketSetAiming;
-import dev.toma.pubgmc.network.packet.SPacketShoot;
+import dev.toma.pubgmc.network.packet.*;
 import dev.toma.pubgmc.util.RenderHelper;
 import dev.toma.pubgmc.util.UsefulFunctions;
 import net.minecraft.block.LeavesBlock;
@@ -174,6 +171,12 @@ public class ClientEventHandler {
                 CooldownTracker tracker = player.getCooldownTracker();
                 if(settings.keyBindAttack.isKeyDown() && !tracker.hasCooldown(stack.getItem()) && gun.getFiremode(stack) == Firemode.FULL_AUTO && !player.isSprinting()) {
                     shoot(gun, stack, player);
+                }
+            }
+            IPlayerCap cap = PlayerCapFactory.get(player);
+            if(cap.isProne()) {
+                if(player.isSneaking() || player.isSprinting()) {
+                    NetworkManager.sendToServer(new SPacketProne(false));
                 }
             }
         }

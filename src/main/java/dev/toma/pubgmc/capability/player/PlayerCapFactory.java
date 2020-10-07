@@ -89,14 +89,14 @@ public class PlayerCapFactory implements IPlayerCap {
     @Override
     public void syncNetworkData() {
         if(owner instanceof ServerPlayerEntity) {
-            NetworkManager.sendToClient((ServerPlayerEntity) owner, new CPacketSendNBT(saveNetworkData(), CPacketSendNBT.PLAYER_CAP_SYNC_NETWORK));
+            NetworkManager.sendToAll(owner.world, new CPacketSendNBT(owner.getUniqueID(), saveNetworkData(), CPacketSendNBT.PLAYER_CAP_SYNC_NETWORK));
         }
     }
 
     @Override
     public void syncAllData() {
         if(owner instanceof ServerPlayerEntity) {
-            NetworkManager.sendToClient((ServerPlayerEntity) owner, new CPacketSendNBT(serializeNBT(), CPacketSendNBT.PLAYER_CAP_SYNC_FULL));
+            NetworkManager.sendToAll(owner.world, new CPacketSendNBT(owner.getUniqueID(), serializeNBT(), CPacketSendNBT.PLAYER_CAP_SYNC_FULL));
         }
     }
 

@@ -1,0 +1,23 @@
+{
+    "category": "ammo",
+    "recipe": {
+        "result": {
+            "item": "pubgmc:ammo_556mm",
+            "count": 10
+        },
+        "ingredients": [
+            {
+                "item": "minecraft:gold_ingot",
+                "count": 2
+            },
+            {
+                "item": "minecraft:iron_ingot",
+                "count": 2
+            },
+            {
+                "item": "minecraft:gunpowder",
+                "count": 2
+            }
+        ]
+    }
+}

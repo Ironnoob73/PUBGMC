@@ -1,0 +1,23 @@
+{
+    "category": "ammo",
+    "recipe": {
+        "result": {
+            "item": "pubgmc:ammo_12g",
+            "count": 10
+        },
+        "ingredients": [
+            {
+                "item": "minecraft:iron_nugget",
+                "count": 8
+            },
+            {
+                "item": "minecraft:iron_ingot",
+                "count": 1
+            },
+            {
+                "item": "minecraft:gunpowder",
+                "count": 1
+            }
+        ]
+    }
+}
