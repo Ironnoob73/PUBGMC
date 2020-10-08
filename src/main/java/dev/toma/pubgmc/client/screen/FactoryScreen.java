@@ -102,6 +102,7 @@ public class FactoryScreen extends ContainerScreen<FactoryContainer> {
 
     @Override
     public void render(int mouseX, int mouseY, float partialTicks) {
+        renderBackground();
         super.render(mouseX, mouseY, partialTicks);
         if(selectedRecipe != null) {
             boolean canFit = guiLeft - 40 > 100;
@@ -111,13 +112,17 @@ public class FactoryScreen extends ContainerScreen<FactoryContainer> {
             if(canFit) {
                 font.drawString(raw.getDisplayName().getFormattedText() + " (" + raw.getCount() + "x)", 25, top, 0xffffff);
             } else {
+                net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
                 minecraft.getItemRenderer().renderItemIntoGUI(raw, 20, top - 3);
+                net.minecraft.client.renderer.RenderHelper.enableGUIStandardItemLighting();
             }
             int j = 0;
             for (ItemStack stack : selectedRecipe.ingredientList()) {
                 int textY = top + 10 + j * 20;
                 String text = canFit ? String.format("%dx %s", stack.getCount(), stack.getDisplayName().getFormattedText()) : stack.getCount() + "x";
+                net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
                 minecraft.getItemRenderer().renderItemIntoGUI(stack, 24, textY);
+                net.minecraft.client.renderer.RenderHelper.enableGUIStandardItemLighting();
                 font.drawString(text, 43, textY + 4, 0xffffff);
                 ++j;
             }

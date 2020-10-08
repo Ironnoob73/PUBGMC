@@ -1,0 +1,18 @@
+{
+    "category": "weapon",
+    "recipe": {
+        "result": {
+            "item": "pubgmc:folding_stock"
+        },
+        "ingredients": [
+            {
+                "item": "minecraft:iron_bars",
+                "count": 2
+            },
+            {
+                "item": "minecraft:iron_nugget",
+                "count": 5
+            }
+        ]
+    }
+}

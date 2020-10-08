@@ -1,0 +1,18 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "P",
+        "G"
+    ],
+    "key": {
+        "P": {
+            "item": "pubgmc:producer"
+        },
+        "G": {
+            "item": "pubgmc:generator"
+        }
+    },
+    "result": {
+        "item": "pubgmc:ammo_factory"
+    }
+}

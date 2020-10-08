@@ -1,0 +1,26 @@
+{
+    "category": "weapon",
+    "recipe": {
+        "result": {
+            "item": "pubgmc:x8_scope"
+        },
+        "ingredients": [
+            {
+                "item": "minecraft:iron_ingot",
+                "count": 25
+            },
+            {
+                "item": "minecraft:glass_pane",
+                "count": 2
+            },
+            {
+                "item": "minecraft:red_dye",
+                "count": 2
+            },
+            {
+                "item": "minecraft:black_dye",
+                "count": 10
+            }
+        ]
+    }
+}

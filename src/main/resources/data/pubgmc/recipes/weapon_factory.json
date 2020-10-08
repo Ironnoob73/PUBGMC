@@ -1,0 +1,24 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "IP",
+        "GS"
+    ],
+    "key": {
+        "I": {
+            "item": "pubgmc:interface"
+        },
+        "P": {
+            "item": "pubgmc:producer"
+        },
+        "G": {
+            "item": "pubgmc:generator"
+        },
+        "S": {
+            "item": "pubgmc:storage"
+        }
+    },
+    "result": {
+        "item": "pubgmc:weapon_factory"
+    }
+}

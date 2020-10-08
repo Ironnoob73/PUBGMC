@@ -1,12 +1,15 @@
 package dev.toma.pubgmc.integration.jei;
 
 import dev.toma.pubgmc.Pubgmc;
+import dev.toma.pubgmc.init.PMCBlocks;
 import dev.toma.pubgmc.util.recipe.PMCRecipe;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.recipe.category.IRecipeCategory;
+import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 @JeiPlugin
@@ -30,9 +33,13 @@ public class JeiCompatMain implements IModPlugin {
     }
 
     @Override
+    public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
+        registration.addRecipeCatalyst(new ItemStack(PMCBlocks.WEAPON_FACTORY), weaponCategory.getUid());
+        registration.addRecipeCatalyst(new ItemStack(PMCBlocks.AMMO_FACTORY), ammoCategory.getUid());
+    }
+
+    @Override
     public ResourceLocation getPluginUid() {
         return Pubgmc.makeResource("jei");
     }
-
-
 }

@@ -1,0 +1,16 @@
+{
+    "category": "weapon",
+    "recipe": {
+        "result": {
+            "item": "pubgmc:quickdraw_extended_smg"
+        },
+        "ingredients": [
+            {
+                "item": "pubgmc:quickdraw_smg"
+            },
+            {
+                "item": "pubgmc:extended_smg"
+            }
+        ]
+    }
+}

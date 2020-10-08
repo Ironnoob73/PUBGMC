@@ -1,0 +1,18 @@
+{
+    "category": "weapon",
+    "recipe": {
+        "result": {
+            "item": "pubgmc:suppressor_ar"
+        },
+        "ingredients": [
+            {
+                "item": "pubgmc:suppressor_smg",
+                "count": 1
+            },
+            {
+                "item": "minecraft:black_wool",
+                "count": 4
+            }
+        ]
+    }
+}

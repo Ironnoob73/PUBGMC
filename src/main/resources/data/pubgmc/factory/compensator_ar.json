@@ -1,0 +1,17 @@
+{
+    "category": "weapon",
+    "recipe": {
+        "result": {
+            "item": "pubgmc:compensator_ar"
+        },
+        "ingredients": [
+            {
+                "item": "minecraft:iron_ingot",
+                "count": 2
+            },
+            {
+                "item": "pubgmc:compensator_smg"
+            }
+        ]
+    }
+}
