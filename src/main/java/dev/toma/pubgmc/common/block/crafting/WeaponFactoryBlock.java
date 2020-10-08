@@ -30,6 +30,9 @@ public class WeaponFactoryBlock extends AbstractFactoryBlock {
     @Nullable
     @Override
     public AbstractFactoryTileEntity createTileEntity(BlockState state, IBlockReader world) {
-        return new AbstractFactoryTileEntity.Weapon();
+        if(state.get(PART) == FactoryPart.UI) {
+            return new AbstractFactoryTileEntity.Weapon();
+        }
+        return null;
     }
 }

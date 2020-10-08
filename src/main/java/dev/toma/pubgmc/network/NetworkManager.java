@@ -37,6 +37,7 @@ public class NetworkManager {
         register(SPacketOpenPlayerInventory.class, new SPacketOpenPlayerInventory());
         register(SPacketOpenAttachmentMenu.class, new SPacketOpenAttachmentMenu());
         register(SPacketProne.class, new SPacketProne());
+        register(SPacketCraft.class, new SPacketCraft());
     }
 
     public static void sendToClient(ServerPlayerEntity player, NetworkPacket<?> packet) {

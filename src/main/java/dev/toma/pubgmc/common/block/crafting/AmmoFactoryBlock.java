@@ -22,6 +22,9 @@ public class AmmoFactoryBlock extends AbstractFactoryBlock {
     @Nullable
     @Override
     public AbstractFactoryTileEntity createTileEntity(BlockState state, IBlockReader world) {
-        return new AbstractFactoryTileEntity.Ammo();
+        if(state.get(PART) == FactoryPart.PRODUCER) {
+            return new AbstractFactoryTileEntity.Ammo();
+        }
+        return null;
     }
 }
