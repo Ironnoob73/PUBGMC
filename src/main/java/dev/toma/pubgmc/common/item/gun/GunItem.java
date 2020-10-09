@@ -121,11 +121,8 @@ public class GunItem extends PMCItem implements HandAnimate {
                 NetworkManager.sendToClient((ServerPlayerEntity) player, new CPacketAnimation(Animations.RECOIL, CPacketAnimation.Result.PLAY));
             }
         } else {
-            if (ammo > 0) {
-                world.playSound(null, source.posX, source.posY, source.posZ, getShootSound(silent), SoundCategory.MASTER, getVolume(silent), 1.0F);
-                shootManager.shoot(source, world, stack);
-                addAmmo(stack, -1);
-            }
+            world.playSound(null, source.posX, source.posY, source.posZ, getShootSound(silent), SoundCategory.MASTER, getVolume(silent), 1.0F);
+            shootManager.shoot(source, world, stack);
         }
     }
 
@@ -220,6 +217,10 @@ public class GunItem extends PMCItem implements HandAnimate {
 
     public float getGunDamage() {
         return damage;
+    }
+
+    public int getFirerate() {
+        return firerate;
     }
 
     @OnlyIn(Dist.CLIENT)

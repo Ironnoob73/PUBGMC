@@ -1,6 +1,7 @@
 package dev.toma.pubgmc.init;
 
 import dev.toma.pubgmc.Pubgmc;
+import dev.toma.pubgmc.common.item.PMCItem;
 import dev.toma.pubgmc.common.item.gun.GunItem;
 import dev.toma.pubgmc.common.item.gun.attachment.AttachmentItem;
 import dev.toma.pubgmc.common.item.healing.HealingItem;
@@ -73,4 +74,5 @@ public class PMCItems {
     public static final BackpackItem MEDIUM_BACKPACK = null;
     public static final BackpackItem LARGE_BACKPACK = null;
     public static final GhillieSuitItem GHILLIE_SUIT = null;
+    public static final PMCItem GRASS_PLATE = null;
 }

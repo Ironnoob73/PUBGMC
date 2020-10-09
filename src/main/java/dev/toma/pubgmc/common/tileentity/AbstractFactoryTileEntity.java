@@ -3,7 +3,7 @@ package dev.toma.pubgmc.common.tileentity;
 import dev.toma.pubgmc.Pubgmc;
 import dev.toma.pubgmc.common.container.FactoryContainer;
 import dev.toma.pubgmc.init.PMCTileEntities;
-import dev.toma.pubgmc.util.recipe.PMCRecipe;
+import dev.toma.pubgmc.data.recipe.PMCRecipe;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;

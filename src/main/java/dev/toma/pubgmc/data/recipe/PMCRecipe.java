@@ -1,4 +1,4 @@
-package dev.toma.pubgmc.util.recipe;
+package dev.toma.pubgmc.data.recipe;
 
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;

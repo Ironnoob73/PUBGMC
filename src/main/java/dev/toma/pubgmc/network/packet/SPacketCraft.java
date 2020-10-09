@@ -3,7 +3,7 @@ package dev.toma.pubgmc.network.packet;
 import dev.toma.pubgmc.Pubgmc;
 import dev.toma.pubgmc.common.tileentity.AbstractFactoryTileEntity;
 import dev.toma.pubgmc.network.NetworkPacket;
-import dev.toma.pubgmc.util.recipe.PMCRecipe;
+import dev.toma.pubgmc.data.recipe.PMCRecipe;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;

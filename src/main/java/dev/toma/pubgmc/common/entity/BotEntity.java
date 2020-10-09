@@ -3,6 +3,8 @@ package dev.toma.pubgmc.common.entity;
 import dev.toma.pubgmc.capability.IWorldCap;
 import dev.toma.pubgmc.capability.world.WorldDataFactory;
 import dev.toma.pubgmc.capability.world.WorldDataProvider;
+import dev.toma.pubgmc.common.entity.goal.GunAttackGoal;
+import dev.toma.pubgmc.common.inventory.IHasInventory;
 import dev.toma.pubgmc.common.inventory.PMCInventoryItem;
 import dev.toma.pubgmc.common.item.gun.GunCategory;
 import dev.toma.pubgmc.common.item.gun.GunItem;
@@ -28,12 +30,12 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
 
-public class BotEntity extends CreatureEntity implements IKeyHolder {
+public class BotEntity extends CreatureEntity implements IKeyHolder, IHasInventory {
 
     private final InventoryManager botInventory;
     private GunCategory weaponPreference;
     private long gameID;
-    private Game game;
+    private final Game game;
     private byte variant;
 
     public BotEntity(EntityType<? extends CreatureEntity> type, World world) {
@@ -77,6 +79,7 @@ public class BotEntity extends CreatureEntity implements IKeyHolder {
 
     @Override
     protected void registerGoals() {
+        this.goalSelector.addGoal(4, new GunAttackGoal(this));
         this.goalSelector.addGoal(5, new WaterAvoidingRandomWalkingGoal(this, 1.0D));
         this.goalSelector.addGoal(6, new LookAtGoal(this, PlayerEntity.class, 16.0F));
         this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
@@ -97,12 +100,16 @@ public class BotEntity extends CreatureEntity implements IKeyHolder {
         super.writeAdditional(compound);
         compound.putLong("gameID", gameID);
         compound.put("inventory", botInventory.serializeNBT());
+        compound.putByte("variant", variant);
+        compound.putByte("preference", (byte) weaponPreference.ordinal());
     }
 
     @Override
     public void read(CompoundNBT compound) {
         super.read(compound);
         gameID = compound.getLong("gameID");
+        variant = compound.getByte("variant");
+        weaponPreference = GunCategory.values()[compound.getByte("preference")];
         if(compound.contains("inventory", Constants.NBT.TAG_LIST)) {
             botInventory.deserializeNBT(compound.getList("inventory", Constants.NBT.TAG_COMPOUND));
         }
@@ -222,6 +229,7 @@ public class BotEntity extends CreatureEntity implements IKeyHolder {
         return game != null && game.isRunning();
     }
 
+    @Override
     public InventoryManager getInventory() {
         return botInventory;
     }

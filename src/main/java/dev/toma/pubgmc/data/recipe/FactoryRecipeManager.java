@@ -1,4 +1,4 @@
-package dev.toma.pubgmc.util.recipe;
+package dev.toma.pubgmc.data.recipe;
 
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
@@ -15,7 +15,7 @@ import org.apache.logging.log4j.MarkerManager;
 import java.lang.reflect.Type;
 import java.util.*;
 
-public class FactoryCraftingRecipes extends JsonReloadListener {
+public class FactoryRecipeManager extends JsonReloadListener {
 
     public static Gson gson = new GsonBuilder()
             .registerTypeAdapter(DeserializationOutput.class, new DeserializationOutput.Deserializer())
@@ -26,7 +26,7 @@ public class FactoryCraftingRecipes extends JsonReloadListener {
     public Map<RecipeType, List<PMCRecipe>> recipeMap = new HashMap<>();
     private static final Marker MARKER = MarkerManager.getMarker("FactoryCraftingRecipes");
 
-    public FactoryCraftingRecipes() {
+    public FactoryRecipeManager() {
         super(gson, "factory");
     }
 
@@ -77,10 +77,5 @@ public class FactoryCraftingRecipes extends JsonReloadListener {
                 return new DeserializationOutput(type, impl);
             }
         }
-    }
-
-    public enum RecipeType {
-
-        AMMO, WEAPON;
     }
 }

@@ -2,6 +2,7 @@ package dev.toma.pubgmc.init;
 
 import dev.toma.pubgmc.Pubgmc;
 import dev.toma.pubgmc.common.block.AirdropBlock;
+import dev.toma.pubgmc.common.block.DeathCrateBlock;
 import dev.toma.pubgmc.common.block.LootSpawnerBlock;
 import dev.toma.pubgmc.common.block.PMCHorizontalBlock;
 import dev.toma.pubgmc.common.block.crafting.AmmoFactoryBlock;
@@ -19,4 +20,5 @@ public class PMCBlocks {
     public static final LootSpawnerBlock LOOT_SPAWNER = null;
     public static final AirdropBlock AIRDROP = null;
     public static final AirdropBlock FLARE_AIRDROP = null;
+    public static final DeathCrateBlock DEATH_CRATE = null;
 }

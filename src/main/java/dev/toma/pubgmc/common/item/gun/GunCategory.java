@@ -4,13 +4,23 @@ import net.minecraft.world.World;
 
 public enum GunCategory {
 
-    MISC,
-    PISTOL,
-    SHOTGUN,
-    SMG,
-    AR_LMG,
-    DMR,
-    SR;
+    MISC(25),
+    PISTOL(30),
+    SHOTGUN(15),
+    SMG(40),
+    AR_LMG(70),
+    DMR(100),
+    SR(130);
+
+    final double range;
+
+    GunCategory(double range) {
+        this.range = range;
+    }
+
+    public double getRange() {
+        return range;
+    }
 
     public static final GunCategory[] BOT_CATEGORIES = {
             SHOTGUN, SMG, AR_LMG, DMR, SR

@@ -16,4 +16,5 @@ public class PMCContainers {
     public static final RegistryObject<ContainerType<FlareAirdropContainer>> FLARE_AIRDROP = CONTAINER_TYPES.register("flare_airdrop", () -> IForgeContainerType.create(FlareAirdropContainer::new));
     public static final RegistryObject<ContainerType<PMCPlayerContainer>> PLAYER_CONTAINER = CONTAINER_TYPES.register("player_container", () -> IForgeContainerType.create(PMCPlayerContainer::new));
     public static final RegistryObject<ContainerType<AttachmentContainer>> ATTACHMENT_CONTAINER = CONTAINER_TYPES.register("attachment_container", () -> IForgeContainerType.create(AttachmentContainer::new));
+    public static final RegistryObject<ContainerType<DeathCrateContainer>> DEATH_CRATE = CONTAINER_TYPES.register("death_crate", () -> IForgeContainerType.create(DeathCrateContainer::new));
 }

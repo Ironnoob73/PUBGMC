@@ -9,6 +9,7 @@ import net.minecraft.util.text.TextFormatting;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Random;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
@@ -81,5 +82,9 @@ public class UsefulFunctions {
 
     public static String addArgumentDesc(String key, String info, String format) {
         return String.format("%s- %s%s:%s%s --> %s", TextFormatting.GREEN, key, TextFormatting.RED, format, TextFormatting.AQUA, info);
+    }
+
+    public static <T> T random(T[] ts, Random random) {
+        return ts[random.nextInt(ts.length)];
     }
 }

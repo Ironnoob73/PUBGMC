@@ -5,6 +5,7 @@ import dev.toma.pubgmc.capability.player.InventoryFactory;
 import dev.toma.pubgmc.common.item.PMCItem;
 import dev.toma.pubgmc.common.item.utility.GhillieSlotItem;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.IDyeableArmorItem;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -13,11 +14,35 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
 
-public class GhillieSuitItem extends PMCItem implements GhillieSlotItem {
+public class GhillieSuitItem extends PMCItem implements GhillieSlotItem, IDyeableArmorItem {
 
     public GhillieSuitItem(String name) {
         super(name, new Properties().maxStackSize(1).group(ITEMS));
+    }
+
+    @Override
+    public boolean hasColor(ItemStack stack) {
+        return stack.hasTag() && stack.getTag().contains("color", Constants.NBT.TAG_INT);
+    }
+
+    @Override
+    public void setColor(ItemStack stack, int color) {
+        CompoundNBT nbt;
+        if(!stack.hasTag()) {
+            nbt = new CompoundNBT();
+            stack.setTag(nbt);
+        }
+        nbt = stack.getTag();
+        nbt.putInt("color", color);
+    }
+
+    @Override
+    public void removeColor(ItemStack stack) {
+        if(hasColor(stack)) {
+            stack.getTag().remove("color");
+        }
     }
 
     @Override

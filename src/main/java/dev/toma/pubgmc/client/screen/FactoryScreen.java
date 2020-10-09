@@ -7,7 +7,7 @@ import dev.toma.pubgmc.common.tileentity.AbstractFactoryTileEntity;
 import dev.toma.pubgmc.network.NetworkManager;
 import dev.toma.pubgmc.network.packet.SPacketCraft;
 import dev.toma.pubgmc.util.RenderHelper;
-import dev.toma.pubgmc.util.recipe.PMCRecipe;
+import dev.toma.pubgmc.data.recipe.PMCRecipe;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;

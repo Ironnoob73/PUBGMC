@@ -7,6 +7,7 @@ import dev.toma.pubgmc.client.model.baked.DummyGunBakedModel;
 import dev.toma.pubgmc.client.render.item.GunRenderer;
 import dev.toma.pubgmc.client.render.item.VehicleSpawnerRenderer;
 import dev.toma.pubgmc.common.block.AirdropBlock;
+import dev.toma.pubgmc.common.block.DeathCrateBlock;
 import dev.toma.pubgmc.common.block.LootSpawnerBlock;
 import dev.toma.pubgmc.common.block.PMCHorizontalBlock;
 import dev.toma.pubgmc.common.block.crafting.AmmoFactoryBlock;
@@ -163,7 +164,8 @@ public class RegistryHandler {
                     new BackpackItem("small_backpack_snow", BackpackSlotItem.BackpackType.SMALL, BackpackItem.Variant.SNOW),
                     new BackpackItem("medium_backpack_snow", BackpackSlotItem.BackpackType.MEDIUM, BackpackItem.Variant.SNOW),
                     new BackpackItem("large_backpack_snow", BackpackSlotItem.BackpackType.LARGE, BackpackItem.Variant.SNOW),
-                    new GhillieSuitItem("ghillie_suit")
+                    new GhillieSuitItem("ghillie_suit"),
+                    new PMCItem("grass_plate", new Item.Properties().group(PMCItem.ITEMS))
             );
             blockItemList.stream().filter(Objects::nonNull).forEach(registry::register);
             blockItemList = null;
@@ -180,7 +182,8 @@ public class RegistryHandler {
                     new AmmoFactoryBlock("ammo_factory"),
                     new LootSpawnerBlock("loot_spawner"),
                     new AirdropBlock("airdrop", AirdropTileEntity::new),
-                    new AirdropBlock("flare_airdrop", FlareAirdropTileEntity::new)
+                    new AirdropBlock("flare_airdrop", FlareAirdropTileEntity::new),
+                    new DeathCrateBlock("death_crate")
             );
         }
 

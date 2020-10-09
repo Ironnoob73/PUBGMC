@@ -1,8 +1,9 @@
 package dev.toma.pubgmc.integration.jei;
 
 import dev.toma.pubgmc.Pubgmc;
+import dev.toma.pubgmc.data.recipe.FactoryRecipeManager;
+import dev.toma.pubgmc.data.recipe.PMCRecipe;
 import dev.toma.pubgmc.init.PMCBlocks;
-import dev.toma.pubgmc.util.recipe.PMCRecipe;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.recipe.category.IRecipeCategory;
@@ -28,8 +29,9 @@ public class JeiCompatMain implements IModPlugin {
 
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
-        registration.addRecipes(Pubgmc.getRecipeManager().getWeaponRecipes(), weaponCategory.getUid());
-        registration.addRecipes(Pubgmc.getRecipeManager().getAmmoRecipes(), ammoCategory.getUid());
+        FactoryRecipeManager manager = Pubgmc.getRecipeManager();
+        registration.addRecipes(manager.getWeaponRecipes(), weaponCategory.getUid());
+        registration.addRecipes(manager.getAmmoRecipes(), ammoCategory.getUid());
     }
 
     @Override

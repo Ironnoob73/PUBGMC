@@ -1,7 +1,7 @@
 package dev.toma.pubgmc.integration.jei;
 
 import dev.toma.pubgmc.Pubgmc;
-import dev.toma.pubgmc.util.recipe.PMCRecipe;
+import dev.toma.pubgmc.data.recipe.PMCRecipe;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.gui.drawable.IDrawable;

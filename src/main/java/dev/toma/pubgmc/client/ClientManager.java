@@ -1,7 +1,6 @@
 package dev.toma.pubgmc.client;
 
 import dev.toma.pubgmc.Pubgmc;
-import dev.toma.pubgmc.client.model.entity.BotModel;
 import dev.toma.pubgmc.client.render.block.LootSpawnerRenderer;
 import dev.toma.pubgmc.client.render.entity.*;
 import dev.toma.pubgmc.common.entity.AirdropEntity;

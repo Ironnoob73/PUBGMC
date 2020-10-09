@@ -18,10 +18,11 @@ import dev.toma.pubgmc.command.LootCommand;
 import dev.toma.pubgmc.common.item.gun.attachment.AttachmentCategory;
 import dev.toma.pubgmc.config.Config;
 import dev.toma.pubgmc.content.ContentManager;
+import dev.toma.pubgmc.data.loadout.LoadoutManager;
 import dev.toma.pubgmc.data.loot.LootManager;
 import dev.toma.pubgmc.init.PMCContainers;
 import dev.toma.pubgmc.network.NetworkManager;
-import dev.toma.pubgmc.util.recipe.FactoryCraftingRecipes;
+import dev.toma.pubgmc.data.recipe.FactoryRecipeManager;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.server.MinecraftServer;
@@ -58,9 +59,10 @@ public class Pubgmc {
     public static final String MODID = "pubgmc";
     public static final Logger pubgmcLog = LogManager.getLogger("pubgmc");
     public static final Random rand = new Random();
-    private static FactoryCraftingRecipes recipeManager;
+    private static FactoryRecipeManager recipeManager;
     private static ContentManager contentManager;
     private static LootManager lootManager;
+    private static LoadoutManager loadoutManager;
     public static GameRules.RuleKey<GameRules.BooleanValue> WEAPON_GRIEFING = GameRules.register("weaponGriefing", GameRules.BooleanValue.create(true));
 
     public Pubgmc() {
@@ -76,9 +78,10 @@ public class Pubgmc {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.COMMON);
         Config.load(Config.CLIENT, FMLPaths.CONFIGDIR.get().resolve("pubgmc-client.toml"));
         Config.load(Config.COMMON, FMLPaths.CONFIGDIR.get().resolve("pubgmc-common.toml"));
-        recipeManager = new FactoryCraftingRecipes();
+        recipeManager = new FactoryRecipeManager();
         lootManager = new LootManager();
         contentManager = new ContentManager();
+        loadoutManager = new LoadoutManager();
     }
 
     private void setupClient(FMLClientSetupEvent event) {
@@ -91,6 +94,7 @@ public class Pubgmc {
             ScreenManager.registerFactory(PMCContainers.PLAYER_CONTAINER.get(), PMCPlayerInventoryScreen::new);
             ScreenManager.registerFactory(PMCContainers.ATTACHMENT_CONTAINER.get(), AttachmentScreen::new);
             ScreenManager.registerFactory(PMCContainers.FACTORY.get(), FactoryScreen::new);
+            ScreenManager.registerFactory(PMCContainers.DEATH_CRATE.get(), DeathCrateScreen::new);
         });
         Animations.init();
         contentManager.start();
@@ -109,6 +113,7 @@ public class Pubgmc {
         IReloadableResourceManager manager = server.getResourceManager();
         manager.addReloadListener(recipeManager);
         manager.addReloadListener(lootManager);
+        manager.addReloadListener(loadoutManager);
     }
 
     private void serverStart(FMLServerStartingEvent event) {
@@ -139,7 +144,7 @@ public class Pubgmc {
         return status == VersionChecker.Status.OUTDATED || status == VersionChecker.Status.BETA_OUTDATED;
     }
 
-    public static FactoryCraftingRecipes getRecipeManager() {
+    public static FactoryRecipeManager getRecipeManager() {
         return recipeManager;
     }
 
@@ -149,6 +154,10 @@ public class Pubgmc {
 
     public static ContentManager getContentManager() {
         return contentManager;
+    }
+
+    public static LoadoutManager getLoadoutManager() {
+        return loadoutManager;
     }
 
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
