@@ -4,17 +4,21 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import dev.toma.pubgmc.client.animation.AnimationManager;
 import dev.toma.pubgmc.client.animation.Animations;
 import dev.toma.pubgmc.client.animation.HandAnimate;
+import dev.toma.pubgmc.client.screen.util.AttachmentSetupScreen;
+import dev.toma.pubgmc.common.item.gun.GunItem;
 import dev.toma.pubgmc.util.RenderHelper;
 import dev.toma.pubgmc.util.object.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
+import org.lwjgl.glfw.GLFW;
 
 import java.text.DecimalFormat;
 import java.util.Map;
@@ -22,6 +26,7 @@ import java.util.Map;
 public class BuilderMain {
 
     public static KeyBinding openToolUI;
+    public static KeyBinding modelSetupUI;
     public static KeyBinding add;
     public static KeyBinding subtract;
     public static KeyBinding reset;
@@ -29,6 +34,7 @@ public class BuilderMain {
 
     public static void init() {
         openToolUI = register("open_builder_ui", 77);
+        modelSetupUI = register("model_setup", GLFW.GLFW_KEY_O);
         add = register("add", 265);
         subtract = register("subtract", 264);
         reset = register("reset", 88);
@@ -55,6 +61,11 @@ public class BuilderMain {
         } else if (reset.isPressed()) {
             BuilderData.resetToDefaultState();
             AnimationManager.playNewAnimation(Animations.DEBUG, BuilderData.current);
+        } else if(modelSetupUI.isPressed()) {
+            ItemStack stack = player.getHeldItemMainhand();
+            if(stack.getItem() instanceof GunItem) {
+                Minecraft.getInstance().displayGuiScreen(new AttachmentSetupScreen(stack));
+            }
         }
     }
 

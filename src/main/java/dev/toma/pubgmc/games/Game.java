@@ -32,7 +32,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.function.Function;
 
-public abstract class Game implements INBTSerializable<CompoundNBT>, IKeyHolder, GameManager {
+public abstract class Game implements INBTSerializable<CompoundNBT>, IKeyHolder, IGameManager {
 
     public static final Marker marker = MarkerManager.getMarker("Games");
     public final World world;

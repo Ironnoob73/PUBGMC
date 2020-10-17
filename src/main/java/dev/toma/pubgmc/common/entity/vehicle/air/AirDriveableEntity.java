@@ -1,7 +1,7 @@
-package dev.toma.pubgmc.common.entity.vehicle;
+package dev.toma.pubgmc.common.entity.vehicle.air;
 
-import dev.toma.pubgmc.init.PMCEntities;
-import dev.toma.pubgmc.init.PMCSounds;
+import dev.toma.pubgmc.common.VehicleDamageSource;
+import dev.toma.pubgmc.common.entity.vehicle.DriveableEntity;
 import dev.toma.pubgmc.util.RenderHelper;
 import dev.toma.pubgmc.util.UsefulFunctions;
 import net.minecraft.client.MainWindow;
@@ -62,10 +62,10 @@ public abstract class AirDriveableEntity extends DriveableEntity {
         this.checkHealthState();
         if (this.collidedHorizontally) {
             float damage = currentSpeed < 0.3F ? 0.0F : currentSpeed * 20.0F;
-            this.attackEntityFrom(VEHICLE_DAMAGE, damage);
+            this.attackEntityFrom(VehicleDamageSource.from(this), damage);
             for (Entity entity : this.getPassengers()) {
                 if (!entity.isInvulnerable()) {
-                    entity.attackEntityFrom(VEHICLE_DAMAGE, damage / 2.0F);
+                    entity.attackEntityFrom(VehicleDamageSource.from(this), damage / 2.0F);
                 }
             }
             this.currentSpeed = 0.0F;
@@ -164,50 +164,5 @@ public abstract class AirDriveableEntity extends DriveableEntity {
         mc.fontRenderer.drawStringWithShadow((int) posY + "m", x - 110, top + 100 - pBarY - 3, 0xFFFFFF);
         if (pBarY - barY > 8)
             mc.fontRenderer.drawStringWithShadow(groundLevel + "m", x - 110, top + 100 - barY - 3, 0x00AA00);
-    }
-
-    public static class GliderDriveable extends AirDriveableEntity {
-
-        public static final DriveableData DATA = new DriveableData(50F, 100.0F, 1.4F, 0.01F, 0.2F);
-        private static final Vec3d ENGINE = new Vec3d(-2.6D, 1.25D, 0.0D);
-        private static final VehicleSoundStorage SOUND_STORAGE = new VehicleSoundStorage(PMCSounds.GLIDER_ACCELERATE, PMCSounds.GLIDER_BRAKE, PMCSounds.GLIDER_CRUISE, PMCSounds.GLIDER_IDLE);
-
-        public GliderDriveable(EntityType<?> type, World world) {
-            super(type, world);
-        }
-
-        public GliderDriveable(World world, BlockPos pos) {
-            super(PMCEntities.GLIDER, world, pos, DATA);
-        }
-
-        @Override
-        public int maxUserAmount() {
-            return 2;
-        }
-
-        @Override
-        protected double getPassengerX(int index) {
-            return index == 0 ? -0.5 : -1.5;
-        }
-
-        @Override
-        protected double getPassengerY(int index) {
-            return index == 0 ? 0.4 : 0.8;
-        }
-
-        @Override
-        protected double getPassengerZ(int index) {
-            return 0;
-        }
-
-        @Override
-        public Vec3d getEngineVector() {
-            return ENGINE;
-        }
-
-        @Override
-        public VehicleSoundStorage getSoundStorage() {
-            return SOUND_STORAGE;
-        }
     }
 }

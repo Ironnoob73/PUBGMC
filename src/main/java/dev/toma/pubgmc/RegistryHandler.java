@@ -20,8 +20,8 @@ import dev.toma.pubgmc.common.entity.throwable.FlashEntity;
 import dev.toma.pubgmc.common.entity.throwable.GrenadeEntity;
 import dev.toma.pubgmc.common.entity.throwable.MolotovEntity;
 import dev.toma.pubgmc.common.entity.throwable.SmokeEntity;
-import dev.toma.pubgmc.common.entity.vehicle.AirDriveableEntity;
-import dev.toma.pubgmc.common.entity.vehicle.LandDriveableEntity;
+import dev.toma.pubgmc.common.entity.vehicle.air.GliderEntity;
+import dev.toma.pubgmc.common.entity.vehicle.land.UAZEntity;
 import dev.toma.pubgmc.common.item.PMCItem;
 import dev.toma.pubgmc.common.item.gun.*;
 import dev.toma.pubgmc.common.item.gun.attachment.AttachmentCategory;
@@ -96,8 +96,8 @@ public class RegistryHandler {
                     new ThrowableItem("smoke", 20, SmokeEntity::new),
                     new ThrowableItem("molotov", 0, MolotovEntity::new),
                     new ThrowableItem("flash", 100, FlashEntity::new),
-                    new VehicleSpawnerItem("spawn_uaz", LandDriveableEntity.UAZDriveable::new, new Item.Properties().maxStackSize(1).group(PMCItem.ITEMS).setTEISR(() -> VehicleSpawnerRenderer::new)),
-                    new VehicleSpawnerItem("spawn_glider", AirDriveableEntity.GliderDriveable::new, new Item.Properties().maxStackSize(1).group(PMCItem.ITEMS).setTEISR(() -> VehicleSpawnerRenderer::new)),
+                    new VehicleSpawnerItem("spawn_uaz", UAZEntity::new, UAZEntity.class, new Item.Properties().maxStackSize(1).group(PMCItem.ITEMS).setTEISR(() -> VehicleSpawnerRenderer::new)),
+                    new VehicleSpawnerItem("spawn_glider", GliderEntity::new, GliderEntity.class, new Item.Properties().maxStackSize(1).group(PMCItem.ITEMS).setTEISR(() -> VehicleSpawnerRenderer::new)),
                     new FuelCanItem("fuel_can"),
                     new AmmoItem("crossbow_bolt", AmmoType.CROSSBOW_BOLT),
                     new AmmoItem("ammo_12g", AmmoType.AMMO_12G),
@@ -195,8 +195,8 @@ public class RegistryHandler {
                     registerEntity("smoke", trackBuilder(SmokeEntity::new, EntityClassification.MISC, 32).size(0.2F, 0.2F)),
                     registerEntity("molotov", trackBuilder(MolotovEntity::new, EntityClassification.MISC, 32).size(0.2F, 0.2F)),
                     registerEntity("flash", trackBuilder(FlashEntity::new, EntityClassification.MISC, 32).size(0.2F, 0.2F)),
-                    registerEntity("uaz", trackBuilder(LandDriveableEntity.UAZDriveable::new, EntityClassification.MISC, 64).size(2.25F, 2.0F)),
-                    registerEntity("glider", trackBuilder(AirDriveableEntity.GliderDriveable::new, EntityClassification.MISC, 64).size(2.5F, 2.0F)),
+                    registerEntity("uaz", trackBuilder(UAZEntity::new, EntityClassification.MISC, 64).size(2.25F, 2.0F)),
+                    registerEntity("glider", trackBuilder(GliderEntity::new, EntityClassification.MISC, 64).size(2.5F, 2.0F)),
                     registerEntity("bullet", trackBuilder(BulletEntity::new, EntityClassification.MISC, 64).size(0.1F, 0.1F)),
                     registerEntity("airdrop", trackBuilder(AirdropEntity::new, EntityClassification.MISC, 256).size(1.0F, 1.0F)),
                     registerEntity("bot", builder(BotEntity::new, EntityClassification.MONSTER).setTrackingRange(256).setUpdateInterval(3).setShouldReceiveVelocityUpdates(true).size(0.6F, 1.95F))

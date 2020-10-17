@@ -26,11 +26,14 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
+import net.minecraftforge.items.IItemHandler;
 
-public class BotEntity extends CreatureEntity implements IKeyHolder, IHasInventory {
+public class BotEntity extends CreatureEntity implements IKeyHolder, IHasInventory, IEntityAdditionalSpawnData {
 
     private final InventoryManager botInventory;
     private GunCategory weaponPreference;
@@ -51,6 +54,18 @@ public class BotEntity extends CreatureEntity implements IKeyHolder, IHasInvento
     }
 
     @Override
+    public void writeSpawnData(PacketBuffer buffer) {
+        buffer.writeByte(variant);
+        buffer.writeLong(gameID);
+    }
+
+    @Override
+    public void readSpawnData(PacketBuffer additionalData) {
+        variant = additionalData.readByte();
+        gameID = additionalData.readLong();
+    }
+
+    @Override
     public void tick() {
         super.tick();
         if(isRunningGame()) {
@@ -68,7 +83,7 @@ public class BotEntity extends CreatureEntity implements IKeyHolder, IHasInvento
         world.getCapability(WorldDataProvider.CAP).ifPresent(cap -> {
             Game game = cap.getGame();
             if(game != null && game.isRunning()) {
-                if(!game.test(gameID)) {
+                if(!game.test(BotEntity.this)) {
                     BotEntity.this.remove();
                 } else {
                     game.processBotSpawn(this);
@@ -98,6 +113,9 @@ public class BotEntity extends CreatureEntity implements IKeyHolder, IHasInvento
     @Override
     public void writeAdditional(CompoundNBT compound) {
         super.writeAdditional(compound);
+        if(game != null && game.isRunning() && gameID == 0) {
+            gameID = game.getGameID();
+        }
         compound.putLong("gameID", gameID);
         compound.put("inventory", botInventory.serializeNBT());
         compound.putByte("variant", variant);
@@ -236,6 +254,35 @@ public class BotEntity extends CreatureEntity implements IKeyHolder, IHasInvento
 
     public byte getVariant() {
         return variant;
+    }
+
+    @Override
+    public void transferTo(IItemHandler handler) {
+        for (EquipmentSlotType slotType : EquipmentSlotType.values()) {
+            ItemStack stack = getItemStackFromSlot(slotType);
+            if(!stack.isEmpty()) {
+                handler.insertItem(slotType.ordinal(), stack.copy(), false);
+            }
+            setItemStackToSlot(slotType, ItemStack.EMPTY);
+        }
+        int index = EquipmentSlotType.values().length;
+        Inventory storage = botInventory.storageInventory;
+        for (int i = 0; i < storage.getSizeInventory(); i++) {
+            ItemStack stack = storage.getStackInSlot(i);
+            if(!stack.isEmpty()) {
+                handler.insertItem(index + i, stack.copy(), false);
+            }
+        }
+        storage.clear();
+        index += storage.getSizeInventory();
+        Inventory equipment = botInventory.equipmentInventory;
+        for (int i = 0; i < equipment.getSizeInventory(); i++) {
+            ItemStack stack = equipment.getStackInSlot(i);
+            if(!stack.isEmpty()) {
+                handler.insertItem(index + i, stack.copy(), false);
+            }
+        }
+        equipment.clear();
     }
 
     public static class InventoryManager implements EquipmentHolder, INBTSerializable<ListNBT> {

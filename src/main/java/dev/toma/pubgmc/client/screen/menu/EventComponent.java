@@ -1,5 +1,6 @@
 package dev.toma.pubgmc.client.screen.menu;
 
+import dev.toma.pubgmc.client.screen.component.PressableComponent;
 import dev.toma.pubgmc.content.CommunityEvent;
 import dev.toma.pubgmc.util.RenderHelper;
 import net.minecraft.client.Minecraft;

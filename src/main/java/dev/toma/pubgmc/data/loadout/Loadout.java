@@ -9,11 +9,10 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
 public class Loadout {
 
-    private List<LoadoutEntry> entryList;
+    private final List<LoadoutEntry> entryList;
 
     public Loadout(List<LoadoutEntry> entryList) {
         this.entryList = entryList;

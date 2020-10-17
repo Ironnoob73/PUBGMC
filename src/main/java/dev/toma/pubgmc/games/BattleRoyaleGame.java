@@ -14,6 +14,7 @@ import dev.toma.pubgmc.init.PMCEntities;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
@@ -161,6 +162,11 @@ public class BattleRoyaleGame extends Game {
     @Override
     public IObjectManager getObjectManager() {
         return objectManager;
+    }
+
+    @Override
+    public boolean createDeathCrate(LivingEntity entity) {
+        return true;
     }
 
     @Override

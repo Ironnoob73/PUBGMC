@@ -1,17 +1,16 @@
 package dev.toma.pubgmc.games;
 
-import dev.toma.pubgmc.Pubgmc;
-import dev.toma.pubgmc.data.loadout.Loadout;
 import dev.toma.pubgmc.games.args.ArgumentProvider;
 import dev.toma.pubgmc.games.interfaces.IObjectManager;
 import dev.toma.pubgmc.games.interfaces.IPlayerManager;
 import dev.toma.pubgmc.games.interfaces.IZone;
 import dev.toma.pubgmc.games.util.Area;
 import dev.toma.pubgmc.games.util.GameStorage;
+import dev.toma.pubgmc.games.util.LoadoutPlayerManager;
 import dev.toma.pubgmc.init.Games;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -23,12 +22,10 @@ public final class DeathmatchGame extends Game {
     private final IObjectManager objectManager;
     private boolean isRunning;
     private int ticksleft;
-    private Loadout loadout;
 
     public DeathmatchGame(World world) {
         super(Games.DEATHMATCH, world);
-        this.loadout = Pubgmc.getLoadoutManager().getLoadout(new ResourceLocation("pubgmc:deathmatch"));
-        this.playerManager = new DeathmatchPlayerManager(loadout);
+        this.playerManager = new LoadoutPlayerManager("pubgmc:deathmatch");
         this.objectManager = new IObjectManager.DefaultImpl(this);
         this.addListener(playerManager);
     }
@@ -62,6 +59,11 @@ public final class DeathmatchGame extends Game {
     }
 
     @Override
+    public boolean createDeathCrate(LivingEntity entity) {
+        return true;
+    }
+
+    @Override
     public boolean isRunning() {
         return isRunning;
     }
@@ -91,37 +93,5 @@ public final class DeathmatchGame extends Game {
     @Override
     public IZone newZoneInstance(GameStorage storage) {
         return new StaticZone(storage);
-    }
-
-    static class DeathmatchPlayerManager extends IPlayerManager.DefaultImpl {
-
-        private final Loadout loadout;
-
-        DeathmatchPlayerManager(Loadout loadout) {
-            this.loadout = loadout;
-        }
-
-        @Override
-        public void gatherPlayers(World world) {
-            super.gatherPlayers(world);
-            if (loadout != null)
-                for (PlayerEntity entity : getPlayerList()) {
-                    this.loadout.getRandom(entity.world).processFor(entity);
-                }
-        }
-
-        @Override
-        public void handleLogIn(PlayerEntity entity) {
-            super.handleLogIn(entity);
-            if (loadout != null)
-                this.loadout.getRandom(entity.world).processFor(entity);
-        }
-
-        @Override
-        public void handlePlayerRespawn(PlayerEntity player, GameStorage storage) {
-            super.handlePlayerRespawn(player, storage);
-            if (loadout != null)
-                this.loadout.getRandom(player.world).processFor(player);
-        }
     }
 }

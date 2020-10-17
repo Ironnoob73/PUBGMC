@@ -1,4 +1,4 @@
-package dev.toma.pubgmc.client.screen.menu;
+package dev.toma.pubgmc.client.screen.component;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;

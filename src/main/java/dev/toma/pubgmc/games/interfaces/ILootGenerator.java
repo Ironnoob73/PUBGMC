@@ -33,10 +33,10 @@ public interface ILootGenerator extends ITileLoadHandler {
      * game ID and generate loot
      */
     @Override
-    default void load(long key) {
+    default void load(IKeyHolder key) {
         if(!test(key)) { // if ids are different
             generateLoot(); // generate loot content
-            setGameID(key); // set new id to prevent duplicate loot gen calls in same game
+            setGameID(key.getGameID()); // set new id to prevent duplicate loot gen calls in same game
         }
     }
 

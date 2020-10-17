@@ -90,7 +90,7 @@ public class AirdropEntity extends Entity implements IEntityAdditionalSpawnData,
         world.getCapability(WorldDataProvider.CAP).ifPresent(cap -> {
             Game game = cap.getGame();
             if(game != null && game.isRunning()) {
-                if(!game.test(gameID)) {
+                if(!game.test(AirdropEntity.this)) {
                     AirdropEntity.this.remove();
                 }
             }

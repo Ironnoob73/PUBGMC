@@ -2,7 +2,9 @@
     "type": "default",
     "entries": [
         {
-            "weapon": [ {"item": "pubgmc:p92", "nbt": "{ammo:15,firemode:0,attachments:{}}"} ]
+            "weapon": [ {"item": "pubgmc:p92", "nbt": "{ammo:15,firemode:0,attachments:{}}"} ],
+            "armor": [],
+            "helmet": []
         }
     ]
 }

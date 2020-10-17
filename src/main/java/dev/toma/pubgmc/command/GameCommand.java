@@ -194,7 +194,7 @@ public class GameCommand {
             for (Entity entity : entities) {
                 if (entity instanceof IKeyHolder) {
                     IKeyHolder keyHolder = (IKeyHolder) entity;
-                    if (keyHolder.getGameID() > 0 && !keyHolder.test(id)) {
+                    if (keyHolder.getGameID() > 0 && !keyHolder.test(newGame)) {
                         entity.remove();
                     }
                 }

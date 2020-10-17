@@ -1,6 +1,8 @@
 package dev.toma.pubgmc.client.screen.menu;
 
 import com.mojang.blaze3d.platform.GlStateManager;
+import dev.toma.pubgmc.client.screen.ComponentScreen;
+import dev.toma.pubgmc.client.screen.component.ButtonComponent;
 import dev.toma.pubgmc.content.ContentManager;
 import dev.toma.pubgmc.content.ContentResult;
 import dev.toma.pubgmc.util.RenderHelper;

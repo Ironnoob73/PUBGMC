@@ -1,10 +1,10 @@
 package dev.toma.pubgmc.client.model.entity;
 
-import dev.toma.pubgmc.common.entity.vehicle.LandDriveableEntity;
+import dev.toma.pubgmc.common.entity.vehicle.land.UAZEntity;
 import net.minecraft.client.renderer.entity.model.RendererModel;
 import net.minecraft.client.renderer.model.ModelBox;
 
-public class UAZModel extends DriveableModel<LandDriveableEntity.UAZDriveable> {
+public class UAZModel extends DriveableModel<UAZEntity> {
 
     private final RendererModel bone;
     private final RendererModel wheelFR;
@@ -280,7 +280,7 @@ public class UAZModel extends DriveableModel<LandDriveableEntity.UAZDriveable> {
     }
 
     @Override
-    public void doRender(LandDriveableEntity.UAZDriveable entity, float partialTicks) {
+    public void doRender(UAZEntity entity, float partialTicks) {
         bone.render(1f);
         wheelBR.render(1f);
         wheelBL2.render(1f);

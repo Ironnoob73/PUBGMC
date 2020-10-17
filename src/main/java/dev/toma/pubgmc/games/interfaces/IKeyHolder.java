@@ -2,7 +2,7 @@ package dev.toma.pubgmc.games.interfaces;
 
 import java.util.function.Predicate;
 
-public interface IKeyHolder extends Predicate<Long> {
+public interface IKeyHolder extends Predicate<IKeyHolder> {
 
     /**
      * Used to update held gameID in this object
@@ -20,11 +20,10 @@ public interface IKeyHolder extends Predicate<Long> {
 
     /**
      * Compares supplied ID to stored one
-     * @param ID - ID to be compared
      * @return true if {@link #getGameID()} and supplied ID are the same
      */
     @Override
-    default boolean test(Long ID) {
-        return getGameID() == ID;
+    default boolean test(IKeyHolder other) {
+        return getGameID() == other.getGameID() && getGameID() > 0;
     }
 }

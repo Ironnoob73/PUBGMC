@@ -4,7 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import dev.toma.pubgmc.client.screen.menu.Component;
+import dev.toma.pubgmc.client.screen.component.Component;
 import dev.toma.pubgmc.client.screen.menu.EventComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;

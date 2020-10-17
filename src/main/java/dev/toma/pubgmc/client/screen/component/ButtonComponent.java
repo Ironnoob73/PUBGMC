@@ -1,4 +1,4 @@
-package dev.toma.pubgmc.client.screen.menu;
+package dev.toma.pubgmc.client.screen.component;
 
 import dev.toma.pubgmc.util.RenderHelper;
 import net.minecraft.client.Minecraft;

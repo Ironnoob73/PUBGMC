@@ -27,8 +27,8 @@ public interface IObjectManager {
         @Override
         public void handleEntityJoin(Entity entity) {
             if(entity instanceof IKeyHolder) {
-                long key = ((IKeyHolder) entity).getGameID();
-                if(key > 0 && !keyHolder.test(key)) {
+                IKeyHolder key = (IKeyHolder) entity;
+                if(key.getGameID() > 0 && !keyHolder.test(key)) {
                     entity.remove();
                 }
             }
@@ -48,7 +48,7 @@ public interface IObjectManager {
         public void handleTileEntityUpdate(TileEntity tileEntity) {
             if(tileEntity instanceof ITileLoadHandler) {
                 ITileLoadHandler loadHandler = (ITileLoadHandler) tileEntity;
-                loadHandler.load(this.keyHolder.getGameID());
+                loadHandler.load(this.keyHolder);
             }
         }
     }

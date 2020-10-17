@@ -1,5 +1,7 @@
-package dev.toma.pubgmc.client.screen.menu;
+package dev.toma.pubgmc.client.screen;
 
+import dev.toma.pubgmc.client.screen.component.Component;
+import dev.toma.pubgmc.client.screen.component.TickableComponent;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.text.ITextComponent;
 
@@ -63,8 +65,8 @@ public class ComponentScreen extends Screen {
 
     protected final void tickComponents() {
         for (Component component : componentList) {
-            if(component instanceof Component.Tickable) {
-                ((Component.Tickable) component).tickComponent();
+            if(component instanceof TickableComponent) {
+                ((TickableComponent) component).tickComponent();
             }
         }
     }

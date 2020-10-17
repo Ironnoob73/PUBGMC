@@ -15,7 +15,6 @@ import java.util.function.Predicate;
 
 public abstract class AbstractControllableEntity extends Entity implements IControllableEntity {
 
-    public static final DamageSource VEHICLE_DAMAGE = new DamageSource("vehicleCollide");
     public boolean forwardKey;
     public boolean backwardKey;
     public boolean rightKey;

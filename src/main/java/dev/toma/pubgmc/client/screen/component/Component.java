@@ -1,4 +1,4 @@
-package dev.toma.pubgmc.client.screen.menu;
+package dev.toma.pubgmc.client.screen.component;
 
 import dev.toma.pubgmc.util.RenderHelper;
 import net.minecraft.client.Minecraft;
@@ -35,10 +35,5 @@ public class Component {
 
     public boolean allowUnhoveredScrolling() {
         return false;
-    }
-
-    protected interface Tickable {
-
-        void tickComponent();
     }
 }

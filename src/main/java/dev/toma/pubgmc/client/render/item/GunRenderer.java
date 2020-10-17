@@ -17,10 +17,10 @@ import net.minecraft.util.ResourceLocation;
 public abstract class GunRenderer extends ItemStackTileEntityRenderer {
 
     // attachments models
-    protected static final AttachmentModel PISTOL_SUPPRESSOR = new PistolSupressorModel();
-    protected static final AttachmentModel RED_DOT = new RedDotModel();
-    protected static final AttachmentModel SCOPE_15X = new ScopeX15Model();
-    protected static final AttachmentModel VERTICAL_GRIP = new VerticalGripModel();
+    public static final AttachmentModel PISTOL_SUPPRESSOR = new PistolSupressorModel();
+    public static final AttachmentModel RED_DOT = new RedDotModel();
+    public static final AttachmentModel SCOPE_15X = new ScopeX15Model();
+    public static final AttachmentModel VERTICAL_GRIP = new VerticalGripModel();
 
     public abstract AbstractGunModel getModel();
 

@@ -1,5 +1,8 @@
 package dev.toma.pubgmc.client.screen.menu;
 
+import dev.toma.pubgmc.client.screen.ComponentScreen;
+import dev.toma.pubgmc.client.screen.component.ButtonComponent;
+import dev.toma.pubgmc.client.screen.component.PressableComponent;
 import dev.toma.pubgmc.util.RenderHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;

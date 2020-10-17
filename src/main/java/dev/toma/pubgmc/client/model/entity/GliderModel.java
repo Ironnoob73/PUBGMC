@@ -1,11 +1,11 @@
 package dev.toma.pubgmc.client.model.entity;
 
-import dev.toma.pubgmc.common.entity.vehicle.AirDriveableEntity;
+import dev.toma.pubgmc.common.entity.vehicle.air.GliderEntity;
 import net.minecraft.client.renderer.entity.model.RendererModel;
 import net.minecraft.client.renderer.model.ModelBox;
 import net.minecraft.util.math.MathHelper;
 
-public class GliderModel extends DriveableModel<AirDriveableEntity.GliderDriveable> {
+public class GliderModel extends DriveableModel<GliderEntity> {
 
     private final RendererModel main;
     private final RendererModel rotorMain;
@@ -395,10 +395,10 @@ public class GliderModel extends DriveableModel<AirDriveableEntity.GliderDriveab
     }
 
     @Override
-    public void doRender(AirDriveableEntity.GliderDriveable gliderDriveable, float partialTicks) {
-        if(gliderDriveable != null) {
-            float throttle = gliderDriveable.throttle;
-            setRotationAngle(rotorMain, 0, 0, MathHelper.lerp(partialTicks, gliderDriveable.ticksExisted - 1, gliderDriveable.ticksExisted) * throttle * 0.5F);
+    public void doRender(GliderEntity glider, float partialTicks) {
+        if(glider != null) {
+            float throttle = glider.throttle;
+            setRotationAngle(rotorMain, 0, 0, MathHelper.lerp(partialTicks, glider.ticksExisted - 1, glider.ticksExisted) * throttle * 0.5F);
         }
         main.render(1f);
     }

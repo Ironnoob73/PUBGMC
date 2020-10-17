@@ -2,6 +2,7 @@ package dev.toma.pubgmc.common.entity.vehicle;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import dev.toma.pubgmc.client.ClientManager;
+import dev.toma.pubgmc.common.VehicleDamageSource;
 import dev.toma.pubgmc.util.RenderHelper;
 import dev.toma.pubgmc.util.UsefulFunctions;
 import net.minecraft.block.BlockState;
@@ -140,7 +141,7 @@ public abstract class DriveableEntity extends AbstractControllableEntity impleme
     protected void updateMovement() {
         super.updateMovement();
         if(noVerticalKey() || !hasFuel()) {
-            float amount = data.acceleration / 3;
+            float amount = data.acceleration / 2f;
             currentSpeed = Math.abs(currentSpeed - amount) <= amount ? 0.0F : currentSpeed > 0 ? currentSpeed - amount : currentSpeed < 0 ? currentSpeed + amount : 0.0F;
         }
         if(noRotateKey()) {
@@ -162,7 +163,7 @@ public abstract class DriveableEntity extends AbstractControllableEntity impleme
         if(entity != null) {
             float damage = currentSpeed < 0.15F ? 0.0F : currentSpeed * 20.0F;
             if(damage > 0)
-                entity.attackEntityFrom(VEHICLE_DAMAGE, damage);
+                entity.attackEntityFrom(VehicleDamageSource.from(this), damage);
             entity.setMotion(getMotion().inverse().add(0, currentSpeed, 0));
         }
     }
@@ -180,7 +181,7 @@ public abstract class DriveableEntity extends AbstractControllableEntity impleme
             this.attackEntityFrom(DamageSource.FALL, damage);
             for(Entity entity : this.getPassengers()) {
                 if(!entity.isInvulnerable()) {
-                    entity.attackEntityFrom(VEHICLE_DAMAGE, damage / 2.0F);
+                    entity.attackEntityFrom(VehicleDamageSource.from(this), damage / 2.0F);
                 }
             }
             this.currentSpeed = 0.0F;

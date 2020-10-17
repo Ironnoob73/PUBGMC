@@ -1,6 +1,8 @@
 package dev.toma.pubgmc.client.screen.menu;
 
 import dev.toma.pubgmc.Pubgmc;
+import dev.toma.pubgmc.client.screen.ComponentScreen;
+import dev.toma.pubgmc.client.screen.component.*;
 import dev.toma.pubgmc.content.ContentManager;
 import dev.toma.pubgmc.content.ContentResult;
 import dev.toma.pubgmc.content.MenuDisplayContent;
@@ -187,7 +189,7 @@ public class MainMenuScreen extends ComponentScreen implements RefreshListener {
         }
     }
 
-    public static class EventPanelComponent extends Component implements Component.Tickable {
+    public static class EventPanelComponent extends Component implements TickableComponent {
 
         final int count;
         short timer = 100;

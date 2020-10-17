@@ -2,7 +2,7 @@ package dev.toma.pubgmc.content;
 
 import com.google.common.collect.Maps;
 import com.google.gson.*;
-import dev.toma.pubgmc.client.screen.menu.Component;
+import dev.toma.pubgmc.client.screen.component.Component;
 import net.minecraft.util.JSONUtils;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;

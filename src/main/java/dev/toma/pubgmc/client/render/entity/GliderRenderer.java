@@ -5,13 +5,13 @@ import dev.toma.pubgmc.Pubgmc;
 import dev.toma.pubgmc.client.model.entity.DriveableModel;
 import dev.toma.pubgmc.client.model.entity.GliderModel;
 import dev.toma.pubgmc.client.render.DriveableRenderer;
-import dev.toma.pubgmc.common.entity.vehicle.AirDriveableEntity;
+import dev.toma.pubgmc.common.entity.vehicle.air.GliderEntity;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
 
-public class GliderRenderer extends DriveableRenderer<AirDriveableEntity.GliderDriveable> {
+public class GliderRenderer extends DriveableRenderer<GliderEntity> {
 
     private static final ResourceLocation TEXTURE = Pubgmc.makeResource("textures/entity/glider.png");
     public static final GliderModel GLIDER = new GliderModel();
@@ -21,13 +21,13 @@ public class GliderRenderer extends DriveableRenderer<AirDriveableEntity.GliderD
     }
 
     @Override
-    public DriveableModel<AirDriveableEntity.GliderDriveable> getModel() {
+    public DriveableModel<GliderEntity> getModel() {
         return GLIDER;
     }
 
     @Nullable
     @Override
-    protected ResourceLocation getEntityTexture(AirDriveableEntity.GliderDriveable entity) {
+    protected ResourceLocation getEntityTexture(GliderEntity entity) {
         return TEXTURE;
     }
 
