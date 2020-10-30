@@ -2,7 +2,9 @@ package dev.toma.pubgmc.client.screen.util;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import dev.toma.pubgmc.client.screen.ComponentScreen;
+import dev.toma.pubgmc.client.screen.component.ButtonComponent;
 import dev.toma.pubgmc.client.screen.component.Component;
+import dev.toma.pubgmc.client.screen.component.PlainTextComponent;
 import dev.toma.pubgmc.client.screen.component.PressableComponent;
 import dev.toma.pubgmc.common.item.gun.GunItem;
 import dev.toma.pubgmc.util.RenderHelper;
@@ -22,6 +24,7 @@ import java.util.function.Consumer;
 public class AttachmentSetupScreen extends ComponentScreen {
 
     ItemStack stack;
+    Tab[] tabArr = new Tab[2];
     Tab tab;
 
     public AttachmentSetupScreen(ItemStack stack) {
@@ -36,30 +39,36 @@ public class AttachmentSetupScreen extends ComponentScreen {
             minecraft.displayGuiScreen(null);
             minecraft.player.sendStatusMessage(new StringTextComponent(TextFormatting.RED + "Gun not found"), true);
         }
-        int tabs = 3;
+        int tabs = tabArr.length;
         int tabWidth = width / tabs;
-        ViewTab tab1 = new ViewTab(0, 0, tabWidth, 10, p -> {});
-        Tab tab2 = new Tab(tabWidth, 0, tabWidth, 10, p -> {});
-        Tab tab3 = new Tab(2*tabWidth, 0, tabWidth, 10, p -> {});
+        tabArr[0] = new ViewTab(0, 0, tabWidth, 10, p -> setTab(tabArr[0]));
+        tabArr[1] = new SelectAttachmentTab(tabWidth, 0, tabWidth, 10, p -> setTab(tabArr[1]), this);
         if(tab == null) {
-            this.tab = tab1;
+            this.tab = tabArr[0];
         }
-        addComponent(tab1);
-        addComponent(tab2);
-        addComponent(tab3);
+        for (Tab t : tabArr)
+            addComponent(t);
         tab.init(stack);
     }
 
     @Override
     public void render(int mouseX, int mouseY, float partialTicks) {
         RenderHelper.drawColoredShape(0, 0, width, height, 0.0F, 0.0F, 0.0F, 0.75F);
-        tab.draw(stack, mouseX, mouseY, partialTicks);
         super.render(mouseX, mouseY, partialTicks);
+        tab.draw(stack, mouseX, mouseY, partialTicks);
     }
 
     public void setTab(Tab tab) {
         this.tab = tab;
         this.init(minecraft, width, height);
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
+        if(tab.clicked(mouseX, mouseY, mouseButton)) {
+            return true;
+        }
+        return super.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
     static class Tab extends PressableComponent {
@@ -77,7 +86,10 @@ public class AttachmentSetupScreen extends ComponentScreen {
         public void init(ItemStack stack) {}
 
         public void draw(ItemStack stack, int mouseX, int mouseY, float partialTicks) {
-            Minecraft mc = Minecraft.getInstance();
+        }
+
+        @Override
+        public void draw(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
             RenderHelper.drawColoredShape(x, y, x + width, y + height, 0.0F, 0.0F, 0.0F, 1.0F);
             mc.fontRenderer.drawString(text, x + (width - mc.fontRenderer.getStringWidth(text)) / 2.0f, y + 2, 0xffffff);
         }
@@ -87,10 +99,121 @@ public class AttachmentSetupScreen extends ComponentScreen {
         }
     }
 
-    static class SelectAttachmentTab {
+    static class SelectAttachmentTab extends Tab {
 
-        public SelectAttachmentTab() {
+        private final AttachmentSetupScreen screen;
+        private final AttachmentSettings settings = AttachmentSettings.instance();
+        private final List<Component> components = new ArrayList<>();
 
+        public SelectAttachmentTab(int x, int y, int w, int h, Consumer<PressableComponent> consumer, AttachmentSetupScreen screen) {
+            super(x, y, w, h, consumer);
+            setText("Render");
+            this.screen = screen;
+        }
+
+        @Override
+        public boolean clicked(double mouseX, double mouseY, int buttonID) {
+            for (Component component : components) {
+                if(component.isMouseOver(mouseX, mouseY)) {
+                    component.handleClicked(mouseX, mouseY, buttonID);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public void init(ItemStack stack) {
+            components.clear();
+            int j = 0;
+            for (AttachmentSettings.ModelSettings settings : this.settings.settingsMap.values()) {
+                components.add(new CheckBoxComponent(25, 25 + j * 20, 20, 20, settings));
+                components.add(new OptionsComponent(200, 25 + j * 20, 20, 20, settings, screen));
+                ++j;
+            }
+        }
+
+        @Override
+        public void draw(ItemStack stack, int mouseX, int mouseY, float partialTicks) {
+            components.forEach(c -> c.draw(Minecraft.getInstance(), mouseX, mouseY, partialTicks));
+        }
+
+        static class OptionsComponent extends ButtonComponent {
+
+            public OptionsComponent(int x, int y, int w, int h, AttachmentSettings.ModelSettings settings, AttachmentSetupScreen screen) {
+                super(x, y, w, h, "...", c -> screen.setTab(new OptionsTab(settings)));
+            }
+        }
+
+        static class OptionsTab extends Tab {
+
+            final AttachmentSettings.ModelSettings settings;
+            final List<Component> componentList = new ArrayList<>();
+
+            public OptionsTab(AttachmentSettings.ModelSettings settings) {
+                super(-1, -1, 0, 0, c -> {});
+                this.settings = settings;
+            }
+
+            @Override
+            public void init(ItemStack stack) {
+                componentList.clear();
+                componentList.add(new PlainTextComponent(25, 25, 50, 20, "Position", false));
+                componentList.add(new PlainTextComponent(35, 40, 20, 20, "X", false));
+                componentList.add(new PlainTextComponent(35, 55, 20, 20, "Y", false));
+                componentList.add(new PlainTextComponent(35, 70, 20, 20, "Z", false));
+                componentList.add(new PlainTextComponent(25, 100, 50, 20, "Scale", false));
+                componentList.add(new PlainTextComponent(25, 130, 50, 20, "Rotation", false));
+                componentList.add(new PlainTextComponent(35, 145, 20, 20, "X", false));
+                componentList.add(new PlainTextComponent(35, 160, 20, 20, "Y", false));
+                componentList.add(new PlainTextComponent(35, 175, 20, 20, "Z", false));
+            }
+
+            @Override
+            public void draw(ItemStack stack, int mouseX, int mouseY, float partialTicks) {
+                for (Component component : componentList) {
+                    component.draw(Minecraft.getInstance(), mouseX, mouseY, partialTicks);
+                }
+            }
+
+            @Override
+            public void draw(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
+            }
+
+            @Override
+            public boolean clicked(double mouseX, double mouseY, int buttonID) {
+                for (Component component : componentList) {
+                    if(component.isMouseOver(mouseX, mouseY)) {
+                        component.handleClicked(mouseX, mouseY, buttonID);
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
+
+        static class CheckBoxComponent extends PressableComponent {
+
+            final AttachmentSettings.ModelSettings settings;
+
+            CheckBoxComponent(int x, int y, int w, int h, AttachmentSettings.ModelSettings settings) {
+                super(x, y, w, h, c -> settings.setEnabled(!settings.isEnabled()));
+                this.settings = settings;
+            }
+
+            @Override
+            public void draw(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
+                RenderHelper.drawColoredShape(x, y, x + 16, y + 16, 0.2F, 0.2F, 0.2F, 1.0F);
+                if(settings.isEnabled()) {
+                    RenderHelper.drawColoredShape(x + 2, y + 2, x + 14, y + 14, 1.0F, 1.0F, 1.0F, 1.0F);
+                }
+                mc.fontRenderer.drawString(settings.getName(), x + 20, y + 4, 0xffffff);
+            }
+
+            @Override
+            public boolean isMouseOver(double mouseX, double mouseY) {
+                return mouseX >= x && mouseX <= x + 16 && mouseY >= y && mouseY <= y + 16;
+            }
         }
     }
 
@@ -124,6 +247,7 @@ public class AttachmentSetupScreen extends ComponentScreen {
             for (Component component : components) {
                 component.draw(Minecraft.getInstance(), mouseX, mouseY, partialTicks);
             }
+            super.draw(stack, mouseX, mouseY, partialTicks);
         }
 
         static class DisplayComponent extends Component {

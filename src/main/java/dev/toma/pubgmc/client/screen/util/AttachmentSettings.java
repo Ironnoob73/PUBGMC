@@ -85,6 +85,10 @@ public class AttachmentSettings {
             this.enabled = enabled;
         }
 
+        public boolean isEnabled() {
+            return enabled;
+        }
+
         public void setPosition(Vec3d pos) {
             this.position = pos;
         }
