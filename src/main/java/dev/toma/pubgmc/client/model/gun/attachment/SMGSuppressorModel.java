@@ -4,13 +4,13 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.renderer.entity.model.RendererModel;
 import net.minecraft.client.renderer.model.ModelBox;
 
-public class PistolSupressorModel extends AttachmentModel {
+public class SMGSuppressorModel extends AttachmentModel {
 
     private final RendererModel bone;
     private final RendererModel bone2;
     private final RendererModel bone3;
 
-    public PistolSupressorModel() {
+    public SMGSuppressorModel() {
         textureWidth = 128;
         textureHeight = 128;
 

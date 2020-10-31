@@ -3,8 +3,8 @@ package dev.toma.pubgmc.client.screen.util;
 import com.mojang.blaze3d.platform.GlStateManager;
 import dev.toma.pubgmc.client.model.gun.attachment.AttachmentModel;
 import dev.toma.pubgmc.client.render.item.GunRenderer;
-import net.minecraft.util.math.Vec3d;
 
+import javax.vecmath.Vector3f;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -29,24 +29,39 @@ public class AttachmentSettings {
 
     AttachmentSettings() {
         settingsMap.put(RED_DOT, new ModelSettings("Red Dot", () -> GunRenderer.RED_DOT));
+        settingsMap.put(HOLO, new ModelSettings("Holographic", () -> GunRenderer.HOLO));
+        settingsMap.put(X2, new ModelSettings("2x", () -> GunRenderer.SCOPE_2X));
+        settingsMap.put(X4, new ModelSettings("4x", () -> GunRenderer.SCOPE_4X));
+        settingsMap.put(X8, new ModelSettings("8x", () -> GunRenderer.SCOPE_8X));
         settingsMap.put(X15, new ModelSettings("15x", () -> GunRenderer.SCOPE_15X));
-        settingsMap.put(SUPPRESSOR_SMG, new ModelSettings("Suppressor (SMG)", () -> GunRenderer.PISTOL_SUPPRESSOR));
+        settingsMap.put(SUPPRESSOR_SMG, new ModelSettings("Suppressor (SMG)", () -> GunRenderer.SMG_SUPPRESSOR));
+        settingsMap.put(SUPPRESSOR_AR, new ModelSettings("Suppressor (AR)", () -> GunRenderer.AR_SUPPRESSOR));
+        settingsMap.put(SUPPRESSOR_SR, new ModelSettings("Suppressor (SR)", () -> GunRenderer.SR_SUPPRESSOR));
         settingsMap.put(VERTICAL_GRIP, new ModelSettings("Vertical grip", () -> GunRenderer.VERTICAL_GRIP));
+        settingsMap.put(ANGLED_GRIP, new ModelSettings("Angled grip", () -> GunRenderer.ANGLED_GRIP));
     }
 
     public static AttachmentSettings instance() {
         return INSTANCE;
     }
 
+    public void renderAll() {
+        for (ModelSettings settings : settingsMap.values()) {
+            if(settings.isEnabled()) {
+                settings.render();
+            }
+        }
+    }
+
     public static class ModelSettings {
         private final String name;
         private final Supplier<AttachmentModel> modelReference;
         private boolean enabled = false;
-        private Vec3d position = Vec3d.ZERO;
-        private Vec3d scale = new Vec3d(1.0, 1.0, 1.0);
-        private double rotX;
-        private double rotY;
-        private double rotZ;
+        private Vector3f position = new Vector3f();
+        private Vector3f scale = new Vector3f(1.0F, 1.0F, 1.0F);
+        private float rotX;
+        private float rotY;
+        private float rotZ;
 
         ModelSettings(String name, Supplier<AttachmentModel> supplier) {
             this.name = name;
@@ -61,24 +76,47 @@ public class AttachmentSettings {
             if(!enabled)
                 return;
             GlStateManager.pushMatrix();
-            GlStateManager.translated(position.x, position.y, position.z);
-            GlStateManager.scaled(scale.x, scale.y, scale.z);
+            GlStateManager.translatef(position.x, position.y, position.z);
+            GlStateManager.scalef(scale.x, scale.y, scale.z);
             if(rotX != 0)
-                GlStateManager.rotated(rotX, 1.0, 0.0, 0.0);
+                GlStateManager.rotatef(rotX, 1.0F, 0.0F, 0.0F);
             if(rotY != 0)
-                GlStateManager.rotated(rotY, 0.0, 1.0, 0.0);
+                GlStateManager.rotatef(rotY, 0.0F, 1.0F, 0.0F);
             if(rotZ != 0)
-                GlStateManager.rotated(rotZ, 0.0, 0.0, 1.0);
+                GlStateManager.rotatef(rotZ, 0.0F, 0.0F, 1.0F);
             this.modelReference.get().doRender();
             GlStateManager.popMatrix();
         }
 
         public void reset() {
-            this.position = Vec3d.ZERO;
-            this.scale = new Vec3d(1.0, 1.0, 1.0);
+            this.position = new Vector3f();
+            this.scale = new Vector3f(1.0F, 1.0F, 1.0F);
             this.rotX = 0;
             this.rotY = 0;
             this.rotZ = 0;
+        }
+
+        public boolean isModified() {
+            return !position.equals(new Vector3f()) || !scale.equals(new Vector3f(1.0F, 1.0F, 1.0F)) || rotX != 0 || rotY != 0 || rotZ != 0;
+        }
+
+        public String getString() {
+            StringBuilder builder = new StringBuilder();
+            builder.append("GlStateManager.pushMatrix();\n");
+            if(!position.equals(new Vector3f())) {
+                builder.append("GlStateManager.translatef(").append(position.x).append("F, ").append(position.y).append("F, ").append(position.z).append("F);\n");
+            }
+            if(!scale.equals(new Vector3f(1.0F, 1.0F, 1.0F))) {
+                builder.append("GlStateManager.scalef(").append(scale.x).append("F, ").append(scale.y).append("F, ").append(scale.z).append("F);\n");
+            }
+            if(rotX != 0)
+                builder.append("GlStateManager.rotatef(").append(rotX).append("F, 1.0F, 0.0F, 0.0F);\n");
+            if(rotY != 0)
+                builder.append("GlStateManager.rotatef(").append(rotY).append("F, 0.0F, 1.0F, 0.0F);\n");
+            if(rotZ != 0)
+                builder.append("GlStateManager.rotatef(").append(rotZ).append("F, 0.0F, 0.0F, 1.0F);\n");
+            builder.append("GlStateManager.popMatrix();\n");
+            return builder.toString();
         }
 
         public void setEnabled(boolean enabled) {
@@ -89,24 +127,76 @@ public class AttachmentSettings {
             return enabled;
         }
 
-        public void setPosition(Vec3d pos) {
-            this.position = pos;
+        public void setPosX(float x) {
+            this.position.x = x;
         }
 
-        public void setScale(Vec3d scale) {
-            this.scale = scale;
+        public void setPosY(float y) {
+            this.position.y = y;
         }
 
-        public void setRotX(double rotX) {
+        public void setPosZ(float z) {
+            this.position.z = z;
+        }
+
+        public void setScaleX(float x) {
+            this.scale.x = x;
+        }
+
+        public void setScaleY(float y) {
+            this.scale.y = y;
+        }
+
+        public void setScaleZ(float z) {
+            this.scale.z = z;
+        }
+
+        public void setRotX(float rotX) {
             this.rotX = rotX;
         }
 
-        public void setRotY(double rotY) {
+        public void setRotY(float rotY) {
             this.rotY = rotY;
         }
 
-        public void setRotZ(double rotZ) {
+        public void setRotZ(float rotZ) {
             this.rotZ = rotZ;
+        }
+
+        public float getPosX() {
+            return position.x;
+        }
+
+        public float getPosY() {
+            return position.y;
+        }
+
+        public float getPosZ() {
+            return position.z;
+        }
+
+        public float getScaleX() {
+            return scale.x;
+        }
+
+        public float getScaleY() {
+            return scale.y;
+        }
+
+        public float getScaleZ() {
+            return scale.z;
+        }
+
+        public float getRotX() {
+            return rotX;
+        }
+
+        public float getRotY() {
+            return rotY;
+        }
+
+        public float getRotZ() {
+            return rotZ;
         }
     }
 }

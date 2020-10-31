@@ -17,10 +17,17 @@ import net.minecraft.util.ResourceLocation;
 public abstract class GunRenderer extends ItemStackTileEntityRenderer {
 
     // attachments models
-    public static final AttachmentModel PISTOL_SUPPRESSOR = new PistolSupressorModel();
+    public static final AttachmentModel SMG_SUPPRESSOR = new SMGSuppressorModel();
+    public static final AttachmentModel AR_SUPPRESSOR = new ARSuppressorModel();
+    public static final AttachmentModel SR_SUPPRESSOR = new SRSuppressorModel();
     public static final AttachmentModel RED_DOT = new RedDotModel();
+    public static final AttachmentModel HOLO = new HolographicModel();
+    public static final AttachmentModel SCOPE_2X = new ScopeX2Model();
+    public static final AttachmentModel SCOPE_4X = new ScopeX4Model();
+    public static final AttachmentModel SCOPE_8X = new ScopeX8Model();
     public static final AttachmentModel SCOPE_15X = new ScopeX15Model();
     public static final AttachmentModel VERTICAL_GRIP = new VerticalGripModel();
+    public static final AttachmentModel ANGLED_GRIP = new AngledGripModel();
 
     public abstract AbstractGunModel getModel();
 
@@ -81,7 +88,7 @@ public abstract class GunRenderer extends ItemStackTileEntityRenderer {
                 GlStateManager.popMatrix();
             }
             if(AttachmentHelper.hasSilencer(item, stack)) {
-                PISTOL_SUPPRESSOR.doRender();
+                SMG_SUPPRESSOR.doRender();
             }
         }
     }

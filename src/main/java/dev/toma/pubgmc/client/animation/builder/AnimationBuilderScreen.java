@@ -102,18 +102,6 @@ public class AnimationBuilderScreen extends Screen {
             BuilderData.part = BuilderData.Part.ITEM;
             init();
         }).setState(BuilderData.part == BuilderData.Part.ITEM));
-
-        Item item = minecraft.player.getHeldItemMainhand().getItem();
-        ItemStackTileEntityRenderer ister = item.getTileEntityItemStackRenderer();
-        if(ister instanceof GunRenderer) {
-            AbstractGunModel gunModel = ((GunRenderer) ister).getModel();
-            Map<Integer, RendererModel> map = gunModel.getAnimatedPartMap();
-            int j = 0;
-            for(int path : map.keySet()) {
-                addComponent(new UIComponent(center + 40, 195 + j * 25, 80, 20, j + ""));
-                ++j;
-            }
-        }
     }
 
     @Override

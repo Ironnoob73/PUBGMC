@@ -10,16 +10,21 @@ import dev.toma.pubgmc.common.item.gun.GunItem;
 import dev.toma.pubgmc.util.RenderHelper;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import org.lwjgl.glfw.GLFW;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class AttachmentSetupScreen extends ComponentScreen {
 
@@ -69,6 +74,40 @@ public class AttachmentSetupScreen extends ComponentScreen {
             return true;
         }
         return super.mouseClicked(mouseX, mouseY, mouseButton);
+    }
+
+    @Override
+    public boolean keyPressed(int p_keyPressed_1_, int p_keyPressed_2_, int p_keyPressed_3_) {
+        if(p_keyPressed_1_ == GLFW.GLFW_KEY_UP) {
+            forEachAttachment(settings -> settings.setPosY(settings.getPosY() + move()));
+        } else if(p_keyPressed_1_ == GLFW.GLFW_KEY_DOWN) {
+            forEachAttachment(settings -> settings.setPosY(settings.getPosY() - move()));
+        } else if(p_keyPressed_1_ == GLFW.GLFW_KEY_RIGHT) {
+            forEachAttachment(settings -> settings.setPosX(settings.getPosX() + move()));
+        } else if(p_keyPressed_1_ == GLFW.GLFW_KEY_LEFT) {
+            forEachAttachment(settings -> settings.setPosX(settings.getPosX() - move()));
+        } else if(p_keyPressed_1_ == GLFW.GLFW_KEY_KP_MULTIPLY) {
+            forEachAttachment(settings -> settings.setPosZ(settings.getPosZ() + move()));
+        } else if(p_keyPressed_1_ == GLFW.GLFW_KEY_KP_DIVIDE) {
+            forEachAttachment(settings -> settings.setPosZ(settings.getPosZ() - move()));
+        }
+        return super.keyPressed(p_keyPressed_1_, p_keyPressed_2_, p_keyPressed_3_);
+    }
+
+    static void forEachAttachment(Consumer<AttachmentSettings.ModelSettings> consumer) {
+        for (AttachmentSettings.ModelSettings settings : AttachmentSettings.instance().settingsMap.values()) {
+            if(settings.isEnabled()) {
+                consumer.accept(settings);
+            }
+        }
+    }
+
+    static float move() {
+        if(hasShiftDown()) {
+            return 0.025F;
+        } else if(hasControlDown()) {
+            return 0.01F;
+        } else return 0.1F;
     }
 
     static class Tab extends PressableComponent {
@@ -129,8 +168,18 @@ public class AttachmentSetupScreen extends ComponentScreen {
             for (AttachmentSettings.ModelSettings settings : this.settings.settingsMap.values()) {
                 components.add(new CheckBoxComponent(25, 25 + j * 20, 20, 20, settings));
                 components.add(new OptionsComponent(200, 25 + j * 20, 20, 20, settings, screen));
+                components.add(new ButtonComponent(225, 25 + j * 20, 40, 20, "Reset", c -> settings.reset()));
                 ++j;
             }
+            components.add(new ButtonComponent(300, 25, 100, 20, "Copy settings", c -> {
+                StringBuilder builder = new StringBuilder();
+                for(AttachmentSettings.ModelSettings settings : settings.settingsMap.values()) {
+                    if(settings.isModified()) {
+                        builder.append(settings.getString()).append("\n");
+                    }
+                }
+                Minecraft.getInstance().keyboardListener.setClipboardString(builder.toString());
+            }));
         }
 
         @Override
@@ -158,15 +207,27 @@ public class AttachmentSetupScreen extends ComponentScreen {
             @Override
             public void init(ItemStack stack) {
                 componentList.clear();
-                componentList.add(new PlainTextComponent(25, 25, 50, 20, "Position", false));
-                componentList.add(new PlainTextComponent(35, 40, 20, 20, "X", false));
-                componentList.add(new PlainTextComponent(35, 55, 20, 20, "Y", false));
-                componentList.add(new PlainTextComponent(35, 70, 20, 20, "Z", false));
-                componentList.add(new PlainTextComponent(25, 100, 50, 20, "Scale", false));
-                componentList.add(new PlainTextComponent(25, 130, 50, 20, "Rotation", false));
-                componentList.add(new PlainTextComponent(35, 145, 20, 20, "X", false));
-                componentList.add(new PlainTextComponent(35, 160, 20, 20, "Y", false));
-                componentList.add(new PlainTextComponent(35, 175, 20, 20, "Z", false));
+                componentList.add(new PlainTextComponent(25, 25, 5, 20, "Position", false));
+                componentList.add(new PlainTextComponent(35, 50, 5, 20, "X", false));
+                componentList.add(new ValueEditComponent(50, 50, 100, 20, settings, AttachmentSettings.ModelSettings::getPosX, AttachmentSettings.ModelSettings::setPosX));
+                componentList.add(new PlainTextComponent(35, 75, 5, 20, "Y", false));
+                componentList.add(new ValueEditComponent(50, 75, 100, 20, settings, AttachmentSettings.ModelSettings::getPosY, AttachmentSettings.ModelSettings::setPosY));
+                componentList.add(new PlainTextComponent(35, 100, 5, 20, "Z", false));
+                componentList.add(new ValueEditComponent(50, 100, 100, 20, settings, AttachmentSettings.ModelSettings::getPosZ, AttachmentSettings.ModelSettings::setPosZ));
+                componentList.add(new PlainTextComponent(25, 125, 5, 20, "Scale", false));
+                componentList.add(new PlainTextComponent(35, 150, 5, 20, "X", false));
+                componentList.add(new ValueEditComponent(50, 150, 100, 20, settings, AttachmentSettings.ModelSettings::getScaleX, AttachmentSettings.ModelSettings::setScaleX));
+                componentList.add(new PlainTextComponent(35, 175, 5, 20, "Y", false));
+                componentList.add(new ValueEditComponent(50, 175, 100, 20, settings, AttachmentSettings.ModelSettings::getScaleY, AttachmentSettings.ModelSettings::setScaleY));
+                componentList.add(new PlainTextComponent(35, 200, 5, 20, "Z", false));
+                componentList.add(new ValueEditComponent(50, 200, 100, 20, settings, AttachmentSettings.ModelSettings::getScaleZ, AttachmentSettings.ModelSettings::setScaleZ));
+                componentList.add(new PlainTextComponent(225, 25, 5, 20, "Rotation", false));
+                componentList.add(new PlainTextComponent(235, 50, 2, 20, "X", false));
+                componentList.add(new ValueEditComponent(250, 50, 100, 20, settings, AttachmentSettings.ModelSettings::getRotX, AttachmentSettings.ModelSettings::setRotX));
+                componentList.add(new PlainTextComponent(235, 75, 2, 20, "Y", false));
+                componentList.add(new ValueEditComponent(250, 75, 100, 20, settings, AttachmentSettings.ModelSettings::getRotY, AttachmentSettings.ModelSettings::setRotY));
+                componentList.add(new PlainTextComponent(235, 100, 2, 20, "Z", false));
+                componentList.add(new ValueEditComponent(250, 100, 100, 20, settings, AttachmentSettings.ModelSettings::getRotZ, AttachmentSettings.ModelSettings::setRotZ));
             }
 
             @Override
@@ -189,6 +250,84 @@ public class AttachmentSetupScreen extends ComponentScreen {
                     }
                 }
                 return false;
+            }
+
+            static class ValueEditComponent extends PressableComponent {
+
+                private static final DecimalFormat df = new DecimalFormat("##.###");
+                private final AttachmentSettings.ModelSettings settings;
+                private final Function<AttachmentSettings.ModelSettings, Float> getter;
+                private final BiConsumer<AttachmentSettings.ModelSettings, Float> setter;
+                private float min = -10.0F, max = 10.0F;
+                private float normal = 0.1F, shift = 0.025F, control = 0.01F;
+
+                public ValueEditComponent(int x,
+                                          int y,
+                                          int w,
+                                          int h,
+                                          AttachmentSettings.ModelSettings settings,
+                                          Function<AttachmentSettings.ModelSettings, Float> getter,
+                                          BiConsumer<AttachmentSettings.ModelSettings, Float> setter) {
+
+                    super(x, y, w, h, null);
+                    this.settings = settings;
+                    this.getter = getter;
+                    this.setter = setter;
+                }
+
+                public ValueEditComponent lim(float min, float max) {
+                    this.min = min;
+                    this.max = max;
+                    return this;
+                }
+
+                public ValueEditComponent vals(float normal, float shift, float control) {
+                    this.normal = normal;
+                    this.shift = shift;
+                    this.control = control;
+                    return this;
+                }
+
+                @Override
+                public void draw(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
+                    super.draw(mc, mouseX, mouseY, partialTicks);
+                    FontRenderer renderer = mc.fontRenderer;
+                    float centerY = y + (height - renderer.FONT_HEIGHT) / 2.0F;
+                    renderer.drawString("<", x + 3, centerY, 0xffffff);
+                    renderer.drawString(">", x + width - 7, centerY, 0xffffff);
+                    float value = getter.apply(settings);
+                    String valueText = df.format(value);
+                    renderer.drawString(valueText, x + 10 + (width - 20 - renderer.getStringWidth(valueText)) / 2.0F, centerY, 0xffffff);
+                }
+
+                @Override
+                public void handleClicked(double mouseX, double mouseY, int mouseButton) {
+                    if(mouseX >= x && mouseX <= x + 10 && mouseY >= y && mouseY <= y + height) {
+                        // subtract
+                        float f = getModifierValue();
+                        float f1 = fixValue(getter.apply(settings) - f);
+                        setter.accept(settings, f1);
+                        playPressSound();
+                    } else if(mouseX >= x + width - 10 && x <= x + width && mouseY >= y && mouseY <= y + height) {
+                        // add
+                        float f = getModifierValue();
+                        float f1 = fixValue(getter.apply(settings) + f);
+                        setter.accept(settings, f1);
+                        playPressSound();
+                    }
+                }
+
+                float fixValue(float in) {
+                    return in < min ? min : Math.min(in, max);
+                }
+
+                float getModifierValue() {
+                    if(hasControlDown()) {
+                        return control;
+                    } else if(hasShiftDown()) {
+                        return shift;
+                    } else return normal;
+                }
             }
         }
 
