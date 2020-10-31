@@ -255,6 +255,9 @@ public class MainMenuScreen extends ComponentScreen implements RefreshListener {
             renderer.drawString(TextFormatting.BOLD + "Events & Announcements", x + 4, y + 4, 0xffffff);
             if(count > 0) {
                 msgComponents.get(currentMsg).draw(mc, mouseX, mouseY, partialTicks);
+            } else {
+                String text = TextFormatting.BOLD + "No events";
+                renderer.drawStringWithShadow(text, x + (width - renderer.getStringWidth(text)) / 2.0F, y + (height - renderer.FONT_HEIGHT) / 2.0F, 0xff3333);
             }
             for (Component child : children) {
                 child.draw(mc, mouseX, mouseY, partialTicks);
