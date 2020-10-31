@@ -1,6 +1,7 @@
 package dev.toma.pubgmc;
 
 import dev.toma.pubgmc.client.ScopeInfo;
+import dev.toma.pubgmc.client.animation.gun.AnimationPackDeagle;
 import dev.toma.pubgmc.client.animation.gun.AnimationPackP18C;
 import dev.toma.pubgmc.client.animation.gun.AnimationPackP1911;
 import dev.toma.pubgmc.client.animation.gun.AnimationPackP92;
@@ -167,7 +168,7 @@ public class RegistryHandler {
                             .firerate(1)
                             .firemodes(Firemode.SINGLE, Firemode::singleMode)
                             .ammo(AmmoType.AMMO_45ACP, (gunItem, stack) -> gunItem.getAttachment(AttachmentCategory.MAGAZINE, stack).isExtended() ? 12 : 7)
-                            .reload(ReloadManager.Magazine.instance, b -> b ? 30 : 40)
+                            .reload(ReloadManager.Magazine.instance, q -> q ? 30 : 40)
                             .ister(() -> GunRenderer.P1911Renderer::new)
                             .attachments()
                             .barrel(() -> new AttachmentItem.Barrel[] {SUPPRESSOR_SMG})
@@ -186,7 +187,7 @@ public class RegistryHandler {
                             .firerate(1)
                             .firemodes(Firemode.SINGLE, Firemode::singleToAuto)
                             .ammo(AmmoType.AMMO_9MM, (gunItem, stack) -> gunItem.getAttachment(AttachmentCategory.MAGAZINE, stack).isExtended() ? 23 : 18)
-                            .reload(ReloadManager.Magazine.instance, b -> b ? 30 : 40)
+                            .reload(ReloadManager.Magazine.instance, q -> q ? 30 : 40)
                             .ister(() -> GunRenderer.P18CRenderer::new)
                             .attachments()
                             .barrel(() -> new AttachmentItem.Barrel[] {SUPPRESSOR_SMG})
@@ -198,6 +199,24 @@ public class RegistryHandler {
                             .shootingVolume(s -> s ? 5.0F : 9.0F)
                             .reloadingSound(q -> q ? P18C_RELOAD_FAST : P18C_RELOAD)
                             .build("p18c"),
+                    new GunItem.GunBuilder()
+                            .category(GunCategory.PISTOL)
+                            .gunProperties(8.0F, 2.5F, 14.0F, 0.05F, 3)
+                            .recoil(2.6F, 0.7F)
+                            .firerate(4)
+                            .firemodes(Firemode.SINGLE, Firemode::singleMode)
+                            .ammo(AmmoType.AMMO_45ACP, (gunItem, stack) -> gunItem.getAttachment(AttachmentCategory.MAGAZINE, stack).isExtended() ? 12 : 7)
+                            .reload(ReloadManager.Magazine.instance, q -> q ? 30 : 40)
+                            .ister(() -> GunRenderer.DeagleRenderer::new)
+                            .attachments()
+                            .scope(() -> new AttachmentItem.Scope[]{RED_DOT})
+                            .magazine(() -> new AttachmentItem.Magazine[]{QUICKDRAW_SMG, EXTENDED_SMG, QUICKDRAW_EXTENDED_SMG})
+                            .build()
+                            .animations(() -> () -> AnimationPackDeagle::new)
+                            .shootingSound(s -> DEAGLE_SHOOT)
+                            .shootingVolume(s -> 9.0F)
+                            .reloadingSound(q -> q ? DEAGLE_RELOAD_FAST : DEAGLE_RELOAD)
+                            .build("deagle"),
                     new BackpackItem("small_backpack_desert", BackpackSlotItem.BackpackType.SMALL, BackpackItem.Variant.DESERT),
                     new BackpackItem("medium_backpack_desert", BackpackSlotItem.BackpackType.MEDIUM, BackpackItem.Variant.DESERT),
                     new BackpackItem("large_backpack_desert", BackpackSlotItem.BackpackType.LARGE, BackpackItem.Variant.DESERT),
@@ -264,7 +283,6 @@ public class RegistryHandler {
                     sound("p18c_reload"),
                     sound("p18c_reload_fast"),
                     sound("deagle_shoot"),
-                    sound("deagle_shoot_silent"),
                     sound("deagle_reload"),
                     sound("deagle_reload_fast"),
                     sound("uaz_idle"),

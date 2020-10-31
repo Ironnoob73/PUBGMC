@@ -21,7 +21,6 @@ public class PMCSounds {
     public static final SoundEvent P18C_RELOAD = null;
     public static final SoundEvent P18C_RELOAD_FAST = null;
     public static final SoundEvent DEAGLE_SHOOT = null;
-    public static final SoundEvent DEAGLE_SHOOT_SILENT = null;
     public static final SoundEvent DEAGLE_RELOAD = null;
     public static final SoundEvent DEAGLE_RELOAD_FAST = null;
     public static final SoundEvent UAZ_IDLE = null;
