@@ -48,6 +48,12 @@ public abstract class AbstractGunModel extends Model {
         this.listeningTo = new LazyLoader<>(supplier);
     }
 
+    public static void setRotationAngle(RendererModel model, float x, float y, float z) {
+        model.rotateAngleX = x;
+        model.rotateAngleY = y;
+        model.rotateAngleZ = z;
+    }
+
     public Map<Integer, RendererModel> getAnimatedPartMap() {
         return animatedPartMap;
     }

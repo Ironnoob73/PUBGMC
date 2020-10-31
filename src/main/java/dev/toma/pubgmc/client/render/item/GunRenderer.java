@@ -2,9 +2,9 @@ package dev.toma.pubgmc.client.render.item;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import dev.toma.pubgmc.Pubgmc;
-import dev.toma.pubgmc.client.model.gun.AbstractGunModel;
-import dev.toma.pubgmc.client.model.gun.P92Model;
+import dev.toma.pubgmc.client.model.gun.*;
 import dev.toma.pubgmc.client.model.gun.attachment.*;
+import dev.toma.pubgmc.client.screen.util.AttachmentSettings;
 import dev.toma.pubgmc.common.item.gun.GunItem;
 import dev.toma.pubgmc.common.item.gun.attachment.AttachmentCategory;
 import dev.toma.pubgmc.common.item.gun.attachment.AttachmentItem;
@@ -29,14 +29,30 @@ public abstract class GunRenderer extends ItemStackTileEntityRenderer {
     public static final AttachmentModel VERTICAL_GRIP = new VerticalGripModel();
     public static final AttachmentModel ANGLED_GRIP = new AngledGripModel();
 
-    public abstract AbstractGunModel getModel();
+    private final AbstractGunModel model;
+    private final ResourceLocation location;
 
-    public abstract ResourceLocation getTexture();
+    public GunRenderer() {
+        this.model = createModel();
+        this.location = createTexture();
+    }
+
+    public abstract AbstractGunModel createModel();
+
+    public abstract ResourceLocation createTexture();
 
     protected abstract void renderAttachments(GunItem item, ItemStack stack);
 
     public void offsetModel() {
 
+    }
+
+    public AbstractGunModel getModel() {
+        return model;
+    }
+
+    public ResourceLocation getTexture() {
+        return location;
     }
 
     @Override
@@ -63,19 +79,18 @@ public abstract class GunRenderer extends ItemStackTileEntityRenderer {
         return gun.getAttachment(category, stack) == item;
     }
 
+    /* ============================= RENDERERS ================================== */
+
     public static class P92Renderer extends GunRenderer {
 
-        private final P92Model model = new P92Model();
-        private final ResourceLocation texture = gunResource("p92");
-
         @Override
-        public P92Model getModel() {
-            return model;
+        public AbstractGunModel createModel() {
+            return new P92Model();
         }
 
         @Override
-        public ResourceLocation getTexture() {
-            return texture;
+        public ResourceLocation createTexture() {
+            return gunResource("p92");
         }
 
         @Override
@@ -90,6 +105,75 @@ public abstract class GunRenderer extends ItemStackTileEntityRenderer {
             if(AttachmentHelper.hasSilencer(item, stack)) {
                 SMG_SUPPRESSOR.doRender();
             }
+        }
+    }
+
+    public static class P1911Renderer extends GunRenderer {
+
+        @Override
+        public AbstractGunModel createModel() {
+            return new P1911Model();
+        }
+
+        @Override
+        public ResourceLocation createTexture() {
+            return gunResource("p92");
+        }
+
+        @Override
+        public void offsetModel() {
+            GlStateManager.translatef(0.0f, 0.07f, 0.0f);
+        }
+
+        @Override
+        protected void renderAttachments(GunItem item, ItemStack stack) {
+            if(AttachmentHelper.hasRedDot(item, stack)) {
+                GlStateManager.pushMatrix();
+                GlStateManager.translatef(0.5F, 0.36000004F, 0.42F);
+                GlStateManager.scalef(0.6999999F, 0.6999999F, 0.6999999F);
+                RED_DOT.doRender();
+                GlStateManager.popMatrix();
+            }
+            if(AttachmentHelper.hasSilencer(item, stack)) {
+                GlStateManager.pushMatrix();
+                GlStateManager.translatef(0.0F, 0.01F, 0.04F);
+                SMG_SUPPRESSOR.doRender();
+                GlStateManager.popMatrix();
+            }
+        }
+    }
+
+    public static class P18CRenderer extends GunRenderer {
+        @Override
+        public AbstractGunModel createModel() {
+            return new P18CModel();
+        }
+
+        @Override
+        public ResourceLocation createTexture() {
+            return gunResource("p18c");
+        }
+
+        @Override
+        protected void renderAttachments(GunItem item, ItemStack stack) {
+
+        }
+    }
+
+    public static class DeagleRenderer extends GunRenderer {
+        @Override
+        public AbstractGunModel createModel() {
+            return new DeagleModel();
+        }
+
+        @Override
+        public ResourceLocation createTexture() {
+            return gunResource("deagle");
+        }
+
+        @Override
+        protected void renderAttachments(GunItem item, ItemStack stack) {
+
         }
     }
 }

@@ -25,12 +25,6 @@ public class P92Model extends AbstractGunModel {
     private final RendererModel bone3;
     private final RendererModel magazine;
 
-    public void setRotationAngle(RendererModel modelRenderer, float x, float y, float z) {
-        modelRenderer.rotateAngleX = x;
-        modelRenderer.rotateAngleY = y;
-        modelRenderer.rotateAngleZ = z;
-    }
-
     @Override
     public void doModelRender(ItemStack stack) {
         p92.render(1.0F);

@@ -1,6 +1,7 @@
 package dev.toma.pubgmc;
 
 import dev.toma.pubgmc.client.ScopeInfo;
+import dev.toma.pubgmc.client.animation.gun.AnimationPackP1911;
 import dev.toma.pubgmc.client.animation.gun.AnimationPackP92;
 import dev.toma.pubgmc.client.model.baked.DummyBakedModel;
 import dev.toma.pubgmc.client.model.baked.DummyGunBakedModel;
@@ -65,6 +66,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
+import static dev.toma.pubgmc.init.PMCSounds.*;
+import static dev.toma.pubgmc.init.PMCItems.*;
 
 public class RegistryHandler {
 
@@ -146,15 +150,34 @@ public class RegistryHandler {
                             .reload(ReloadManager.Magazine.instance, isQuickdraw -> isQuickdraw ? 30 : 40)
                             .ister(() -> GunRenderer.P92Renderer::new)
                             .attachments()
-                            .barrel(() -> new AttachmentItem.Barrel[]{PMCItems.SUPPRESSOR_SMG})
-                            .scope(() -> new AttachmentItem.Scope[]{PMCItems.RED_DOT, PMCItems.HOLOGRAPHIC})
-                            .magazine(() -> new AttachmentItem.Magazine[]{PMCItems.QUICKDRAW_SMG, PMCItems.EXTENDED_SMG, PMCItems.QUICKDRAW_EXTENDED_SMG})
+                            .barrel(() -> new AttachmentItem.Barrel[]{SUPPRESSOR_SMG})
+                            .scope(() -> new AttachmentItem.Scope[]{RED_DOT})
+                            .magazine(() -> new AttachmentItem.Magazine[]{QUICKDRAW_SMG, EXTENDED_SMG, QUICKDRAW_EXTENDED_SMG})
                             .build()
                             .animations(() -> () -> AnimationPackP92::new)
-                            .shootingSound(silenced -> silenced ? PMCSounds.P92_SHOOT_SILENT : PMCSounds.P92_SHOOT)
-                            .reloadingSound(quickdraw -> quickdraw ? PMCSounds.P92_RELOAD_FAST : PMCSounds.P92_RELOAD)
+                            .shootingSound(silenced -> silenced ? P92_SHOOT_SILENT : P92_SHOOT)
+                            .reloadingSound(quickdraw -> quickdraw ? P92_RELOAD_FAST : P92_RELOAD)
                             .shootingVolume(silenced -> silenced ? 5.0F : 9.0F)
                             .build("p92"),
+                    new GunItem.GunBuilder()
+                            .category(GunCategory.PISTOL)
+                            .gunProperties(5.0F, 2.5F, 13.0F, 0.05F, 3)
+                            .recoil(1.5F, 0.75F)
+                            .firerate(1)
+                            .firemodes(Firemode.SINGLE, Firemode::singleMode)
+                            .ammo(AmmoType.AMMO_45ACP, (gunItem, stack) -> gunItem.getAttachment(AttachmentCategory.MAGAZINE, stack).isExtended() ? 12 : 7)
+                            .reload(ReloadManager.Magazine.instance, b -> b ? 30 : 40)
+                            .ister(() -> GunRenderer.P1911Renderer::new)
+                            .attachments()
+                            .barrel(() -> new AttachmentItem.Barrel[] {SUPPRESSOR_SMG})
+                            .scope(() -> new AttachmentItem.Scope[]{RED_DOT})
+                            .magazine(() -> new AttachmentItem.Magazine[]{QUICKDRAW_SMG, EXTENDED_SMG, QUICKDRAW_EXTENDED_SMG})
+                            .build()
+                            .animations(() -> () -> AnimationPackP1911::new)
+                            .shootingSound(s -> s ? P1911_SHOOT_SILENT : P1911_SHOOT)
+                            .reloadingSound(q -> q ? P1911_RELOAD_FAST : P1911_RELOAD)
+                            .shootingVolume(s -> s ? 5.0F : 9.0F)
+                            .build("p1911"),
                     new BackpackItem("small_backpack_desert", BackpackSlotItem.BackpackType.SMALL, BackpackItem.Variant.DESERT),
                     new BackpackItem("medium_backpack_desert", BackpackSlotItem.BackpackType.MEDIUM, BackpackItem.Variant.DESERT),
                     new BackpackItem("large_backpack_desert", BackpackSlotItem.BackpackType.LARGE, BackpackItem.Variant.DESERT),
@@ -212,6 +235,18 @@ public class RegistryHandler {
                     sound("p92_shoot_silent"),
                     sound("p92_reload"),
                     sound("p92_reload_fast"),
+                    sound("p1911_shoot"),
+                    sound("p1911_shoot_silent"),
+                    sound("p1911_reload"),
+                    sound("p1911_reload_fast"),
+                    sound("p18c_shoot"),
+                    sound("p18c_shoot_silent"),
+                    sound("p18c_reload"),
+                    sound("p18c_reload_fast"),
+                    sound("deagle_shoot"),
+                    sound("deagle_shoot_silent"),
+                    sound("deagle_reload"),
+                    sound("deagle_reload_fast"),
                     sound("uaz_idle"),
                     sound("uaz_accelerate"),
                     sound("uaz_brake"),
