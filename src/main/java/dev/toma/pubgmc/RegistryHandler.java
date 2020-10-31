@@ -1,6 +1,7 @@
 package dev.toma.pubgmc;
 
 import dev.toma.pubgmc.client.ScopeInfo;
+import dev.toma.pubgmc.client.animation.gun.AnimationPackP18C;
 import dev.toma.pubgmc.client.animation.gun.AnimationPackP1911;
 import dev.toma.pubgmc.client.animation.gun.AnimationPackP92;
 import dev.toma.pubgmc.client.model.baked.DummyBakedModel;
@@ -178,6 +179,25 @@ public class RegistryHandler {
                             .reloadingSound(q -> q ? P1911_RELOAD_FAST : P1911_RELOAD)
                             .shootingVolume(s -> s ? 5.0F : 9.0F)
                             .build("p1911"),
+                    new GunItem.GunBuilder()
+                            .category(GunCategory.PISTOL)
+                            .gunProperties(4.0F, 2.5F, 11.0F, 0.05F, 3)
+                            .recoil(1.2F, 0.5F)
+                            .firerate(1)
+                            .firemodes(Firemode.SINGLE, Firemode::singleToAuto)
+                            .ammo(AmmoType.AMMO_9MM, (gunItem, stack) -> gunItem.getAttachment(AttachmentCategory.MAGAZINE, stack).isExtended() ? 23 : 18)
+                            .reload(ReloadManager.Magazine.instance, b -> b ? 30 : 40)
+                            .ister(() -> GunRenderer.P18CRenderer::new)
+                            .attachments()
+                            .barrel(() -> new AttachmentItem.Barrel[] {SUPPRESSOR_SMG})
+                            .scope(() -> new AttachmentItem.Scope[]{RED_DOT})
+                            .magazine(() -> new AttachmentItem.Magazine[]{QUICKDRAW_SMG, EXTENDED_SMG, QUICKDRAW_EXTENDED_SMG})
+                            .build()
+                            .animations(() -> () -> AnimationPackP18C::new)
+                            .shootingSound(s -> s ? P18C_SHOOT_SILENT : P18C_SHOOT)
+                            .shootingVolume(s -> s ? 5.0F : 9.0F)
+                            .reloadingSound(q -> q ? P18C_RELOAD_FAST : P18C_RELOAD)
+                            .build("p18c"),
                     new BackpackItem("small_backpack_desert", BackpackSlotItem.BackpackType.SMALL, BackpackItem.Variant.DESERT),
                     new BackpackItem("medium_backpack_desert", BackpackSlotItem.BackpackType.MEDIUM, BackpackItem.Variant.DESERT),
                     new BackpackItem("large_backpack_desert", BackpackSlotItem.BackpackType.LARGE, BackpackItem.Variant.DESERT),
