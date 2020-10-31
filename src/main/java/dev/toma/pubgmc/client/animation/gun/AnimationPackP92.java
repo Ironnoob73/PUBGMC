@@ -7,6 +7,6 @@ public class AnimationPackP92 extends AnimationPackPistols {
 
     @Override
     public ReloadAnimation getReloadAnimation(GunItem gunItem, ItemStack stack) {
-        return new ReloadAnimationP92(gunItem, stack);
+        return new PistolDefaultReloadAnimation(gunItem, stack);
     }
 }
