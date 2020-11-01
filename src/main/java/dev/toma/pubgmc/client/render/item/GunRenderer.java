@@ -206,4 +206,33 @@ public abstract class GunRenderer extends ItemStackTileEntityRenderer {
             }
         }
     }
+
+    public static class R1895Renderer extends GunRenderer {
+
+        @Override
+        public AbstractGunModel createModel() {
+            return new R1895Model();
+        }
+
+        @Override
+        public ResourceLocation createTexture() {
+            return GunRenderer.gunResource("scar");
+        }
+
+        @Override
+        public void offsetModel() {
+            GlStateManager.translatef(-0.002F, -0.005F, 0.0F);
+        }
+
+        @Override
+        protected void renderAttachments(GunItem item, ItemStack stack) {
+            if(AttachmentHelper.hasSilencer(item, stack)) {
+                GlStateManager.pushMatrix();
+                GlStateManager.translatef(0.14999998F, 0.26000002F, -0.17999999F);
+                GlStateManager.scalef(0.6999999F, 0.6999999F, 0.6999999F);
+                SMG_SUPPRESSOR.doRender();
+                GlStateManager.popMatrix();
+            }
+        }
+    }
 }

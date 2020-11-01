@@ -1,10 +1,7 @@
 package dev.toma.pubgmc;
 
 import dev.toma.pubgmc.client.ScopeInfo;
-import dev.toma.pubgmc.client.animation.gun.AnimationPackDeagle;
-import dev.toma.pubgmc.client.animation.gun.AnimationPackP18C;
-import dev.toma.pubgmc.client.animation.gun.AnimationPackP1911;
-import dev.toma.pubgmc.client.animation.gun.AnimationPackP92;
+import dev.toma.pubgmc.client.animation.gun.*;
 import dev.toma.pubgmc.client.model.baked.DummyBakedModel;
 import dev.toma.pubgmc.client.model.baked.DummyGunBakedModel;
 import dev.toma.pubgmc.client.render.item.GunRenderer;
@@ -68,6 +65,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 
 import static dev.toma.pubgmc.init.PMCSounds.*;
 import static dev.toma.pubgmc.init.PMCItems.*;
@@ -147,7 +145,7 @@ public class RegistryHandler {
                             .gunProperties(4.0F, 2.5F, 11.0F, 0.05F, 3)
                             .recoil(1.5F, 0.75F)
                             .firerate(2)
-                            .firemodes(Firemode.SINGLE, Firemode::singleMode)
+                            .firemodes(Firemode.SINGLE, Function.identity())
                             .ammo(AmmoType.AMMO_9MM, (p92, stack) -> p92.getAttachment(AttachmentCategory.MAGAZINE, stack).isExtended() ? 20 : 15)
                             .reload(ReloadManager.Magazine.instance, isQuickdraw -> isQuickdraw ? 30 : 40)
                             .ister(() -> GunRenderer.P92Renderer::new)
@@ -166,7 +164,7 @@ public class RegistryHandler {
                             .gunProperties(5.0F, 2.5F, 13.0F, 0.05F, 3)
                             .recoil(1.5F, 0.75F)
                             .firerate(1)
-                            .firemodes(Firemode.SINGLE, Firemode::singleMode)
+                            .firemodes(Firemode.SINGLE, Function.identity())
                             .ammo(AmmoType.AMMO_45ACP, (gunItem, stack) -> gunItem.getAttachment(AttachmentCategory.MAGAZINE, stack).isExtended() ? 12 : 7)
                             .reload(ReloadManager.Magazine.instance, q -> q ? 30 : 40)
                             .ister(() -> GunRenderer.P1911Renderer::new)
@@ -204,7 +202,7 @@ public class RegistryHandler {
                             .gunProperties(8.0F, 2.5F, 14.0F, 0.05F, 3)
                             .recoil(2.6F, 0.7F)
                             .firerate(4)
-                            .firemodes(Firemode.SINGLE, Firemode::singleMode)
+                            .firemodes(Firemode.SINGLE, Function.identity())
                             .ammo(AmmoType.AMMO_45ACP, (gunItem, stack) -> gunItem.getAttachment(AttachmentCategory.MAGAZINE, stack).isExtended() ? 12 : 7)
                             .reload(ReloadManager.Magazine.instance, q -> q ? 30 : 40)
                             .ister(() -> GunRenderer.DeagleRenderer::new)
@@ -217,6 +215,23 @@ public class RegistryHandler {
                             .shootingVolume(s -> 9.0F)
                             .reloadingSound(q -> q ? DEAGLE_RELOAD_FAST : DEAGLE_RELOAD)
                             .build("deagle"),
+                    new GunItem.GunBuilder()
+                            .category(GunCategory.PISTOL)
+                            .gunProperties(8.0F, 2.5F, 17.0F, 0.05F, 3)
+                            .recoil(2.0F, 0.8F)
+                            .firerate(8)
+                            .firemodes(Firemode.SINGLE, Function.identity())
+                            .ammo(AmmoType.AMMO_762MM, (gunItem, stack) -> 7)
+                            .reload(ReloadManager.Single.instance, q -> 25)
+                            .ister(() -> GunRenderer.R1895Renderer::new)
+                            .attachments()
+                            .barrel(() -> new AttachmentItem.Barrel[] {SUPPRESSOR_SMG})
+                            .build()
+                            .animations(() -> () -> AnimationPackR1895::new)
+                            .shootingSound(s -> s ? R1895_SHOOT_SILENT : R1895_SHOOT)
+                            .shootingVolume(s -> s ? 5.0F : 9.0F)
+                            .reloadingSound(q -> R1895_RELOAD)
+                            .build("r1895"),
                     new BackpackItem("small_backpack_desert", BackpackSlotItem.BackpackType.SMALL, BackpackItem.Variant.DESERT),
                     new BackpackItem("medium_backpack_desert", BackpackSlotItem.BackpackType.MEDIUM, BackpackItem.Variant.DESERT),
                     new BackpackItem("large_backpack_desert", BackpackSlotItem.BackpackType.LARGE, BackpackItem.Variant.DESERT),

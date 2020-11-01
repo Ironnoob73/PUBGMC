@@ -6,10 +6,6 @@ public enum Firemode {
     BURST,
     FULL_AUTO;
 
-    public static Firemode singleMode(Firemode firemode) {
-        return firemode;
-    }
-
     public static Firemode singleToBurst(Firemode firemode) {
         return firemode == SINGLE ? BURST : SINGLE;
     }
