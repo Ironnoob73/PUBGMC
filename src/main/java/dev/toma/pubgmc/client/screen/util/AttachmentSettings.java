@@ -102,6 +102,7 @@ public class AttachmentSettings {
 
         public String getString() {
             StringBuilder builder = new StringBuilder();
+            builder.append("// ").append(getName()).append("\n");
             builder.append("GlStateManager.pushMatrix();\n");
             if(!position.equals(new Vector3f())) {
                 builder.append("GlStateManager.translatef(").append(position.x).append("F, ").append(position.y).append("F, ").append(position.z).append("F);\n");
