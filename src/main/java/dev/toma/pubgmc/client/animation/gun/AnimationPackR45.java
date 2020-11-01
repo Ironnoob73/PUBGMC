@@ -1,11 +1,11 @@
 package dev.toma.pubgmc.client.animation.gun;
 
 import dev.toma.pubgmc.common.item.gun.GunItem;
+import dev.toma.pubgmc.util.AttachmentHelper;
 import net.minecraft.item.ItemStack;
 
-public class AnimationPackR1895 extends AnimationPackPistols {
+public class AnimationPackR45 extends AnimationPackPistols {
 
-    // TODO
     @Override
     public ReloadAnimation getReloadAnimation(GunItem gunItem, ItemStack stack) {
         return new PistolDefaultReloadAnimation(gunItem, stack);
@@ -13,6 +13,9 @@ public class AnimationPackR1895 extends AnimationPackPistols {
 
     @Override
     public float getAimYOffset(GunItem item, ItemStack stack) {
+        if(AttachmentHelper.hasRedDot(item, stack)) {
+            return 0.05F;
+        }
         return 0.1F;
     }
 }

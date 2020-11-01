@@ -235,4 +235,55 @@ public abstract class GunRenderer extends ItemStackTileEntityRenderer {
             }
         }
     }
+
+    public static class R45Renderer extends GunRenderer {
+
+        @Override
+        public AbstractGunModel createModel() {
+            return new R45Model();
+        }
+
+        @Override
+        public ResourceLocation createTexture() {
+            return gunResource("r45");
+        }
+
+        @Override
+        public void offsetModel() {
+            GlStateManager.translatef(-0.002F, 0.01F, 0.0F);
+        }
+
+        @Override
+        protected void renderAttachments(GunItem item, ItemStack stack) {
+            if(AttachmentHelper.hasRedDot(item, stack)) {
+                GlStateManager.pushMatrix();
+                GlStateManager.translatef(0.5F, 0.45000005F, 0.15999998F);
+                GlStateManager.scalef(0.5999999F, 0.5999999F, 0.5999999F);
+                RED_DOT.doRender();
+                GlStateManager.popMatrix();
+            }
+        }
+    }
+
+    public static class ScorpionRenderer extends GunRenderer {
+        @Override
+        public AbstractGunModel createModel() {
+            return new ScorpionModel();
+        }
+
+        @Override
+        public ResourceLocation createTexture() {
+            return gunResource("scar");
+        }
+
+        @Override
+        public void offsetModel() {
+
+        }
+
+        @Override
+        protected void renderAttachments(GunItem item, ItemStack stack) {
+            AttachmentSettings.instance().renderAll();
+        }
+    }
 }
