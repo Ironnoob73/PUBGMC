@@ -278,12 +278,32 @@ public abstract class GunRenderer extends ItemStackTileEntityRenderer {
 
         @Override
         public void offsetModel() {
-
+            GlStateManager.translatef(-0.002F, -0.345F, 0.2F);
         }
 
         @Override
         protected void renderAttachments(GunItem item, ItemStack stack) {
-            AttachmentSettings.instance().renderAll();
+            if(AttachmentHelper.hasRedDot(item, stack)) {
+                GlStateManager.pushMatrix();
+                GlStateManager.translatef(0.5F, 0.28000003F, 0.38000003F);
+                GlStateManager.scalef(0.79999995F, 0.79999995F, 0.79999995F);
+                RED_DOT.doRender();
+                GlStateManager.popMatrix();
+            }
+
+            if(AttachmentHelper.hasSilencer(item, stack)) {
+                GlStateManager.pushMatrix();
+                GlStateManager.translatef(0.0F, -0.02F, 0.04F);
+                SMG_SUPPRESSOR.doRender();
+                GlStateManager.popMatrix();
+            }
+
+            if(AttachmentHelper.hasVerticalGrip(item, stack)) {
+                GlStateManager.pushMatrix();
+                GlStateManager.translatef(0.495F, -0.23000005F, 0.19F);
+                VERTICAL_GRIP.doRender();
+                GlStateManager.popMatrix();
+            }
         }
     }
 }
