@@ -1,5 +1,7 @@
 package dev.toma.pubgmc.client.model.gun;
 
+import dev.toma.pubgmc.client.animation.Animations;
+import dev.toma.pubgmc.client.animation.builder.AnimationType;
 import net.minecraft.client.renderer.entity.model.RendererModel;
 import net.minecraft.client.renderer.model.ModelBox;
 import net.minecraft.item.ItemStack;
@@ -39,7 +41,7 @@ public class ScorpionModel extends AbstractGunModel {
     @Override
     public void doModelRender(ItemStack stack) {
         scorpion.render(1f);
-        magazine.render(1f);
+        //magazine.render(1f);
     }
 
     public ScorpionModel() {
@@ -306,5 +308,8 @@ public class ScorpionModel extends AbstractGunModel {
         bone.cubeList.add(new ModelBox(bone, 91, 24, -14.4238F, -16.838F, -20.0F, 1, 2, 3, 0.0F, false));
         bone.cubeList.add(new ModelBox(bone, 91, 24, -18.2522F, -16.838F, -20.0F, 1, 2, 3, 0.0F, false));
         bone.cubeList.add(new ModelBox(bone, 91, 24, -16.838F, -14.4238F, -20.0F, 2, 1, 3, 0.0F, false));
+
+        addAnimatedPart(0, magazine);
+        registerTypes(() -> new AnimationType[] {Animations.RELOADING});
     }
 }
