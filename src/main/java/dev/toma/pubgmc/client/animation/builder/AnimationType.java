@@ -4,8 +4,10 @@ import dev.toma.pubgmc.client.animation.Animation;
 import dev.toma.pubgmc.client.animation.AnimationManager;
 import dev.toma.pubgmc.util.object.LazyLoader;
 import dev.toma.pubgmc.util.object.Optional;
+import net.minecraft.entity.player.PlayerEntity;
 
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public final class AnimationType {
@@ -13,14 +15,14 @@ public final class AnimationType {
     public final int index;
     private LazyLoader<AnimationType[]> blockedBy = new LazyLoader<>(() -> new AnimationType[0]);
     private LazyLoader<AnimationType[]> overrides = new LazyLoader<>(() -> new AnimationType[0]);
-    private Supplier<Animation> instanceSupplier;
+    private Function<PlayerEntity, Animation> factory;
 
     public AnimationType(int id) {
         this.index = id;
     }
 
-    public AnimationType factory(Supplier<Animation> supplier) {
-        this.instanceSupplier = supplier;
+    public AnimationType factory(Function<PlayerEntity, Animation> factory) {
+        this.factory = factory;
         return this;
     }
 
@@ -34,11 +36,11 @@ public final class AnimationType {
         return this;
     }
 
-    public Animation getDefaultInstance() {
-        if(instanceSupplier == null) {
+    public Animation getDefaultInstance(PlayerEntity player) {
+        if(factory == null) {
             throw new UnsupportedOperationException("No defined animation for this type");
         }
-        return instanceSupplier.get();
+        return factory.apply(player);
     }
 
     public void apply() {

@@ -28,17 +28,17 @@ public class AttachmentSettings {
     final Map<Integer, ModelSettings> settingsMap = new HashMap<>();
 
     AttachmentSettings() {
-        settingsMap.put(RED_DOT, new ModelSettings("Red Dot", () -> GunRenderer.RED_DOT));
-        settingsMap.put(HOLO, new ModelSettings("Holographic", () -> GunRenderer.HOLO));
-        settingsMap.put(X2, new ModelSettings("2x", () -> GunRenderer.SCOPE_2X));
-        settingsMap.put(X4, new ModelSettings("4x", () -> GunRenderer.SCOPE_4X));
-        settingsMap.put(X8, new ModelSettings("8x", () -> GunRenderer.SCOPE_8X));
-        settingsMap.put(X15, new ModelSettings("15x", () -> GunRenderer.SCOPE_15X));
-        settingsMap.put(SUPPRESSOR_SMG, new ModelSettings("Suppressor (SMG)", () -> GunRenderer.SMG_SUPPRESSOR));
-        settingsMap.put(SUPPRESSOR_AR, new ModelSettings("Suppressor (AR)", () -> GunRenderer.AR_SUPPRESSOR));
-        settingsMap.put(SUPPRESSOR_SR, new ModelSettings("Suppressor (SR)", () -> GunRenderer.SR_SUPPRESSOR));
-        settingsMap.put(VERTICAL_GRIP, new ModelSettings("Vertical grip", () -> GunRenderer.VERTICAL_GRIP));
-        settingsMap.put(ANGLED_GRIP, new ModelSettings("Angled grip", () -> GunRenderer.ANGLED_GRIP));
+        settingsMap.put(RED_DOT, new ModelSettings("Red Dot", () -> GunRenderer.RED_DOT, "RED_DOT", "hasRedDot"));
+        settingsMap.put(HOLO, new ModelSettings("Holographic", () -> GunRenderer.HOLO, "HOLO", "hasHolographic"));
+        settingsMap.put(X2, new ModelSettings("2x", () -> GunRenderer.SCOPE_2X, "SCOPE_2X", "has2x"));
+        settingsMap.put(X4, new ModelSettings("4x", () -> GunRenderer.SCOPE_4X, "SCOPE_4X", "has4x"));
+        settingsMap.put(X8, new ModelSettings("8x", () -> GunRenderer.SCOPE_8X, "SCOPE_8X", "has8x"));
+        settingsMap.put(X15, new ModelSettings("15x", () -> GunRenderer.SCOPE_15X, "SCOPE_15X", "has15x"));
+        settingsMap.put(SUPPRESSOR_SMG, new ModelSettings("Suppressor (SMG)", () -> GunRenderer.SMG_SUPPRESSOR, "SMG_SUPPRESSOR", "hasSilencer"));
+        settingsMap.put(SUPPRESSOR_AR, new ModelSettings("Suppressor (AR)", () -> GunRenderer.AR_SUPPRESSOR, "AR_SUPPRESSOR", "hasSilencer"));
+        settingsMap.put(SUPPRESSOR_SR, new ModelSettings("Suppressor (SR)", () -> GunRenderer.SR_SUPPRESSOR, "SR_SUPPRESSOR", "hasSilencer"));
+        settingsMap.put(VERTICAL_GRIP, new ModelSettings("Vertical grip", () -> GunRenderer.VERTICAL_GRIP, "VERTICAL_GRIP", "hasVerticalGrip"));
+        settingsMap.put(ANGLED_GRIP, new ModelSettings("Angled grip", () -> GunRenderer.ANGLED_GRIP, "ANGLED_GRIP", "hasAngledGrip"));
     }
 
     public static AttachmentSettings instance() {
@@ -55,6 +55,8 @@ public class AttachmentSettings {
 
     public static class ModelSettings {
         private final String name;
+        private final String referenceName;
+        private final String functionName;
         private final Supplier<AttachmentModel> modelReference;
         private boolean enabled = false;
         private Vector3f position = new Vector3f();
@@ -63,9 +65,11 @@ public class AttachmentSettings {
         private float rotY;
         private float rotZ;
 
-        ModelSettings(String name, Supplier<AttachmentModel> supplier) {
+        ModelSettings(String name, Supplier<AttachmentModel> supplier, String referenceName, String functionName) {
             this.name = name;
             this.modelReference = supplier;
+            this.referenceName = referenceName;
+            this.functionName = functionName;
         }
 
         public String getName() {
@@ -102,7 +106,7 @@ public class AttachmentSettings {
 
         public String getString() {
             StringBuilder builder = new StringBuilder();
-            builder.append("// ").append(getName()).append("\n");
+            builder.append("if(AttachmentHelper.").append(functionName).append("(item, stack)) {\n");
             builder.append("GlStateManager.pushMatrix();\n");
             if(!position.equals(new Vector3f())) {
                 builder.append("GlStateManager.translatef(").append(position.x).append("F, ").append(position.y).append("F, ").append(position.z).append("F);\n");
@@ -116,7 +120,9 @@ public class AttachmentSettings {
                 builder.append("GlStateManager.rotatef(").append(rotY).append("F, 0.0F, 1.0F, 0.0F);\n");
             if(rotZ != 0)
                 builder.append("GlStateManager.rotatef(").append(rotZ).append("F, 0.0F, 0.0F, 1.0F);\n");
+            builder.append(referenceName).append(".doRender();\n");
             builder.append("GlStateManager.popMatrix();\n");
+            builder.append("}\n");
             return builder.toString();
         }
 

@@ -16,6 +16,7 @@ public class BuilderData {
     static { steps.add(new BuilderAnimationStep()); }
     public static BuilderAnimationStep current = steps.get(0);
     public static int animationLength = 20;
+    public static boolean buildingGunAnimation = true;
 
     public static Animation asAnimation() {
         return new BuiltAnimation(animationLength);

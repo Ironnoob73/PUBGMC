@@ -1,7 +1,10 @@
 package dev.toma.pubgmc.client.animation;
 
 import dev.toma.pubgmc.client.animation.builder.AnimationType;
+import dev.toma.pubgmc.client.animation.gun.GunAnimationPack;
 import dev.toma.pubgmc.client.animation.types.RecoilAnimation;
+import dev.toma.pubgmc.common.item.gun.GunItem;
+import net.minecraft.item.ItemStack;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,9 +30,17 @@ public class Animations {
         HEALING = register();
         AIMING = register().blockedBy(() -> new AnimationType[] {SPRINTING, RELOADING, BOLT});
         SPRINTING = register().blockedBy(() -> new AnimationType[] {RELOADING, BOLT});
-        RELOADING = register();
+        RELOADING = register().factory(player -> {
+            ItemStack stack = player.getHeldItemMainhand();
+            if(stack.getItem() instanceof GunItem) {
+                GunItem item = (GunItem) stack.getItem();
+                GunAnimationPack pack = item.getAnimations();
+                return pack.getReloadAnimation(item, stack);
+            }
+            return null;
+        });
         BOLT = register();
-        RECOIL = register().factory(RecoilAnimation::new);
+        RECOIL = register().factory(player -> new RecoilAnimation());
         FIREMODE_SWITCH = register();
     }
 

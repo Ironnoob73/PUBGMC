@@ -3,8 +3,12 @@ package dev.toma.pubgmc.common.item.gun;
 import dev.toma.pubgmc.capability.IPlayerCap;
 import dev.toma.pubgmc.capability.player.PlayerCapFactory;
 import dev.toma.pubgmc.capability.player.ReloadInfo;
+import dev.toma.pubgmc.client.animation.Animations;
 import dev.toma.pubgmc.common.item.utility.AmmoItem;
+import dev.toma.pubgmc.network.NetworkManager;
+import dev.toma.pubgmc.network.packet.CPacketAnimation;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
@@ -101,6 +105,7 @@ public interface ReloadManager {
                 int time = ((GunItem) stack.getItem()).getReloadTime(stack);
                 reloadInfo.startReloading(player.inventory.currentItem, time);
                 cap.syncNetworkData();
+                NetworkManager.sendToClient((ServerPlayerEntity) player, new CPacketAnimation(Animations.RELOADING, CPacketAnimation.Result.PLAY));
             }
         }
 

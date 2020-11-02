@@ -41,6 +41,10 @@ public class AnimationBuilderScreen extends Screen {
         addComponent(new PlainTextComponent(10, 3, TextFormatting.BOLD + "General"));
         addComponent(new PressableComponent(10, 20, 75, 20, "Play Animation", ac -> AnimationManager.playNewAnimation(Animations.DEBUG, BuilderData.asAnimation())));
         addComponent(new PressableComponent(95, 20, 75, 20, "Export as .txt", ac -> BuiltAnimationExporter.exportAnimation()));
+        addComponent(new UIComponent(175, 20, 40, 20, "Gun", ac -> {
+            BuilderData.buildingGunAnimation = !BuilderData.buildingGunAnimation;
+            init();
+        }).setState(BuilderData.buildingGunAnimation));
         addComponent(new PlainTextComponent(10, 45, "Animation length:"));
         PlainTextComponent textComponent = new PlainTextComponent(95, 45, TextFormatting.BOLD.toString() + BuilderData.animationLength + TextFormatting.RESET + " ticks");
         addComponent(new PressableComponent(145, 45, 20, 20, "-", ac -> {

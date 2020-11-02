@@ -55,7 +55,7 @@ public class BuiltAnimationExporter {
         float first = 0.0F;
         for(BuilderAnimationStep step : BuilderData.steps) {
             float last = first + step.length;
-            builder.append("addStep(").append(df.format(first)).append("F, ").append(df.format(last)).append("F, SimpleAnimation.newSimpleAnimation()");
+            builder.append("addStep(").append(df.format(first)).append("F, ").append(df.format(last)).append("F, ").append(BuilderData.buildingGunAnimation ? "SimpleGunAnimation.create()" : "SimpleAnimation.newSimpleAnimation()");
             first = last;
             for(BuilderData.Part part : BuilderData.Part.values()) {
                 BuilderAnimationStep.Data data = step.map.get(part);

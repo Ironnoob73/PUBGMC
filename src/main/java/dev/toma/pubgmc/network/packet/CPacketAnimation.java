@@ -4,6 +4,7 @@ import dev.toma.pubgmc.client.animation.AnimationManager;
 import dev.toma.pubgmc.client.animation.Animations;
 import dev.toma.pubgmc.client.animation.builder.AnimationType;
 import dev.toma.pubgmc.network.NetworkPacket;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -41,7 +42,7 @@ public class CPacketAnimation implements NetworkPacket<CPacketAnimation> {
         context.enqueueWork(() -> {
             switch (instance.result) {
                 case PLAY:
-                    AnimationManager.playNewAnimation(instance.type, instance.type.getDefaultInstance());
+                    AnimationManager.playNewAnimation(instance.type, instance.type.getDefaultInstance(Minecraft.getInstance().player));
                     break;
                 case STOP:
                     AnimationManager.stopAnimation(instance.type);

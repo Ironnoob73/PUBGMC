@@ -8,7 +8,7 @@ public class AnimationPackR45 extends AnimationPackPistols {
 
     @Override
     public ReloadAnimation getReloadAnimation(GunItem gunItem, ItemStack stack) {
-        return new PistolDefaultReloadAnimation(gunItem, stack);
+        return new AnimationPackR1895.R1895ReloadAnimation(gunItem, stack);
     }
 
     @Override

@@ -23,8 +23,6 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.CooldownTracker;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.GameRules;
@@ -51,15 +49,7 @@ public class CommonEventHandler {
         EquipmentSlotType slotType = event.getSlot();
         if(entity instanceof PlayerEntity) {
             if (stack.getItem() instanceof GunItem) {
-                if(slotType == EquipmentSlotType.MAINHAND) {
-                    CompoundNBT old = event.getFrom().getTag();
-                    CompoundNBT updated = stack.getTag();
-                    if(old == null || updated == null) return;
-                    if(updated.getInt("ammo") != old.getInt("ammo") - 1) {
-                        CooldownTracker tracker = ((PlayerEntity) entity).getCooldownTracker();
-                        tracker.setCooldown(stack.getItem(), 20);
-                    }
-                } else if(slotType == EquipmentSlotType.OFFHAND) {
+                if(slotType == EquipmentSlotType.OFFHAND) {
                     ItemStack copyOf = stack.copy();
                     stack.setCount(0);
                     if(!entity.world.isRemote) {
