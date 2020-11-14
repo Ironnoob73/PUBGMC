@@ -11,7 +11,7 @@ import dev.toma.pubgmc.capability.world.WorldDataFactory;
 import dev.toma.pubgmc.client.ClientManager;
 import dev.toma.pubgmc.client.ModKeybinds;
 import dev.toma.pubgmc.client.animation.Animations;
-import dev.toma.pubgmc.client.animation.builder.BuilderMain;
+import dev.toma.pubgmc.internal.InternalHandles;
 import dev.toma.pubgmc.client.screen.*;
 import dev.toma.pubgmc.command.GameCommand;
 import dev.toma.pubgmc.command.LootCommand;
@@ -98,7 +98,7 @@ public class Pubgmc {
         });
         Animations.init();
         contentManager.start();
-        if(Config.animationTool.get()) BuilderMain.init();
+        if(Config.animationTool.get()) InternalHandles.init();
     }
 
     private void setupCommon(FMLCommonSetupEvent event) {

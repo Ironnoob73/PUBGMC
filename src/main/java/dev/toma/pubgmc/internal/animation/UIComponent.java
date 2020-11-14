@@ -1,4 +1,4 @@
-package dev.toma.pubgmc.client.animation.builder;
+package dev.toma.pubgmc.internal.animation;
 
 import dev.toma.pubgmc.util.RenderHelper;
 import dev.toma.pubgmc.util.object.Optional;

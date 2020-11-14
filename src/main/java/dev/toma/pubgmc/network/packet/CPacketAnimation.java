@@ -2,7 +2,7 @@ package dev.toma.pubgmc.network.packet;
 
 import dev.toma.pubgmc.client.animation.AnimationManager;
 import dev.toma.pubgmc.client.animation.Animations;
-import dev.toma.pubgmc.client.animation.builder.AnimationType;
+import dev.toma.pubgmc.client.animation.AnimationType;
 import dev.toma.pubgmc.network.NetworkPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.PacketBuffer;

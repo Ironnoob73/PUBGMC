@@ -4,7 +4,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import dev.toma.pubgmc.Pubgmc;
 import dev.toma.pubgmc.client.model.gun.*;
 import dev.toma.pubgmc.client.model.gun.attachment.*;
-import dev.toma.pubgmc.client.screen.util.AttachmentSettings;
+import dev.toma.pubgmc.internal.attachment.AttachmentSettings;
 import dev.toma.pubgmc.common.item.gun.GunItem;
 import dev.toma.pubgmc.common.item.gun.attachment.AttachmentCategory;
 import dev.toma.pubgmc.common.item.gun.attachment.AttachmentItem;
@@ -304,6 +304,29 @@ public abstract class GunRenderer extends ItemStackTileEntityRenderer {
                 VERTICAL_GRIP.doRender();
                 GlStateManager.popMatrix();
             }
+        }
+    }
+
+    public static class SawedOffRenderer extends GunRenderer {
+        @Override
+        public AbstractGunModel createModel() {
+            return new SawedOffModel();
+        }
+
+        @Override
+        public ResourceLocation createTexture() {
+            return gunResource("scar");
+        }
+
+        @Override
+        public void offsetModel() {
+            GlStateManager.scalef(0.75F, 0.75F, 0.75F);
+            GlStateManager.translatef(0.165F, 0.25F, 0.0F);
+        }
+
+        @Override
+        protected void renderAttachments(GunItem item, ItemStack stack) {
+            AttachmentSettings.instance().renderAll();
         }
     }
 }

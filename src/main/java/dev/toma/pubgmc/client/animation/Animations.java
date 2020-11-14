@@ -1,6 +1,5 @@
 package dev.toma.pubgmc.client.animation;
 
-import dev.toma.pubgmc.client.animation.builder.AnimationType;
 import dev.toma.pubgmc.client.animation.gun.GunAnimationPack;
 import dev.toma.pubgmc.client.animation.types.RecoilAnimation;
 import dev.toma.pubgmc.common.item.gun.GunItem;

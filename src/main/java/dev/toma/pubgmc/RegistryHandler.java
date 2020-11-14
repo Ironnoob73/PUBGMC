@@ -268,6 +268,21 @@ public class RegistryHandler {
                             .shootingVolume(s -> s ? 5.0F : 9.0F)
                             .reloadingSound(q -> q ? SCORPION_RELOAD_FAST : SCORPION_RELOAD)
                             .build("scorpion"),
+                    new GunItem.GunBuilder()
+                            .category(GunCategory.SHOTGUN)
+                            .gunProperties(3.0F, 2.5F, 11.0F, 0.15F, 3)
+                            .recoil(1.5F, 0.7F)
+                            .firerate(3)
+                            .firemodes(Firemode.SINGLE, Function.identity())
+                            .ammo(AmmoType.AMMO_12G, (gunItem, stack) -> 2)
+                            .reload(ReloadManager.Magazine.instance, q -> 30)
+                            .shoot(ShootManager::handleShotgun)
+                            .ister(() -> GunRenderer.SawedOffRenderer::new)
+                            .animations(() -> () -> AnimationPackSawedOff::new)
+                            .shootingSound(s -> SAWED_OFF_SHOOT)
+                            .shootingVolume(s -> 9.0F)
+                            .reloadingSound(q -> SAWED_OFF_RELOAD)
+                            .build("sawed_off"),
                     new BackpackItem("small_backpack_desert", BackpackSlotItem.BackpackType.SMALL, BackpackItem.Variant.DESERT),
                     new BackpackItem("medium_backpack_desert", BackpackSlotItem.BackpackType.MEDIUM, BackpackItem.Variant.DESERT),
                     new BackpackItem("large_backpack_desert", BackpackSlotItem.BackpackType.LARGE, BackpackItem.Variant.DESERT),
@@ -336,6 +351,8 @@ public class RegistryHandler {
                     sound("deagle_shoot"),
                     sound("deagle_reload"),
                     sound("deagle_reload_fast"),
+                    sound("sawed_off_shoot"),
+                    sound("sawed_off_reload"),
                     sound("uaz_idle"),
                     sound("uaz_accelerate"),
                     sound("uaz_brake"),

@@ -1,6 +1,7 @@
-package dev.toma.pubgmc.client.animation.builder;
+package dev.toma.pubgmc.internal.animation;
 
 import com.google.gson.JsonParseException;
+import dev.toma.pubgmc.internal.InternalData;
 import dev.toma.pubgmc.util.object.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.StringTextComponent;
@@ -53,14 +54,14 @@ public class BuiltAnimationExporter {
         DecimalFormat df = new DecimalFormat("###.##", symbols);
         StringBuilder builder = new StringBuilder();
         float first = 0.0F;
-        for(BuilderAnimationStep step : BuilderData.steps) {
+        for(BuilderAnimationStep step : InternalData.steps) {
             float last = first + step.length;
-            builder.append("addStep(").append(df.format(first)).append("F, ").append(df.format(last)).append("F, ").append(BuilderData.buildingGunAnimation ? "SimpleGunAnimation.create()" : "SimpleAnimation.newSimpleAnimation()");
+            builder.append("addStep(").append(df.format(first)).append("F, ").append(df.format(last)).append("F, ").append(InternalData.buildingGunAnimation ? "SimpleGunAnimation.create()" : "SimpleAnimation.newSimpleAnimation()");
             first = last;
-            for(BuilderData.Part part : BuilderData.Part.values()) {
-                BuilderAnimationStep.Data data = step.map.get(part);
+            for(IAnimationPart part : IAnimationPart.PARTS) {
+                AnimationData data = step.map.get(part);
                 if(data.isEmpty()) continue;
-                builder.append(getFunctionName(part)).append(generateAnimation(data, df)).append("})");
+                builder.append(part.getFunctionName()).append(generateAnimation(data, df)).append("})");
             }
             builder.append(".create());\n");
         }
@@ -72,9 +73,9 @@ public class BuiltAnimationExporter {
         return builder.toString();
     }
 
-    private static String generateAnimation(BuilderAnimationStep.Data data, DecimalFormat df) {
+    private static String generateAnimation(AnimationData data, DecimalFormat df) {
         StringBuilder builder = new StringBuilder();
-        BuilderAnimationStep.TranslationContext tctx = data.translationContext;
+        IContext.Translation tctx = data.translation;
         if(!tctx.isEmpty()) {
             builder.append("GlStateManager.translatef(");
             handleTranslationValue(builder, df, tctx.baseX, tctx.newX, true);
@@ -82,11 +83,11 @@ public class BuiltAnimationExporter {
             handleTranslationValue(builder, df, tctx.baseZ, tctx.newZ, false);
             builder.append(");");
         }
-        BuilderAnimationStep.RotationContext ctx = data.rotationContext;
+        IContext.Rotation ctx = data.rotation;
         if(!ctx.isEmpty()) {
-            List<Map.Entry<BuilderData.Axis, Pair<Float, Float>>> list = new ArrayList<>(ctx.rotations.entrySet());
+            List<Map.Entry<InternalData.Axis, Pair<Float, Float>>> list = new ArrayList<>(ctx.rotations.entrySet());
             list.sort(Comparator.comparingInt(o -> o.getKey().index()));
-            for(Map.Entry<BuilderData.Axis, Pair<Float, Float>> entry : list) {
+            for(Map.Entry<InternalData.Axis, Pair<Float, Float>> entry : list) {
                 builder.append("GlStateManager.rotatef(");
                 Pair<Float, Float> sdP = entry.getValue();
                 handleTranslationValue(builder, df, sdP.getLeft(), sdP.getRight(), true);
@@ -116,14 +117,8 @@ public class BuiltAnimationExporter {
         if(addComma) builder.append(", ");
     }
 
-    private static String getFunctionName(BuilderData.Part part) {
-        switch (part) {
-            case ITEM: return ".item(f -> {";
-            case ITEM_AND_HANDS: default: return ".itemHand(f -> {";
-            case LEFT_HAND: return ".leftHand(f -> {";
-            case RIGHT_HAND: return ".rightHand(f -> {";
-            case HANDS: return ".hands(f -> {";
-        }
+    private static String getFunctionName(IAnimationPart part) {
+        return part.getFunctionName();
     }
 
     private static String normal(int input) {

@@ -1,7 +1,7 @@
 package dev.toma.pubgmc.client.model.gun;
 
 import dev.toma.pubgmc.client.animation.Animations;
-import dev.toma.pubgmc.client.animation.builder.AnimationType;
+import dev.toma.pubgmc.client.animation.AnimationType;
 import net.minecraft.client.renderer.entity.model.RendererModel;
 import net.minecraft.client.renderer.model.ModelBox;
 import net.minecraft.item.ItemStack;

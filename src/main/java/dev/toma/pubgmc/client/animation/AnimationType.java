@@ -1,7 +1,5 @@
-package dev.toma.pubgmc.client.animation.builder;
+package dev.toma.pubgmc.client.animation;
 
-import dev.toma.pubgmc.client.animation.Animation;
-import dev.toma.pubgmc.client.animation.AnimationManager;
 import dev.toma.pubgmc.util.object.LazyLoader;
 import dev.toma.pubgmc.util.object.Optional;
 import net.minecraft.entity.player.PlayerEntity;

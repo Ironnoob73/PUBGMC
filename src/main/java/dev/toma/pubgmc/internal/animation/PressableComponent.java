@@ -1,4 +1,4 @@
-package dev.toma.pubgmc.client.animation.builder;
+package dev.toma.pubgmc.internal.animation;
 
 import java.util.function.Consumer;
 

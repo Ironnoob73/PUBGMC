@@ -32,6 +32,8 @@ public class PMCSounds {
     public static final SoundEvent SCORPION_SHOOT_SILENT = null;
     public static final SoundEvent SCORPION_RELOAD = null;
     public static final SoundEvent SCORPION_RELOAD_FAST = null;
+    public static final SoundEvent SAWED_OFF_SHOOT = null;
+    public static final SoundEvent SAWED_OFF_RELOAD = null;
     public static final SoundEvent UAZ_IDLE = null;
     public static final SoundEvent UAZ_ACCELERATE = null;
     public static final SoundEvent UAZ_BRAKE = null;

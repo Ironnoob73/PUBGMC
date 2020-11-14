@@ -1,4 +1,4 @@
-package dev.toma.pubgmc.client.screen.util;
+package dev.toma.pubgmc.internal.attachment;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import dev.toma.pubgmc.client.screen.ComponentScreen;

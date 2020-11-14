@@ -1,5 +1,6 @@
-package dev.toma.pubgmc.client.animation.builder;
+package dev.toma.pubgmc.internal.animation;
 
+import dev.toma.pubgmc.internal.InternalData;
 import dev.toma.pubgmc.util.RenderHelper;
 import net.minecraft.client.gui.FontRenderer;
 
@@ -39,7 +40,7 @@ public class InputComponent extends UIComponent {
         try {
             String text = name.get();
             int value = text.isEmpty() ? 1 : Integer.parseInt(name.get());
-            BuilderData.steps.get(this.index).length = value / 100.0F;
+            InternalData.steps.get(this.index).length = value / 100.0F;
         } catch (NumberFormatException ex) {
             // do nothing as we don't really care
         }

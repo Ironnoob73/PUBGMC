@@ -4,7 +4,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import dev.toma.pubgmc.client.animation.Animation;
 import dev.toma.pubgmc.client.animation.AnimationManager;
 import dev.toma.pubgmc.client.animation.GunPartAnimation;
-import dev.toma.pubgmc.client.animation.builder.AnimationType;
+import dev.toma.pubgmc.client.animation.AnimationType;
 import dev.toma.pubgmc.util.object.LazyLoader;
 import dev.toma.pubgmc.util.object.Optional;
 import net.minecraft.client.renderer.entity.model.RendererModel;

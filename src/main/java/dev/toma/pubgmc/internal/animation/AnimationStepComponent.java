@@ -1,8 +1,9 @@
-package dev.toma.pubgmc.client.animation.builder;
+package dev.toma.pubgmc.internal.animation;
 
 import dev.toma.pubgmc.client.animation.Animation;
 import dev.toma.pubgmc.client.animation.AnimationManager;
 import dev.toma.pubgmc.client.animation.Animations;
+import dev.toma.pubgmc.internal.InternalData;
 import dev.toma.pubgmc.util.RenderHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -31,29 +32,29 @@ public class AnimationStepComponent extends UIComponent {
         }));
         screen.addComponent(new PressableComponent(x + 120, y + 5, 40, 20, "Add", ac -> {
             BuilderAnimationStep newStep = new BuilderAnimationStep(step);
-            BuilderData.steps.add(ID + 1, newStep);
-            BuilderData.current = newStep;
+            InternalData.steps.add(ID + 1, newStep);
+            InternalData.current = newStep;
             screen.init();
         }));
         screen.addComponent(new PressableComponent(x + 165, y + 5, 40, 20, "Remove", ac -> {
-            BuilderData.steps.remove(ID);
-            if(BuilderData.steps.isEmpty()) {
+            InternalData.steps.remove(ID);
+            if(InternalData.steps.isEmpty()) {
                 BuilderAnimationStep step1 = new BuilderAnimationStep();
-                BuilderData.steps.add(step1);
-                BuilderData.current = step1;
-            } else if(BuilderData.current == null) {
-                BuilderData.current = BuilderData.steps.get(BuilderData.steps.size() - 1);
+                InternalData.steps.add(step1);
+                InternalData.current = step1;
+            } else if(InternalData.current == null) {
+                InternalData.current = InternalData.steps.get(InternalData.steps.size() - 1);
             }
             screen.init();
         }));
-        this.selected = BuilderData.current == step;
+        this.selected = InternalData.current == step;
     }
 
     @Override
     public void onClick(double mousex, double mousey) {
         if(!selected) {
-            if(id < BuilderData.steps.size()) {
-                BuilderData.current = BuilderData.steps.get(id);
+            if(id < InternalData.steps.size()) {
+                InternalData.current = InternalData.steps.get(id);
                 screen.init();
             }
         }

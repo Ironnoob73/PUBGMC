@@ -1,7 +1,6 @@
 package dev.toma.pubgmc.client.animation;
 
 import dev.toma.pubgmc.Pubgmc;
-import dev.toma.pubgmc.client.animation.builder.AnimationType;
 import dev.toma.pubgmc.util.object.Optional;
 import net.minecraftforge.event.TickEvent;
 
