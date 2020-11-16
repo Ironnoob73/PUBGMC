@@ -19,8 +19,6 @@ public interface IAnimationPart {
 
     String parameters();
 
-    void apply(float f, int i);
-
     static void refresh() {
         PARTS.clear();
         PARTS.add(ITEM_AND_HANDS);
@@ -53,12 +51,7 @@ public interface IAnimationPart {
 
         @Override
         public String parameters() {
-            return "f";
-        }
-
-        @Override
-        public void apply(float f, int i) {
-
+            return "(f";
         }
     }
 
@@ -82,17 +75,12 @@ public interface IAnimationPart {
 
         @Override
         public String getFunctionName() {
-            return "model";
+            return "model_" + index;
         }
 
         @Override
         public String parameters() {
-            return "(i, f)";
-        }
-
-        @Override
-        public void apply(float f, int i) {
-
+            return "((i, f)";
         }
 
         @Override

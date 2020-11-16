@@ -69,17 +69,11 @@ public interface IContext {
         }
 
         public Rotation(Rotation ctx) {
-            Pair<Float, Float> x = ctx.rotations.get(InternalData.Axis.X);
-            if(x != null) {
-                rotations.put(InternalData.Axis.X, Pair.of(this.sum(x), 0.0F));
-            }
-            Pair<Float, Float> y = ctx.rotations.get(InternalData.Axis.Y);
-            if(y != null) {
-                rotations.put(InternalData.Axis.Y, Pair.of(this.sum(y), 0.0F));
-            }
-            Pair<Float, Float> z = ctx.rotations.get(InternalData.Axis.Z);
-            if(z != null) {
-                rotations.put(InternalData.Axis.Z, Pair.of(this.sum(z), 0.0F));
+            for (InternalData.Axis axis : InternalData.Axis.values()) {
+                Pair<Float, Float> data = ctx.rotations.get(axis);
+                if(data != null) {
+                    rotations.put(axis, Pair.of(this.sum(data), 0.0F));
+                }
             }
         }
 
