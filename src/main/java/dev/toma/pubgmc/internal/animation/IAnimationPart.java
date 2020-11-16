@@ -19,6 +19,8 @@ public interface IAnimationPart {
 
     String parameters();
 
+    boolean isSpecial();
+
     static void refresh() {
         PARTS.clear();
         PARTS.add(ITEM_AND_HANDS);
@@ -53,6 +55,11 @@ public interface IAnimationPart {
         public String parameters() {
             return "(f";
         }
+
+        @Override
+        public boolean isSpecial() {
+            return false;
+        }
     }
 
     class Model implements IAnimationPart {
@@ -75,12 +82,17 @@ public interface IAnimationPart {
 
         @Override
         public String getFunctionName() {
-            return "model_" + index;
+            return "model";
         }
 
         @Override
         public String parameters() {
             return "((i, f)";
+        }
+
+        @Override
+        public boolean isSpecial() {
+            return true;
         }
 
         @Override

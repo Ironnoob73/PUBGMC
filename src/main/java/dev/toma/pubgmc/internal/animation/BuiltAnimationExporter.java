@@ -60,10 +60,30 @@ public class BuiltAnimationExporter {
             float last = first + step.length;
             builder.append("addStep(").append(df.format(first)).append("F, ").append(df.format(last)).append("F, ").append(InternalData.buildingGunAnimation ? "SimpleGunAnimation.create()" : "SimpleAnimation.newSimpleAnimation()");
             first = last;
+            List<IAnimationPart> specialParts = new ArrayList<>();
             for (IAnimationPart part : IAnimationPart.PARTS) {
                 AnimationData data = step.map.get(part);
                 if (data.isEmpty()) continue;
-                builder.append(".").append(part.getFunctionName()).append(part.parameters()).append("-> {").append(generateAnimation(data, df)).append("})");
+                if(part.isSpecial()) {
+                    specialParts.add(part);
+                } else {
+                    builder.append(".").append(part.getFunctionName()).append(part.parameters()).append("-> {").append(generateAnimation(data, df)).append("})");
+                }
+            }
+            if(!specialParts.isEmpty()) {
+                if(specialParts.size() == 1) {
+                    IAnimationPart part = specialParts.get(0);
+                    AnimationData data = step.map.get(part);
+                    builder.append(".").append(part.getFunctionName()).append(part.parameters()).append("-> {").append(generateAnimation(data, df)).append("})");
+                } else {
+                    builder.append(".model((i, f) -> {");
+                    builder.append("\nswitch(i) {\n");
+                    for (IAnimationPart part : specialParts) {
+                        AnimationData data = step.map.get(part);
+                        builder.append("case ").append(part.getDisplayName()).append(":").append(generateAnimation(data, df)).append("break;");
+                    }
+                    builder.append("}})");
+                }
             }
             builder.append(".create());\n");
         }
