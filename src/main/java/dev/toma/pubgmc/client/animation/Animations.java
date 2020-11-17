@@ -27,8 +27,6 @@ public class Animations {
     public static void init() {
         DEBUG = register();
         HEALING = register();
-        AIMING = register().blockedBy(() -> new AnimationType[] {SPRINTING, RELOADING, BOLT});
-        SPRINTING = register().blockedBy(() -> new AnimationType[] {RELOADING, BOLT});
         RELOADING = register().factory(player -> {
             ItemStack stack = player.getHeldItemMainhand();
             if(stack.getItem() instanceof GunItem) {
@@ -40,6 +38,8 @@ public class Animations {
         });
         BOLT = register();
         RECOIL = register().factory(player -> new RecoilAnimation());
+        SPRINTING = register().blockedBy(RELOADING, BOLT);
+        AIMING = register().blockedBy(SPRINTING, RELOADING, BOLT);
         FIREMODE_SWITCH = register();
     }
 

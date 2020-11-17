@@ -1,18 +1,16 @@
 package dev.toma.pubgmc.client.animation;
 
-import dev.toma.pubgmc.util.object.LazyLoader;
 import dev.toma.pubgmc.util.object.Optional;
 import net.minecraft.entity.player.PlayerEntity;
 
 import java.util.Objects;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 public final class AnimationType {
 
     public final int index;
-    private LazyLoader<AnimationType[]> blockedBy = new LazyLoader<>(() -> new AnimationType[0]);
-    private LazyLoader<AnimationType[]> overrides = new LazyLoader<>(() -> new AnimationType[0]);
+    private AnimationType[] blockedBy = new AnimationType[0];
+    private AnimationType[] overrides = new AnimationType[0];
     private Function<PlayerEntity, Animation> factory;
 
     public AnimationType(int id) {
@@ -24,13 +22,13 @@ public final class AnimationType {
         return this;
     }
 
-    public AnimationType blockedBy(Supplier<AnimationType[]> conditions) {
-        this.blockedBy = new LazyLoader<>(conditions);
+    public AnimationType blockedBy(AnimationType... conditions) {
+        this.blockedBy = conditions;
         return this;
     }
 
-    public AnimationType override(Supplier<AnimationType[]> overrides) {
-        this.overrides = new LazyLoader<>(overrides);
+    public AnimationType override(AnimationType... overrides) {
+        this.overrides = overrides;
         return this;
     }
 
@@ -43,14 +41,14 @@ public final class AnimationType {
 
     public void apply() {
         if(this.canPlay()) {
-            for(AnimationType type : overrides.get()) {
+            for(AnimationType type : overrides) {
                 AnimationManager.stopAnimation(type);
             }
         }
     }
 
     public boolean canPlay() {
-        for(AnimationType type : blockedBy.get()) {
+        for(AnimationType type : blockedBy) {
             Optional<Animation> optional = AnimationManager.getAnimationFromID(type);
             if (optional.isPresent()) {
                 return false;

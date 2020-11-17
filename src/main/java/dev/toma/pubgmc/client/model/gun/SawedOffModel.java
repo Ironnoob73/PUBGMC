@@ -1,7 +1,6 @@
 package dev.toma.pubgmc.client.model.gun;
 
 import dev.toma.pubgmc.client.animation.Animations;
-import dev.toma.pubgmc.client.animation.AnimationType;
 import net.minecraft.client.renderer.entity.model.RendererModel;
 import net.minecraft.client.renderer.model.ModelBox;
 import net.minecraft.item.ItemStack;
@@ -207,7 +206,7 @@ public class SawedOffModel extends AbstractGunModel {
         bone4.cubeList.add(new ModelBox(bone4, 32, 67, -4.5F, -1.4493F, -3.3643F, 9, 2, 6, 0.0F, true));
         bone4.cubeList.add(new ModelBox(bone4, 32, 67, -4.5F, -0.4493F, -9.3643F, 9, 1, 6, 0.0F, true));
 
-        registerTypes(() -> new AnimationType[] {Animations.RELOADING, Animations.DEBUG});
+        registerTypes(Animations.RELOADING);
         addAnimatedPart(0, joint);
     }
 

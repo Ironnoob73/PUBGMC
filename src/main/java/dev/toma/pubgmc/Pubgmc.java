@@ -82,6 +82,7 @@ public class Pubgmc {
         lootManager = new LootManager();
         contentManager = new ContentManager();
         loadoutManager = new LoadoutManager();
+        DistExecutor.runWhenOn(Dist.CLIENT, () -> Animations::init);
     }
 
     private void setupClient(FMLClientSetupEvent event) {
@@ -96,7 +97,6 @@ public class Pubgmc {
             ScreenManager.registerFactory(PMCContainers.FACTORY.get(), FactoryScreen::new);
             ScreenManager.registerFactory(PMCContainers.DEATH_CRATE.get(), DeathCrateScreen::new);
         });
-        Animations.init();
         contentManager.start();
         if(Config.animationTool.get()) InternalHandles.init();
     }
