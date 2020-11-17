@@ -206,8 +206,7 @@ public class SawedOffModel extends AbstractGunModel {
         bone4.cubeList.add(new ModelBox(bone4, 32, 67, -4.5F, -1.4493F, -3.3643F, 9, 2, 6, 0.0F, true));
         bone4.cubeList.add(new ModelBox(bone4, 32, 67, -4.5F, -0.4493F, -9.3643F, 9, 1, 6, 0.0F, true));
 
-        registerTypes(Animations.RELOADING);
-        addAnimatedPart(0, joint);
+        addAnimatedParts(joint);
     }
 
     @Override

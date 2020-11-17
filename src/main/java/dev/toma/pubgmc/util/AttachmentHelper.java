@@ -43,6 +43,10 @@ public class AttachmentHelper {
         return has(PMCItems.ANGLED_GRIP, item, stack);
     }
 
+    public static boolean hasScope(GunItem item, ItemStack stack) {
+        return !item.getAttachment(AttachmentCategory.SCOPE, stack).isEmpty();
+    }
+
     public static boolean hasRedDot(GunItem item, ItemStack stack) {
         return has(PMCItems.RED_DOT, item, stack);
     }

@@ -10,6 +10,7 @@ import dev.toma.pubgmc.common.item.gun.attachment.AttachmentCategory;
 import dev.toma.pubgmc.common.item.gun.attachment.AttachmentItem;
 import dev.toma.pubgmc.util.AttachmentHelper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -29,17 +30,16 @@ public abstract class GunRenderer extends ItemStackTileEntityRenderer {
     public static final AttachmentModel VERTICAL_GRIP = new VerticalGripModel();
     public static final AttachmentModel ANGLED_GRIP = new AngledGripModel();
 
+    public static final ResourceLocation GUN_TEXTURE_MAP = Pubgmc.makeResource("textures/gun_texture_map.png");
+    public static final ResourceLocation ATTACHMENT_TEXTURE_MAP = Pubgmc.makeResource("textures/attachment_texture_map.png");
+
     private final AbstractGunModel model;
-    private final ResourceLocation location;
 
     public GunRenderer() {
         this.model = createModel();
-        this.location = createTexture();
     }
 
     public abstract AbstractGunModel createModel();
-
-    public abstract ResourceLocation createTexture();
 
     protected abstract void renderAttachments(GunItem item, ItemStack stack);
 
@@ -51,13 +51,10 @@ public abstract class GunRenderer extends ItemStackTileEntityRenderer {
         return model;
     }
 
-    public ResourceLocation getTexture() {
-        return location;
-    }
-
     @Override
     public void renderByItem(ItemStack itemStackIn) {
-        Minecraft.getInstance().getTextureManager().bindTexture(this.getTexture());
+        TextureManager manager = Minecraft.getInstance().getTextureManager();
+        manager.bindTexture(GUN_TEXTURE_MAP);
         GlStateManager.pushMatrix();
         this.offsetModel();
         GlStateManager.translatef(0.5F, 1.2F, 0.25F);
@@ -67,16 +64,9 @@ public abstract class GunRenderer extends ItemStackTileEntityRenderer {
         this.getModel().render(itemStackIn);
         GlStateManager.popMatrix();
         GlStateManager.pushMatrix();
+        manager.bindTexture(ATTACHMENT_TEXTURE_MAP);
         this.renderAttachments((GunItem) itemStackIn.getItem(), itemStackIn);
         GlStateManager.popMatrix();
-    }
-
-    protected static ResourceLocation gunResource(String name) {
-        return new ResourceLocation(Pubgmc.MODID, "textures/weapons/" + name + ".png");
-    }
-
-    private boolean has(AttachmentCategory category, AttachmentItem item, GunItem gun, ItemStack stack) {
-        return gun.getAttachment(category, stack) == item;
     }
 
     /* ============================= RENDERERS ================================== */
@@ -86,11 +76,6 @@ public abstract class GunRenderer extends ItemStackTileEntityRenderer {
         @Override
         public AbstractGunModel createModel() {
             return new P92Model();
-        }
-
-        @Override
-        public ResourceLocation createTexture() {
-            return gunResource("p92");
         }
 
         @Override
@@ -113,11 +98,6 @@ public abstract class GunRenderer extends ItemStackTileEntityRenderer {
         @Override
         public AbstractGunModel createModel() {
             return new P1911Model();
-        }
-
-        @Override
-        public ResourceLocation createTexture() {
-            return gunResource("p92");
         }
 
         @Override
@@ -147,11 +127,6 @@ public abstract class GunRenderer extends ItemStackTileEntityRenderer {
         @Override
         public AbstractGunModel createModel() {
             return new P18CModel();
-        }
-
-        @Override
-        public ResourceLocation createTexture() {
-            return gunResource("p18c");
         }
 
         @Override
@@ -185,11 +160,6 @@ public abstract class GunRenderer extends ItemStackTileEntityRenderer {
         }
 
         @Override
-        public ResourceLocation createTexture() {
-            return gunResource("deagle");
-        }
-
-        @Override
         public void offsetModel() {
             GlStateManager.translatef(0.123F, -0.01F, 0.35F);
             GlStateManager.scalef(0.75F, 0.75F, 0.75F);
@@ -212,11 +182,6 @@ public abstract class GunRenderer extends ItemStackTileEntityRenderer {
         @Override
         public AbstractGunModel createModel() {
             return new R1895Model();
-        }
-
-        @Override
-        public ResourceLocation createTexture() {
-            return GunRenderer.gunResource("scar");
         }
 
         @Override
@@ -244,11 +209,6 @@ public abstract class GunRenderer extends ItemStackTileEntityRenderer {
         }
 
         @Override
-        public ResourceLocation createTexture() {
-            return gunResource("r45");
-        }
-
-        @Override
         public void offsetModel() {
             GlStateManager.translatef(-0.002F, 0.01F, 0.0F);
         }
@@ -269,11 +229,6 @@ public abstract class GunRenderer extends ItemStackTileEntityRenderer {
         @Override
         public AbstractGunModel createModel() {
             return new ScorpionModel();
-        }
-
-        @Override
-        public ResourceLocation createTexture() {
-            return gunResource("scar");
         }
 
         @Override
@@ -311,11 +266,6 @@ public abstract class GunRenderer extends ItemStackTileEntityRenderer {
         @Override
         public AbstractGunModel createModel() {
             return new SawedOffModel();
-        }
-
-        @Override
-        public ResourceLocation createTexture() {
-            return gunResource("scar");
         }
 
         @Override

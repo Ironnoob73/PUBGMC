@@ -16,7 +16,15 @@ import java.util.function.Supplier;
 public abstract class AbstractGunModel extends Model {
 
     private final Map<Integer, RendererModel> animatedPartMap = new HashMap<>();
-    private AnimationType[] listeningTo = new AnimationType[0];
+    private final AnimationType[] listeningTo;
+
+    public AbstractGunModel() {
+        if(Config.animationTool.get()) {
+            listeningTo = new AnimationType[] {Animations.RELOADING, Animations.DEBUG};
+        } else {
+            listeningTo = new AnimationType[] {Animations.RELOADING};
+        }
+    }
 
     public abstract void doModelRender(ItemStack stack);
 
@@ -38,19 +46,10 @@ public abstract class AbstractGunModel extends Model {
         }
     }
 
-    public final void addAnimatedPart(int modelID, RendererModel model) {
-        this.animatedPartMap.put(modelID, model);
-    }
-
-    public final void registerTypes(AnimationType... types) {
-        if(Config.animationTool.get()) {
-            int l = types.length;
-            AnimationType[] array = new AnimationType[l + 1];
-            System.arraycopy(types, 0, array, 0, l);
-            array[l] = Animations.DEBUG;
-            this.listeningTo = array;
+    public final void addAnimatedParts(RendererModel... models) {
+        for (RendererModel model : models) {
+            this.animatedPartMap.put(this.animatedPartMap.size(), model);
         }
-        this.listeningTo = types;
     }
 
     public static void setRotationAngle(RendererModel model, float x, float y, float z) {
