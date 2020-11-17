@@ -166,14 +166,14 @@ public class ClientEventHandler {
                 NetworkManager.sendToServer(new SPacketControllableInput(fwd, bwd, right, left, ptUp, ptDown));
             }
             ItemStack stack = player.getHeldItemMainhand();
+            IPlayerCap cap = PlayerCapFactory.get(player);
             if(stack.getItem() instanceof GunItem) {
                 GunItem gun = (GunItem) stack.getItem();
                 CooldownTracker tracker = player.getCooldownTracker();
-                if(settings.keyBindAttack.isKeyDown() && !tracker.hasCooldown(stack.getItem()) && gun.getFiremode(stack) == Firemode.FULL_AUTO && !player.isSprinting()) {
+                if(settings.keyBindAttack.isKeyDown() && !tracker.hasCooldown(stack.getItem()) && gun.getFiremode(stack) == Firemode.FULL_AUTO && !player.isSprinting() && !cap.getReloadInfo().isReloading()) {
                     shoot(gun, stack, player);
                 }
             }
-            IPlayerCap cap = PlayerCapFactory.get(player);
             if(cap.isProne()) {
                 if(player.isSneaking() || player.isSprinting()) {
                     NetworkManager.sendToServer(new SPacketProne(false));

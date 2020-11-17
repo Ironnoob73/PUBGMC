@@ -131,7 +131,8 @@ public abstract class GunRenderer extends ItemStackTileEntityRenderer {
 
         @Override
         public void offsetModel() {
-            GlStateManager.translatef(0.0F, -0.12F, 0.1F);
+            GlStateManager.translatef(1.0F, 0.09F, 0.55F);
+            GlStateManager.rotatef(180.0F, 0.0F, 1.0F, 0.0F);
         }
 
         @Override
