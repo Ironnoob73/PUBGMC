@@ -43,10 +43,8 @@ public class DeagleModel extends AbstractGunModel {
 
     @Override
     public void doModelRender(ItemStack stack) {
-        slide.render(1.0F);
         hammer.render(1.0F);
         deagle.render(1.0F);
-        magazine.render(1.0F);
         if(AttachmentHelper.hasScope((GunItem) stack.getItem(), stack))
             rail.render(1.0F);
     }

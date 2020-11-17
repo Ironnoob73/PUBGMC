@@ -30,8 +30,8 @@ public abstract class GunRenderer extends ItemStackTileEntityRenderer {
     public static final AttachmentModel VERTICAL_GRIP = new VerticalGripModel();
     public static final AttachmentModel ANGLED_GRIP = new AngledGripModel();
 
-    public static final ResourceLocation GUN_TEXTURE_MAP = Pubgmc.makeResource("textures/gun_texture_map.png");
-    public static final ResourceLocation ATTACHMENT_TEXTURE_MAP = Pubgmc.makeResource("textures/attachment_texture_map.png");
+    public static final ResourceLocation GUN_TEXTURE_MAP = Pubgmc.makeResource("textures/weapons/gun_texture_map.png");
+    public static final ResourceLocation ATTACHMENT_TEXTURE_MAP = Pubgmc.makeResource("textures/weapons/attachment_texture_map.png");
 
     private final AbstractGunModel model;
 

@@ -1,6 +1,5 @@
 package dev.toma.pubgmc.client.model.gun;
 
-import dev.toma.pubgmc.client.animation.Animations;
 import net.minecraft.client.renderer.entity.model.RendererModel;
 import net.minecraft.client.renderer.model.ModelBox;
 import net.minecraft.item.ItemStack;
@@ -33,9 +32,7 @@ public class P1911Model extends AbstractGunModel {
 
     @Override
     public void doModelRender(ItemStack stack) {
-        slide.render(1.0F);
         p1911.render(1.0F);
-        magazine.render(1.0F);
         hammer.render(1.0F);
     }
 

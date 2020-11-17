@@ -35,7 +35,6 @@ public class R1895Model extends AbstractGunModel {
     @Override
     public void doModelRender(ItemStack stack) {
         r1895.render(1.0F);
-        drum.render(1.0F);
     }
 
     public R1895Model() {

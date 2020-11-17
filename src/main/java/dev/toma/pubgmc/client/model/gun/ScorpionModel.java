@@ -39,8 +39,6 @@ public class ScorpionModel extends AbstractGunModel {
 
     @Override
     public void doModelRender(ItemStack stack) {
-        charging_handle.render(1.0F);
-        magazine.render(1.0F);
         scorpion.render(1.0F);
     }
 

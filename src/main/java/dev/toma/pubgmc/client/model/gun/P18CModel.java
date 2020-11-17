@@ -22,8 +22,6 @@ public class P18CModel extends AbstractGunModel {
     @Override
     public void doModelRender(ItemStack stack) {
         gun.render(1.0F);
-        slide.render(1.0F);
-        magazine.render(1.0F);
     }
 
     public P18CModel() {

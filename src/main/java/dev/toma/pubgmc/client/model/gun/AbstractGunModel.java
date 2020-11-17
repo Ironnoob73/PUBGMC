@@ -5,6 +5,8 @@ import dev.toma.pubgmc.client.animation.*;
 import dev.toma.pubgmc.config.Config;
 import dev.toma.pubgmc.util.object.LazyLoader;
 import dev.toma.pubgmc.util.object.Optional;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.renderer.entity.model.RendererModel;
 import net.minecraft.client.renderer.model.Model;
 import net.minecraft.item.ItemStack;
@@ -30,14 +32,18 @@ public abstract class AbstractGunModel extends Model {
 
     public final void render(ItemStack stack) {
         this.doModelRender(stack);
+        ClientPlayerEntity client = Minecraft.getInstance().player;
+        boolean flag = client.getHeldItemMainhand() == stack;
         for(Map.Entry<Integer, RendererModel> entry : animatedPartMap.entrySet()) {
             GlStateManager.pushMatrix();
-            for(AnimationType type : listeningTo) {
-                Optional<Animation> animationOptional = AnimationManager.getAnimationFromID(type);
-                if(animationOptional.isPresent()) {
-                    Animation animation = animationOptional.get();
-                    if(animation instanceof GunPartAnimation) {
-                        ((GunPartAnimation) animation).animateModel(entry.getKey());
+            if(flag) {
+                for(AnimationType type : listeningTo) {
+                    Optional<Animation> animationOptional = AnimationManager.getAnimationFromID(type);
+                    if(animationOptional.isPresent()) {
+                        Animation animation = animationOptional.get();
+                        if(animation instanceof GunPartAnimation) {
+                            ((GunPartAnimation) animation).animateModel(entry.getKey());
+                        }
                     }
                 }
             }

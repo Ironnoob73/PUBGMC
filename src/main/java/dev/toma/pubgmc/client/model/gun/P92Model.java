@@ -28,10 +28,8 @@ public class P92Model extends AbstractGunModel {
 
     @Override
     public void doModelRender(ItemStack stack) {
-        slide.render(1.0F);
         hammer.render(1.0F);
         p92.render(1.0F);
-        magazine.render(1.0F);
     }
 
     public P92Model() {

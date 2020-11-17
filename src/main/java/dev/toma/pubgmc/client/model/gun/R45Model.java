@@ -40,7 +40,6 @@ public class R45Model extends AbstractGunModel {
     public void doModelRender(ItemStack stack) {
         r45.render(1.0F);
         hammer.render(1.0F);
-        drum.render(1.0F);
     }
 
     public R45Model() {
