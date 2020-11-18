@@ -88,7 +88,7 @@ public class ClientEventHandler {
             IPlayerCap data = PlayerCapFactory.get(player);
             if(data.getAimInfo().isAiming() && scopeInfo != null) {
                 MainWindow window = event.getWindow();
-                int top = 25;
+                int top = 10;
                 int size = window.getScaledHeight() - 50;
                 double left = window.getScaledWidth() / 2.0D - size / 2.0D;
                 if(scopeInfo.shouldRenderPiP()) {

@@ -7,12 +7,7 @@ import net.minecraft.item.ItemStack;
 public class AnimationPackS686 extends AnimationPackShotguns {
 
     @Override
-    public AimingAnimation getAimingAnimation(GunItem gunItem, ItemStack stack) {
-        return null;
-    }
-
-    @Override
-    public ReloadAnimation getReloadAnimation(GunItem gunItem, ItemStack stack) {
-        return null;
+    public float getAimYOffset(GunItem item, ItemStack stack) {
+        return 0.20F;
     }
 }

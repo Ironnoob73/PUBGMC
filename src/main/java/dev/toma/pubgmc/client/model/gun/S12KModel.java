@@ -572,7 +572,7 @@ public class S12KModel extends AbstractGunModel {
     @Override
     public void doModelRender(ItemStack stack) {
         s12k.render(1.0F);
-        if(!hasSight(stack))
-            ironsights.render(1.0F);
+        /*if(!hasSight(stack))
+            ironsights.render(1.0F);*/
     }
 }

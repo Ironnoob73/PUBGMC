@@ -290,7 +290,8 @@ public abstract class GunRenderer extends ItemStackTileEntityRenderer {
 
         @Override
         public void offsetModel() {
-
+            GlStateManager.scalef(1.0F, 1.0F, 0.8F);
+            GlStateManager.translatef(-0.15F, -0.1F, 0.5F);
         }
 
         @Override
@@ -311,7 +312,8 @@ public abstract class GunRenderer extends ItemStackTileEntityRenderer {
 
         @Override
         public void offsetModel() {
-
+            GlStateManager.scalef(1.0F, 1.0F, 0.8F);
+            GlStateManager.translatef(-0.15F, -0.18F, 0.5F);
         }
     }
 
@@ -323,12 +325,42 @@ public abstract class GunRenderer extends ItemStackTileEntityRenderer {
 
         @Override
         protected void renderAttachments(GunItem item, ItemStack stack) {
-
+            if(AttachmentHelper.hasRedDot(item, stack)) {
+                GlStateManager.pushMatrix();
+                GlStateManager.translatef(0.34999993F, 0.21000001F, 0.6F);
+                GlStateManager.scalef(0.79999995F, 0.79999995F, 0.79999995F);
+                RED_DOT.doRender();
+                GlStateManager.popMatrix();
+            }
+            if(AttachmentHelper.hasHolographic(item, stack)) {
+                GlStateManager.pushMatrix();
+                GlStateManager.translatef(0.349F, -0.53F, 0.77000004F);
+                GlStateManager.scalef(1.8000002F, 1.8000002F, 1.8000002F);
+                HOLO.doRender();
+                GlStateManager.popMatrix();
+            }
+            if(AttachmentHelper.has2x(item, stack)) {
+                GlStateManager.pushMatrix();
+                GlStateManager.translatef(0.35000005F, -0.59999985F, 0.72000015F);
+                GlStateManager.scalef(1.9000002F, 1.9000002F, 1.9000002F);
+                SCOPE_2X.doRender();
+                GlStateManager.popMatrix();
+            }
+            if(AttachmentHelper.has4x(item, stack)) {
+                GlStateManager.pushMatrix();
+                GlStateManager.translatef(0.35000005F, -0.29000008F, 0.69000006F);
+                GlStateManager.scalef(1.6000001F, 1.6000001F, 1.0F);
+                SCOPE_4X.doRender();
+                GlStateManager.popMatrix();
+            }
+            AttachmentSettings.instance().renderAll();
         }
 
         @Override
         public void offsetModel() {
-
+            GlStateManager.rotatef(180.0F, 0.0F, 1.0F, 0.0F);
+            GlStateManager.scalef(1.0F, 1.0F, 0.8F);
+            GlStateManager.translatef(-0.85F, -0.15F, -0.95F);
         }
     }
 }

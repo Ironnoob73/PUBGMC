@@ -22,8 +22,9 @@ public class DummyGunBakedModel extends DummyBakedModel {
                 break;
             }
             case GUI: {
-                GlStateManager.translatef(0.1F, -0.22F, 0.0F);
+                GlStateManager.translatef(-0.05F, -0.15F, 0.0F);
                 GlStateManager.rotatef(90.0F, 0.5F, 1.0F, 0.0F);
+                GlStateManager.scalef(0.6F, 0.6F, 0.6F);
                 break;
             }
         }
