@@ -353,6 +353,13 @@ public abstract class GunRenderer extends ItemStackTileEntityRenderer {
                 SCOPE_4X.doRender();
                 GlStateManager.popMatrix();
             }
+            if(AttachmentHelper.hasSilencer(item, stack)) {
+                GlStateManager.pushMatrix();
+                GlStateManager.translatef(0.35000005F, -0.82000005F, -0.55999994F);
+                GlStateManager.scalef(2.0000002F, 2.0000002F, 1.3000001F);
+                AR_SUPPRESSOR.doRender();
+                GlStateManager.popMatrix();
+            }
             AttachmentSettings.instance().renderAll();
         }
 
