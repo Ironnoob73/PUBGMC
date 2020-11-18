@@ -113,7 +113,7 @@ function initializeCoreMod() {
             FLOAD 9
             INVOKEVIRTUAL net/minecraft/client/renderer/entity/LivingRenderer.prepareScale (Lnet/minecraft/entity/LivingEntity;F)F
             FSTORE 16*/
-		'livingRenderer': {
+		'playerRenderer': {
 		    'target': {
 		        'type': 'METHOD',
 		        'class': 'net.minecraft.client.renderer.entity.PlayerRenderer',

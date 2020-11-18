@@ -280,4 +280,55 @@ public abstract class GunRenderer extends ItemStackTileEntityRenderer {
             AttachmentSettings.instance().renderAll();
         }
     }
+
+    public static class S1897Renderer extends GunRenderer {
+
+        @Override
+        public AbstractGunModel createModel() {
+            return new S1897Model();
+        }
+
+        @Override
+        public void offsetModel() {
+
+        }
+
+        @Override
+        protected void renderAttachments(GunItem item, ItemStack stack) {
+        }
+    }
+
+    public static class S686Renderer extends GunRenderer {
+        @Override
+        public AbstractGunModel createModel() {
+            return new S686Model();
+        }
+
+        @Override
+        protected void renderAttachments(GunItem item, ItemStack stack) {
+
+        }
+
+        @Override
+        public void offsetModel() {
+
+        }
+    }
+
+    public static class S12KRenderer extends GunRenderer {
+        @Override
+        public AbstractGunModel createModel() {
+            return new S12KModel();
+        }
+
+        @Override
+        protected void renderAttachments(GunItem item, ItemStack stack) {
+
+        }
+
+        @Override
+        public void offsetModel() {
+
+        }
+    }
 }

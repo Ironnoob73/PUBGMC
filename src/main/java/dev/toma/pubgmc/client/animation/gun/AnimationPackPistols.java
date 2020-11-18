@@ -33,6 +33,7 @@ public abstract class AnimationPackPistols extends GunAnimationPack {
         });
     }
 
+    @Override
     public float getAimYOffset(GunItem item, ItemStack stack) {
         if(AttachmentHelper.hasRedDot(item, stack)) {
             return 0.067F;

@@ -17,6 +17,10 @@ public abstract class GunAnimationPack {
 
     }
 
+    public float getAimYOffset(GunItem item, ItemStack stack) {
+        return 0.0F;
+    }
+
     public abstract AimingAnimation getAimingAnimation(GunItem gunItem, ItemStack stack);
 
     public abstract ReloadAnimation getReloadAnimation(GunItem gunItem, ItemStack stack);

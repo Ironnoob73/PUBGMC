@@ -2,7 +2,9 @@ package dev.toma.pubgmc.client.model.gun;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import dev.toma.pubgmc.client.animation.*;
+import dev.toma.pubgmc.common.item.gun.GunItem;
 import dev.toma.pubgmc.config.Config;
+import dev.toma.pubgmc.util.AttachmentHelper;
 import dev.toma.pubgmc.util.object.LazyLoader;
 import dev.toma.pubgmc.util.object.Optional;
 import net.minecraft.client.Minecraft;
@@ -62,6 +64,10 @@ public abstract class AbstractGunModel extends Model {
         model.rotateAngleX = x;
         model.rotateAngleY = y;
         model.rotateAngleZ = z;
+    }
+
+    protected static boolean hasSight(ItemStack stack) {
+        return AttachmentHelper.hasScope((GunItem) stack.getItem(), stack);
     }
 
     public Map<Integer, RendererModel> getAnimatedPartMap() {
