@@ -4,9 +4,9 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import dev.toma.pubgmc.client.animation.AnimationManager;
 import dev.toma.pubgmc.client.animation.Animations;
 import dev.toma.pubgmc.client.animation.HandAnimate;
+import dev.toma.pubgmc.common.item.gun.core.AbstractGunItem;
 import dev.toma.pubgmc.internal.animation.*;
 import dev.toma.pubgmc.internal.attachment.AttachmentSetupScreen;
-import dev.toma.pubgmc.common.item.gun.GunItem;
 import dev.toma.pubgmc.util.RenderHelper;
 import dev.toma.pubgmc.util.object.Pair;
 import net.minecraft.client.Minecraft;
@@ -14,7 +14,6 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Rotation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -65,7 +64,7 @@ public class InternalHandles {
             AnimationManager.playNewAnimation(Animations.DEBUG, InternalData.current);
         } else if(modelSetupUI.isPressed()) {
             ItemStack stack = player.getHeldItemMainhand();
-            if(stack.getItem() instanceof GunItem) {
+            if(stack.getItem() instanceof AbstractGunItem) {
                 Minecraft.getInstance().displayGuiScreen(new AttachmentSetupScreen(stack));
             }
         }

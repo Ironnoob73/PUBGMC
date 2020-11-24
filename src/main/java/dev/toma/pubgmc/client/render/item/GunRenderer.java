@@ -4,10 +4,8 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import dev.toma.pubgmc.Pubgmc;
 import dev.toma.pubgmc.client.model.gun.*;
 import dev.toma.pubgmc.client.model.gun.attachment.*;
+import dev.toma.pubgmc.common.item.gun.core.AbstractGunItem;
 import dev.toma.pubgmc.internal.attachment.AttachmentSettings;
-import dev.toma.pubgmc.common.item.gun.GunItem;
-import dev.toma.pubgmc.common.item.gun.attachment.AttachmentCategory;
-import dev.toma.pubgmc.common.item.gun.attachment.AttachmentItem;
 import dev.toma.pubgmc.util.AttachmentHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureManager;
@@ -41,7 +39,7 @@ public abstract class GunRenderer extends ItemStackTileEntityRenderer {
 
     public abstract AbstractGunModel createModel();
 
-    protected abstract void renderAttachments(GunItem item, ItemStack stack);
+    protected abstract void renderAttachments(AbstractGunItem item, ItemStack stack);
 
     public void offsetModel() {
 
@@ -65,7 +63,7 @@ public abstract class GunRenderer extends ItemStackTileEntityRenderer {
         GlStateManager.popMatrix();
         GlStateManager.pushMatrix();
         manager.bindTexture(ATTACHMENT_TEXTURE_MAP);
-        this.renderAttachments((GunItem) itemStackIn.getItem(), itemStackIn);
+        this.renderAttachments((AbstractGunItem) itemStackIn.getItem(), itemStackIn);
         GlStateManager.popMatrix();
     }
 
@@ -79,7 +77,7 @@ public abstract class GunRenderer extends ItemStackTileEntityRenderer {
         }
 
         @Override
-        protected void renderAttachments(GunItem item, ItemStack stack) {
+        protected void renderAttachments(AbstractGunItem item, ItemStack stack) {
             if(AttachmentHelper.hasRedDot(item, stack)) {
                 GlStateManager.pushMatrix();
                 GlStateManager.scaled(0.65, 0.65, 0.65);
@@ -106,7 +104,7 @@ public abstract class GunRenderer extends ItemStackTileEntityRenderer {
         }
 
         @Override
-        protected void renderAttachments(GunItem item, ItemStack stack) {
+        protected void renderAttachments(AbstractGunItem item, ItemStack stack) {
             if(AttachmentHelper.hasRedDot(item, stack)) {
                 GlStateManager.pushMatrix();
                 GlStateManager.translatef(0.5F, 0.36000004F, 0.42F);
@@ -136,7 +134,7 @@ public abstract class GunRenderer extends ItemStackTileEntityRenderer {
         }
 
         @Override
-        protected void renderAttachments(GunItem item, ItemStack stack) {
+        protected void renderAttachments(AbstractGunItem item, ItemStack stack) {
             if(AttachmentHelper.hasRedDot(item, stack)) {
                 GlStateManager.pushMatrix();
                 GlStateManager.translatef(0.5F, 0.35000005F, 0.33999997F);
@@ -167,7 +165,7 @@ public abstract class GunRenderer extends ItemStackTileEntityRenderer {
         }
 
         @Override
-        protected void renderAttachments(GunItem item, ItemStack stack) {
+        protected void renderAttachments(AbstractGunItem item, ItemStack stack) {
             if(AttachmentHelper.hasRedDot(item, stack)) {
                 GlStateManager.pushMatrix();
                 GlStateManager.translatef(0.5F, 0.37000003F, 0.34999996F);
@@ -191,7 +189,7 @@ public abstract class GunRenderer extends ItemStackTileEntityRenderer {
         }
 
         @Override
-        protected void renderAttachments(GunItem item, ItemStack stack) {
+        protected void renderAttachments(AbstractGunItem item, ItemStack stack) {
             if(AttachmentHelper.hasSilencer(item, stack)) {
                 GlStateManager.pushMatrix();
                 GlStateManager.translatef(0.14999998F, 0.26000002F, -0.17999999F);
@@ -215,7 +213,7 @@ public abstract class GunRenderer extends ItemStackTileEntityRenderer {
         }
 
         @Override
-        protected void renderAttachments(GunItem item, ItemStack stack) {
+        protected void renderAttachments(AbstractGunItem item, ItemStack stack) {
             if(AttachmentHelper.hasRedDot(item, stack)) {
                 GlStateManager.pushMatrix();
                 GlStateManager.translatef(0.5F, 0.45000005F, 0.15999998F);
@@ -238,7 +236,7 @@ public abstract class GunRenderer extends ItemStackTileEntityRenderer {
         }
 
         @Override
-        protected void renderAttachments(GunItem item, ItemStack stack) {
+        protected void renderAttachments(AbstractGunItem item, ItemStack stack) {
             if(AttachmentHelper.hasRedDot(item, stack)) {
                 GlStateManager.pushMatrix();
                 GlStateManager.translatef(0.5F, 0.28000003F, 0.38000003F);
@@ -276,7 +274,7 @@ public abstract class GunRenderer extends ItemStackTileEntityRenderer {
         }
 
         @Override
-        protected void renderAttachments(GunItem item, ItemStack stack) {
+        protected void renderAttachments(AbstractGunItem item, ItemStack stack) {
             AttachmentSettings.instance().renderAll();
         }
     }
@@ -295,7 +293,7 @@ public abstract class GunRenderer extends ItemStackTileEntityRenderer {
         }
 
         @Override
-        protected void renderAttachments(GunItem item, ItemStack stack) {
+        protected void renderAttachments(AbstractGunItem item, ItemStack stack) {
         }
     }
 
@@ -306,7 +304,7 @@ public abstract class GunRenderer extends ItemStackTileEntityRenderer {
         }
 
         @Override
-        protected void renderAttachments(GunItem item, ItemStack stack) {
+        protected void renderAttachments(AbstractGunItem item, ItemStack stack) {
 
         }
 
@@ -324,7 +322,7 @@ public abstract class GunRenderer extends ItemStackTileEntityRenderer {
         }
 
         @Override
-        protected void renderAttachments(GunItem item, ItemStack stack) {
+        protected void renderAttachments(AbstractGunItem item, ItemStack stack) {
             if(AttachmentHelper.hasRedDot(item, stack)) {
                 GlStateManager.pushMatrix();
                 GlStateManager.translatef(0.34999993F, 0.21000001F, 0.6F);

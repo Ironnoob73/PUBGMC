@@ -1,6 +1,6 @@
 package dev.toma.pubgmc.common.inventory;
 
-import dev.toma.pubgmc.common.item.gun.GunItem;
+import dev.toma.pubgmc.common.item.gun.core.AbstractGunItem;
 import dev.toma.pubgmc.common.item.gun.attachment.AttachmentCategory;
 import dev.toma.pubgmc.common.item.gun.attachment.AttachmentItem;
 import dev.toma.pubgmc.common.item.gun.attachment.GunAttachments;
@@ -28,7 +28,7 @@ public class AttachmentInventory extends Inventory {
         if(!validate(stack, player)) {
             return;
         }
-        CompoundNBT nbt = ((GunItem) stack.getItem()).getOrCreateTag(stack).getCompound("attachments");
+        CompoundNBT nbt = ((AbstractGunItem) stack.getItem()).getOrCreateTag(stack).getCompound("attachments");
         for (int i = 0; i < getSizeInventory(); i++) {
             ItemStack itemStack = detach(nbt, i);
             if(!itemStack.isEmpty()) {
@@ -43,8 +43,8 @@ public class AttachmentInventory extends Inventory {
         if(!validate(stack, player)) {
             return;
         }
-        GunAttachments attachments = ((GunItem) stack.getItem()).getAttachmentList();
-        CompoundNBT nbt = ((GunItem) stack.getItem()).getOrCreateTag(stack).getCompound("attachments");
+        GunAttachments attachments = ((AbstractGunItem) stack.getItem()).getAttachmentList();
+        CompoundNBT nbt = ((AbstractGunItem) stack.getItem()).getOrCreateTag(stack).getCompound("attachments");
         for(int i = 0; i < getSizeInventory(); i++) {
             ItemStack itemStack = getStackInSlot(i);
             if(!itemStack.isEmpty()) {
@@ -91,7 +91,7 @@ public class AttachmentInventory extends Inventory {
     }
 
     boolean validate(ItemStack stack, PlayerEntity player) {
-        if(!(stack.getItem() instanceof GunItem)) {
+        if(!(stack.getItem() instanceof AbstractGunItem)) {
             for (int i = 0; i < getSizeInventory(); i++) {
                 ItemStack itemStack = getStackInSlot(i);
                 if(!itemStack.isEmpty()) {

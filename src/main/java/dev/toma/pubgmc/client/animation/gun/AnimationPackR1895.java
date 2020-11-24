@@ -1,24 +1,24 @@
 package dev.toma.pubgmc.client.animation.gun;
 
 import com.mojang.blaze3d.platform.GlStateManager;
-import dev.toma.pubgmc.common.item.gun.GunItem;
+import dev.toma.pubgmc.common.item.gun.core.AbstractGunItem;
 import net.minecraft.item.ItemStack;
 
 public class AnimationPackR1895 extends AnimationPackPistols {
 
     @Override
-    public ReloadAnimation getReloadAnimation(GunItem gunItem, ItemStack stack) {
+    public ReloadAnimation getReloadAnimation(AbstractGunItem gunItem, ItemStack stack, boolean isContinued) {
         return new R1895ReloadAnimation(gunItem, stack);
     }
 
     @Override
-    public float getAimYOffset(GunItem item, ItemStack stack) {
+    public float getAimYOffset(AbstractGunItem item, ItemStack stack) {
         return 0.1F;
     }
 
     public static class R1895ReloadAnimation extends ReloadAnimation {
 
-        public R1895ReloadAnimation(GunItem item, ItemStack stack) {
+        public R1895ReloadAnimation(AbstractGunItem item, ItemStack stack) {
             super(item, stack);
         }
 

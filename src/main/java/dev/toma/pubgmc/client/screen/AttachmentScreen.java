@@ -3,7 +3,7 @@ package dev.toma.pubgmc.client.screen;
 import com.mojang.blaze3d.platform.GlStateManager;
 import dev.toma.pubgmc.Pubgmc;
 import dev.toma.pubgmc.common.container.AttachmentContainer;
-import dev.toma.pubgmc.common.item.gun.GunItem;
+import dev.toma.pubgmc.common.item.gun.core.AbstractGunItem;
 import dev.toma.pubgmc.common.item.gun.attachment.AttachmentItem;
 import dev.toma.pubgmc.common.item.gun.attachment.GunAttachments;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
@@ -32,7 +32,7 @@ public class AttachmentScreen extends ContainerScreen<AttachmentContainer> {
     @Override
     protected void init() {
         super.init();
-        if(!(displayStack.getItem() instanceof GunItem)) {
+        if(!(displayStack.getItem() instanceof AbstractGunItem)) {
             minecraft.displayGuiScreen(null);
             minecraft.player.sendStatusMessage(new StringTextComponent(TextFormatting.RED + "Couldn't open attachment menu for " + displayStack.getItem().getClass().getSimpleName()), true);
         }
@@ -48,7 +48,7 @@ public class AttachmentScreen extends ContainerScreen<AttachmentContainer> {
             int highlightSlot = -1;
             if(dragging.getItem() instanceof AttachmentItem) {
                 AttachmentItem item = (AttachmentItem) dragging.getItem();
-                GunAttachments attachments = ((GunItem) displayStack.getItem()).getAttachmentList();
+                GunAttachments attachments = ((AbstractGunItem) displayStack.getItem()).getAttachmentList();
                 if(attachments.canAttach(item)) {
                     highlightSlot = item.getCategory().ordinal();
                 }

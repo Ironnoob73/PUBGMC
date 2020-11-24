@@ -5,7 +5,7 @@ import dev.toma.pubgmc.capability.player.PlayerCapFactory;
 import dev.toma.pubgmc.client.animation.AnimationManager;
 import dev.toma.pubgmc.client.animation.Animations;
 import dev.toma.pubgmc.client.animation.types.FiremodeAnimation;
-import dev.toma.pubgmc.common.item.gun.GunItem;
+import dev.toma.pubgmc.common.item.gun.core.AbstractGunItem;
 import dev.toma.pubgmc.common.item.utility.ThrowableItem;
 import dev.toma.pubgmc.network.NetworkManager;
 import dev.toma.pubgmc.network.packet.*;
@@ -55,20 +55,20 @@ public class ModKeybinds {
                 ItemStack stack = player.getHeldItemMainhand();
                 if(stack.getItem() instanceof ThrowableItem) {
                     NetworkManager.sendToServer(new SPacketCookThrowable());
-                } else if(stack.getItem() instanceof GunItem) {
-                    GunItem gun = (GunItem) stack.getItem();
+                } else if(stack.getItem() instanceof AbstractGunItem) {
+                    AbstractGunItem gun = (AbstractGunItem) stack.getItem();
                     int ammo = gun.getAmmo(stack);
                     int limit = gun.getMaxAmmo(stack);
                     if(ammo < limit && (player.isCreative() || UsefulFunctions.totalItemCountInInventory(gun.getAmmoType().getAmmo(), player.inventory) > 0)) {
                         NetworkManager.sendToServer(new SPacketSetReloading(true, gun.getReloadTime(stack)));
-                        AnimationManager.playNewAnimation(Animations.RELOADING, gun.getAnimations().getReloadAnimation(gun, stack));
+                        AnimationManager.playNewAnimation(Animations.RELOADING, gun.getAnimations().getReloadAnimation(gun, stack, false));
                         player.playSound(gun.getReloadSound(stack), 1.0F, 1.0F);
                     }
                 }
             } else if(FIREMODE_CHANGE.isPressed()) {
                 ItemStack stack = player.getHeldItemMainhand();
-                if(stack.getItem() instanceof GunItem) {
-                    GunItem gunItem = (GunItem) stack.getItem();
+                if(stack.getItem() instanceof AbstractGunItem) {
+                    AbstractGunItem gunItem = (AbstractGunItem) stack.getItem();
                     boolean switched = gunItem.switchFiremode(player, stack);
                     if(switched) {
                         AnimationManager.playNewAnimation(Animations.FIREMODE_SWITCH, new FiremodeAnimation());
@@ -77,7 +77,7 @@ public class ModKeybinds {
                 }
             } else if(EDIT_ATTACHMENTS.isPressed()) {
                 ItemStack stack = player.getHeldItemMainhand();
-                if(stack.getItem() instanceof GunItem) {
+                if(stack.getItem() instanceof AbstractGunItem) {
                     NetworkManager.sendToServer(new SPacketOpenAttachmentMenu());
                 } else {
                     player.sendStatusMessage(new StringTextComponent(TextFormatting.RED + "Cannot change attachments on currently held item!"), true);

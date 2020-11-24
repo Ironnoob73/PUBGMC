@@ -1,6 +1,6 @@
 package dev.toma.pubgmc.capability.player;
 
-import dev.toma.pubgmc.common.item.gun.GunItem;
+import dev.toma.pubgmc.common.item.gun.core.AbstractGunItem;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -31,8 +31,8 @@ public class ReloadInfo {
                 factory.syncNetworkData();
                 PlayerEntity player = factory.getOwner();
                 ItemStack stack = player.getHeldItemMainhand();
-                if(stack.getItem() instanceof GunItem) {
-                    ((GunItem) stack.getItem()).doReload(player, player.world, stack);
+                if(stack.getItem() instanceof AbstractGunItem) {
+                    ((AbstractGunItem) stack.getItem()).doReload(player, player.world, stack);
                 }
             }
         }

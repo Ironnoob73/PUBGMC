@@ -1,6 +1,6 @@
 package dev.toma.pubgmc.network.packet;
 
-import dev.toma.pubgmc.common.item.gun.GunItem;
+import dev.toma.pubgmc.common.item.gun.core.AbstractGunItem;
 import dev.toma.pubgmc.network.NetworkPacket;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -26,8 +26,8 @@ public class SPacketFiremode implements NetworkPacket<SPacketFiremode> {
         ctx.get().enqueueWork(() -> {
             ServerPlayerEntity player = ctx.get().getSender();
             ItemStack stack = player.getHeldItemMainhand();
-            if(stack.getItem() instanceof GunItem) {
-                ((GunItem) stack.getItem()).switchFiremode(player, stack);
+            if(stack.getItem() instanceof AbstractGunItem) {
+                ((AbstractGunItem) stack.getItem()).switchFiremode(player, stack);
             }
         });
         ctx.get().setPacketHandled(true);

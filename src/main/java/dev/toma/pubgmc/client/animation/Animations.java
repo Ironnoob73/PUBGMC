@@ -2,7 +2,7 @@ package dev.toma.pubgmc.client.animation;
 
 import dev.toma.pubgmc.client.animation.gun.GunAnimationPack;
 import dev.toma.pubgmc.client.animation.types.RecoilAnimation;
-import dev.toma.pubgmc.common.item.gun.GunItem;
+import dev.toma.pubgmc.common.item.gun.core.AbstractGunItem;
 import net.minecraft.item.ItemStack;
 
 import java.util.HashMap;
@@ -29,10 +29,10 @@ public class Animations {
         HEALING = register();
         RELOADING = register().factory(player -> {
             ItemStack stack = player.getHeldItemMainhand();
-            if(stack.getItem() instanceof GunItem) {
-                GunItem item = (GunItem) stack.getItem();
+            if(stack.getItem() instanceof AbstractGunItem) {
+                AbstractGunItem item = (AbstractGunItem) stack.getItem();
                 GunAnimationPack pack = item.getAnimations();
-                return pack.getReloadAnimation(item, stack);
+                return pack.getReloadAnimation(item, stack, true);
             }
             return null;
         });

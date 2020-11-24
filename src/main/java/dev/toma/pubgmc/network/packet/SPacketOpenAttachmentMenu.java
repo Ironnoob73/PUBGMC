@@ -1,7 +1,7 @@
 package dev.toma.pubgmc.network.packet;
 
 import dev.toma.pubgmc.common.container.AttachmentContainer;
-import dev.toma.pubgmc.common.item.gun.GunItem;
+import dev.toma.pubgmc.common.item.gun.core.AbstractGunItem;
 import dev.toma.pubgmc.network.NetworkPacket;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -38,7 +38,7 @@ public class SPacketOpenAttachmentMenu implements NetworkPacket<SPacketOpenAttac
         ctx.get().enqueueWork(() -> {
             ServerPlayerEntity player = ctx.get().getSender();
             ItemStack stack = player.getHeldItemMainhand();
-            if(stack.getItem() instanceof GunItem) {
+            if(stack.getItem() instanceof AbstractGunItem) {
                 NetworkHooks.openGui(player, new INamedContainerProvider() {
                     @Override
                     public ITextComponent getDisplayName() {

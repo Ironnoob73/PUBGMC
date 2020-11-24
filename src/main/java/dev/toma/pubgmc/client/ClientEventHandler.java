@@ -14,8 +14,8 @@ import dev.toma.pubgmc.client.animation.types.SprintAnimation;
 import dev.toma.pubgmc.client.render.OverlayGameRenderer;
 import dev.toma.pubgmc.common.entity.IControllableEntity;
 import dev.toma.pubgmc.common.inventory.SlotType;
+import dev.toma.pubgmc.common.item.gun.core.AbstractGunItem;
 import dev.toma.pubgmc.common.item.gun.Firemode;
-import dev.toma.pubgmc.common.item.gun.GunItem;
 import dev.toma.pubgmc.common.item.gun.attachment.AttachmentCategory;
 import dev.toma.pubgmc.common.item.utility.BackpackSlotItem;
 import dev.toma.pubgmc.common.item.wearable.IPMCArmor;
@@ -62,7 +62,7 @@ public class ClientEventHandler {
     private static final Random rand = new Random();
     private static final StateListener runningAnimationFactory = new StateListener(PlayerEntity::isSprinting, player -> {
         ItemStack stack = player.getHeldItemMainhand();
-        if(stack.getItem() instanceof GunItem && Animations.SPRINTING.canPlay()) {
+        if(stack.getItem() instanceof AbstractGunItem && Animations.SPRINTING.canPlay()) {
             AnimationManager.playNewAnimation(Animations.SPRINTING, new SprintAnimation());
         }
     });
@@ -74,7 +74,7 @@ public class ClientEventHandler {
         if(Config.specialHUDRenderer.get()) {
             if(event.getType() == RenderGameOverlayEvent.ElementType.ARMOR || event.getType() == RenderGameOverlayEvent.ElementType.HEALTH || event.getType() == RenderGameOverlayEvent.ElementType.FOOD || event.getType() == RenderGameOverlayEvent.ElementType.AIR || event.getType() == RenderGameOverlayEvent.ElementType.EXPERIENCE) {
                 event.setCanceled(true);
-            } else if(event.getType() == RenderGameOverlayEvent.ElementType.CROSSHAIRS && Minecraft.getInstance().player.getHeldItemMainhand().getItem() instanceof GunItem) {
+            } else if(event.getType() == RenderGameOverlayEvent.ElementType.CROSSHAIRS && Minecraft.getInstance().player.getHeldItemMainhand().getItem() instanceof AbstractGunItem) {
                 //event.setCanceled(true);
             }
         }
@@ -124,12 +124,12 @@ public class ClientEventHandler {
         GameSettings settings = Minecraft.getInstance().gameSettings;
         if(player != null && event.getAction() == 1) {
             ItemStack stack = player.getHeldItemMainhand();
-            if(stack.getItem() instanceof GunItem) {
-                GunItem gun = (GunItem) stack.getItem();
+            if(stack.getItem() instanceof AbstractGunItem) {
+                AbstractGunItem gun = (AbstractGunItem) stack.getItem();
                 Firemode firemode = gun.getFiremode(stack);
                 CooldownTracker tracker = player.getCooldownTracker();
                 IPlayerCap cap = PlayerCapFactory.get(player);
-                if(settings.keyBindAttack.isPressed() && firemode == Firemode.SINGLE && !tracker.hasCooldown(gun) && !player.isSprinting() && !cap.getReloadInfo().isReloading()) {
+                if(settings.keyBindAttack.isPressed() && firemode == Firemode.SINGLE && !tracker.hasCooldown(gun) && !player.isSprinting() && !cap.getReloadInfo().isReloading() && gun.canShoot(stack)) {
                     shoot(gun, stack, player);
                 } else if(settings.keyBindUseItem.isPressed() && Animations.AIMING.canPlay()) {
                     boolean aiming = !PlayerCapFactory.get(player).getAimInfo().isActualAim();
@@ -167,10 +167,10 @@ public class ClientEventHandler {
             }
             ItemStack stack = player.getHeldItemMainhand();
             IPlayerCap cap = PlayerCapFactory.get(player);
-            if(stack.getItem() instanceof GunItem) {
-                GunItem gun = (GunItem) stack.getItem();
+            if(stack.getItem() instanceof AbstractGunItem) {
+                AbstractGunItem gun = (AbstractGunItem) stack.getItem();
                 CooldownTracker tracker = player.getCooldownTracker();
-                if(settings.keyBindAttack.isKeyDown() && !tracker.hasCooldown(stack.getItem()) && gun.getFiremode(stack) == Firemode.FULL_AUTO && !player.isSprinting() && !cap.getReloadInfo().isReloading()) {
+                if(settings.keyBindAttack.isKeyDown() && !tracker.hasCooldown(stack.getItem()) && gun.getFiremode(stack) == Firemode.FULL_AUTO && !player.isSprinting() && !cap.getReloadInfo().isReloading() && gun.canShoot(stack)) {
                     shoot(gun, stack, player);
                 }
             }
@@ -280,7 +280,7 @@ public class ClientEventHandler {
         }
     }
 
-    private static void shoot(GunItem item, ItemStack stack, PlayerEntity player) {
+    private static void shoot(AbstractGunItem item, ItemStack stack, PlayerEntity player) {
         if(item.getAmmo(stack) > 0) {
             float vertical = item.getVerticalRecoil(player, stack);
             float horizontalUnmodified = item.getHorizontalRecoil(stack);
@@ -332,8 +332,8 @@ public class ClientEventHandler {
                 RenderHelper.x32Blit(left + 36, top - 18, left + 52, top - 2, id, 2, 1, 1);
             }
             ItemStack stack = player.getHeldItemMainhand();
-            if(stack.getItem() instanceof GunItem) {
-                GunItem gun = (GunItem) stack.getItem();
+            if(stack.getItem() instanceof AbstractGunItem) {
+                AbstractGunItem gun = (AbstractGunItem) stack.getItem();
                 int ammo = gun.getAmmo(stack);
                 int total = UsefulFunctions.totalItemCountInInventory(gun.getAmmoType().getAmmo(), player.inventory);
                 FontRenderer renderer = mc.fontRenderer;

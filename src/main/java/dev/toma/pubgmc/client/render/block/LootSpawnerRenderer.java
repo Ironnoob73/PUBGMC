@@ -1,7 +1,7 @@
 package dev.toma.pubgmc.client.render.block;
 
 import com.mojang.blaze3d.platform.GlStateManager;
-import dev.toma.pubgmc.common.item.gun.GunItem;
+import dev.toma.pubgmc.common.item.gun.core.AbstractGunItem;
 import dev.toma.pubgmc.common.item.healing.HealingItem;
 import dev.toma.pubgmc.common.tileentity.LootSpawnerTileEntity;
 import dev.toma.pubgmc.util.UsefulFunctions;
@@ -62,7 +62,7 @@ public class LootSpawnerRenderer extends TileEntityRenderer<LootSpawnerTileEntit
                     GlStateManager.translatef(ox * 0.45F, 0, oz * 0.45F);
                     GlStateManager.rotatef(-90.0F, 1.0F, 0.0F, 0.0F);
                     GlStateManager.scaled(0.8, 0.8, 0.8);
-                    if(stack.getItem() instanceof GunItem) {
+                    if(stack.getItem() instanceof AbstractGunItem) {
                         GlStateManager.translatef(0.15f, -0.25f, 0.05f);
                         GlStateManager.rotatef(90.0F, 1.0F, 0.0F, 0.0F);
                         GlStateManager.rotatef(-30.0F, 0.0F, 1.0F, 0.0F);

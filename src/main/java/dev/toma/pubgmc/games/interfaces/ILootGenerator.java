@@ -1,8 +1,8 @@
 package dev.toma.pubgmc.games.interfaces;
 
 import dev.toma.pubgmc.Pubgmc;
+import dev.toma.pubgmc.common.item.gun.core.AbstractGunItem;
 import dev.toma.pubgmc.common.item.gun.AmmoType;
-import dev.toma.pubgmc.common.item.gun.GunItem;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
@@ -48,9 +48,9 @@ public interface ILootGenerator extends ITileLoadHandler {
      * @return index of last item in inventory
      */
     default int postItemGenerated(ItemStack stack, int index, LazyOptional<? extends IItemHandler> inventory) {
-        if(stack.getItem() instanceof GunItem && inventory.isPresent()) {
+        if(stack.getItem() instanceof AbstractGunItem && inventory.isPresent()) {
             IItemHandler handler = inventory.orElseThrow(NullPointerException::new);
-            GunItem gun = (GunItem) stack.getItem();
+            AbstractGunItem gun = (AbstractGunItem) stack.getItem();
             AmmoType ammoType = gun.getAmmoType();
             int ammoBoxes = 1 + Pubgmc.rand.nextInt(3);
             for(int a = 0; a < ammoBoxes; a++) {

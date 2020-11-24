@@ -1,21 +1,21 @@
 package dev.toma.pubgmc.client.model.gun;
 
 import com.mojang.blaze3d.platform.GlStateManager;
+import dev.toma.pubgmc.PubgmcHooks;
 import dev.toma.pubgmc.client.animation.*;
-import dev.toma.pubgmc.common.item.gun.GunItem;
+import dev.toma.pubgmc.common.item.gun.core.AbstractGunItem;
 import dev.toma.pubgmc.config.Config;
 import dev.toma.pubgmc.util.AttachmentHelper;
-import dev.toma.pubgmc.util.object.LazyLoader;
 import dev.toma.pubgmc.util.object.Optional;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.renderer.entity.model.RendererModel;
+import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.model.Model;
 import net.minecraft.item.ItemStack;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
 
 public abstract class AbstractGunModel extends Model {
 
@@ -24,9 +24,9 @@ public abstract class AbstractGunModel extends Model {
 
     public AbstractGunModel() {
         if(Config.animationTool.get()) {
-            listeningTo = new AnimationType[] {Animations.RELOADING, Animations.DEBUG};
+            listeningTo = new AnimationType[] {Animations.RELOADING, Animations.RECOIL, Animations.DEBUG};
         } else {
-            listeningTo = new AnimationType[] {Animations.RELOADING};
+            listeningTo = new AnimationType[] {Animations.RELOADING, Animations.RECOIL};
         }
     }
 
@@ -35,7 +35,7 @@ public abstract class AbstractGunModel extends Model {
     public final void render(ItemStack stack) {
         this.doModelRender(stack);
         ClientPlayerEntity client = Minecraft.getInstance().player;
-        boolean flag = client.getHeldItemMainhand() == stack;
+        boolean flag = client.getHeldItemMainhand() == stack && PubgmcHooks.renderingType == ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND;
         for(Map.Entry<Integer, RendererModel> entry : animatedPartMap.entrySet()) {
             GlStateManager.pushMatrix();
             if(flag) {
@@ -67,7 +67,7 @@ public abstract class AbstractGunModel extends Model {
     }
 
     protected static boolean hasSight(ItemStack stack) {
-        return AttachmentHelper.hasScope((GunItem) stack.getItem(), stack);
+        return AttachmentHelper.hasScope((AbstractGunItem) stack.getItem(), stack);
     }
 
     public Map<Integer, RendererModel> getAnimatedPartMap() {

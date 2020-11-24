@@ -4,6 +4,7 @@ import dev.toma.pubgmc.capability.IPlayerCap;
 import dev.toma.pubgmc.capability.player.PlayerCapFactory;
 import dev.toma.pubgmc.capability.player.ReloadInfo;
 import dev.toma.pubgmc.client.animation.Animations;
+import dev.toma.pubgmc.common.item.gun.core.AbstractGunItem;
 import dev.toma.pubgmc.common.item.utility.AmmoItem;
 import dev.toma.pubgmc.network.NetworkManager;
 import dev.toma.pubgmc.network.packet.CPacketAnimation;
@@ -16,7 +17,7 @@ public interface ReloadManager {
 
     void doReload(PlayerEntity player, World world, ItemStack stack);
 
-    boolean canInterrupt(GunItem gun, ItemStack stack);
+    boolean canInterrupt(AbstractGunItem gun, ItemStack stack);
 
     class Magazine implements ReloadManager {
 
@@ -24,8 +25,8 @@ public interface ReloadManager {
 
         @Override
         public void doReload(PlayerEntity player, World world, ItemStack stack) {
-            GunItem gun = (GunItem) stack.getItem();
-            AmmoType ammoType = gun.ammoType;
+            AbstractGunItem gun = (AbstractGunItem) stack.getItem();
+            AmmoType ammoType = gun.getAmmoType();
             int max = gun.getMaxAmmo(stack);
             int actual = gun.getAmmo(stack);
             int left = max - actual;
@@ -51,7 +52,7 @@ public interface ReloadManager {
         }
 
         @Override
-        public boolean canInterrupt(GunItem gun, ItemStack stack) {
+        public boolean canInterrupt(AbstractGunItem gun, ItemStack stack) {
             return false;
         }
 
@@ -67,8 +68,8 @@ public interface ReloadManager {
 
         @Override
         public void doReload(PlayerEntity player, World world, ItemStack stack) {
-            GunItem gun = (GunItem) stack.getItem();
-            AmmoType ammoType = gun.ammoType;
+            AbstractGunItem gun = (AbstractGunItem) stack.getItem();
+            AmmoType ammoType = gun.getAmmoType();
             int max = gun.getMaxAmmo(stack);
             int ammo = gun.getAmmo(stack);
             boolean continueReloading = max - ammo > 1;
@@ -101,8 +102,8 @@ public interface ReloadManager {
             IPlayerCap cap = PlayerCapFactory.get(player);
             ReloadInfo reloadInfo = cap.getReloadInfo();
             ItemStack stack = player.getHeldItemMainhand();
-            if(stack.getItem() instanceof GunItem) {
-                int time = ((GunItem) stack.getItem()).getReloadTime(stack);
+            if(stack.getItem() instanceof AbstractGunItem) {
+                int time = ((AbstractGunItem) stack.getItem()).getReloadTime(stack);
                 reloadInfo.startReloading(player.inventory.currentItem, time);
                 cap.syncNetworkData();
                 NetworkManager.sendToClient((ServerPlayerEntity) player, new CPacketAnimation(Animations.RELOADING, CPacketAnimation.Result.PLAY));
@@ -115,7 +116,7 @@ public interface ReloadManager {
         }
 
         @Override
-        public boolean canInterrupt(GunItem gun, ItemStack stack) {
+        public boolean canInterrupt(AbstractGunItem gun, ItemStack stack) {
             return true;
         }
     }
@@ -126,7 +127,11 @@ public interface ReloadManager {
 
         @Override
         public void doReload(PlayerEntity player, World world, ItemStack stack) {
-
+            AbstractGunItem gunItem = (AbstractGunItem) stack.getItem();
+            int ammo = gunItem.getAmmo(stack);
+            if(ammo == 0) {
+                Magazine.instance.doReload(player, world, stack);
+            } else Single.instance.doReload(player, world, stack);
         }
 
         @Override
@@ -135,7 +140,7 @@ public interface ReloadManager {
         }
 
         @Override
-        public boolean canInterrupt(GunItem gun, ItemStack stack) {
+        public boolean canInterrupt(AbstractGunItem gun, ItemStack stack) {
             return gun.getAmmo(stack) > 0;
         }
 
@@ -143,8 +148,8 @@ public interface ReloadManager {
             IPlayerCap cap = PlayerCapFactory.get(player);
             ReloadInfo reloadInfo = cap.getReloadInfo();
             ItemStack stack = player.getHeldItemMainhand();
-            if(stack.getItem() instanceof GunItem) {
-                int time = ((GunItem) stack.getItem()).getReloadTime(stack);
+            if(stack.getItem() instanceof AbstractGunItem) {
+                int time = ((AbstractGunItem) stack.getItem()).getReloadTime(stack);
                 reloadInfo.startReloading(player.inventory.currentItem, time);
                 cap.syncNetworkData();
             }

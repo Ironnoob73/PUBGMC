@@ -1,7 +1,10 @@
 package dev.toma.pubgmc.client.animation.gun;
 
+import dev.toma.pubgmc.client.animation.Animation;
+import dev.toma.pubgmc.client.animation.GunPartAnimation;
 import dev.toma.pubgmc.client.animation.types.AimingAnimation;
-import dev.toma.pubgmc.common.item.gun.GunItem;
+import dev.toma.pubgmc.client.animation.types.RecoilAnimation;
+import dev.toma.pubgmc.common.item.gun.core.AbstractGunItem;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -17,11 +20,20 @@ public abstract class GunAnimationPack {
 
     }
 
-    public float getAimYOffset(GunItem item, ItemStack stack) {
+    public float getAimYOffset(AbstractGunItem item, ItemStack stack) {
         return 0.06F;
     }
 
-    public abstract AimingAnimation getAimingAnimation(GunItem gunItem, ItemStack stack);
+    public abstract AimingAnimation getAimingAnimation(AbstractGunItem gunItem, ItemStack stack);
 
-    public abstract ReloadAnimation getReloadAnimation(GunItem gunItem, ItemStack stack);
+    public abstract ReloadAnimation getReloadAnimation(AbstractGunItem gunItem, ItemStack stack, boolean isContinued);
+
+    public Animation getShootAnimation(int time) {
+        return new RecoilAnimation();
+    }
+
+    public interface IBoltPack {
+
+        GunPartAnimation getBoltAnimation(int ticks);
+    }
 }

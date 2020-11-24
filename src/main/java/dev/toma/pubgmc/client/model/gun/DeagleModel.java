@@ -1,6 +1,6 @@
 package dev.toma.pubgmc.client.model.gun;
 
-import dev.toma.pubgmc.common.item.gun.GunItem;
+import dev.toma.pubgmc.common.item.gun.core.AbstractGunItem;
 import dev.toma.pubgmc.util.AttachmentHelper;
 import net.minecraft.client.renderer.entity.model.RendererModel;
 import net.minecraft.client.renderer.model.ModelBox;
@@ -45,7 +45,7 @@ public class DeagleModel extends AbstractGunModel {
     public void doModelRender(ItemStack stack) {
         hammer.render(1.0F);
         deagle.render(1.0F);
-        if(AttachmentHelper.hasScope((GunItem) stack.getItem(), stack))
+        if(AttachmentHelper.hasScope((AbstractGunItem) stack.getItem(), stack))
             rail.render(1.0F);
     }
 

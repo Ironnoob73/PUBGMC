@@ -6,8 +6,8 @@ import dev.toma.pubgmc.capability.world.WorldDataProvider;
 import dev.toma.pubgmc.common.entity.goal.GunAttackGoal;
 import dev.toma.pubgmc.common.inventory.IHasInventory;
 import dev.toma.pubgmc.common.inventory.PMCInventoryItem;
+import dev.toma.pubgmc.common.item.gun.core.AbstractGunItem;
 import dev.toma.pubgmc.common.item.gun.GunCategory;
-import dev.toma.pubgmc.common.item.gun.GunItem;
 import dev.toma.pubgmc.common.item.utility.BackpackSlotItem;
 import dev.toma.pubgmc.common.item.wearable.IPMCArmor;
 import dev.toma.pubgmc.games.Game;
@@ -223,10 +223,10 @@ public class BotEntity extends CreatureEntity implements IKeyHolder, IHasInvento
                 return equipment.isEmpty();
             }
         } else if(slotType == EquipmentSlotType.MAINHAND) {
-            if(candidate.getItem() instanceof GunItem) {
-                if(existing.getItem() instanceof GunItem) {
-                    GunItem current = (GunItem) existing.getItem();
-                    GunItem toPick = (GunItem) candidate.getItem();
+            if(candidate.getItem() instanceof AbstractGunItem) {
+                if(existing.getItem() instanceof AbstractGunItem) {
+                    AbstractGunItem current = (AbstractGunItem) existing.getItem();
+                    AbstractGunItem toPick = (AbstractGunItem) candidate.getItem();
                     if(current.getCategory() != weaponPreference) {
                         return current.getGunDamage() < toPick.getGunDamage();
                     } else return toPick.getCategory() == weaponPreference && toPick.getGunDamage() > current.getGunDamage();

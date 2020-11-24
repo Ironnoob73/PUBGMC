@@ -4,7 +4,7 @@ import dev.toma.pubgmc.client.animation.AnimationManager;
 import dev.toma.pubgmc.client.animation.Animations;
 import dev.toma.pubgmc.client.model.gun.AbstractGunModel;
 import dev.toma.pubgmc.client.render.item.GunRenderer;
-import dev.toma.pubgmc.common.item.gun.GunItem;
+import dev.toma.pubgmc.common.item.gun.core.AbstractGunItem;
 import dev.toma.pubgmc.internal.InternalData;
 import dev.toma.pubgmc.util.RenderHelper;
 import dev.toma.pubgmc.util.object.Optional;
@@ -110,7 +110,7 @@ public class AnimationBuilderScreen extends Screen {
         }).setState(InternalData.part == IAnimationPart.ITEM));
 
         ItemStack stack = minecraft.player.getHeldItemMainhand();
-        if(!stack.isEmpty() && stack.getItem() instanceof GunItem) {
+        if(!stack.isEmpty() && stack.getItem() instanceof AbstractGunItem) {
             GunRenderer renderer = (GunRenderer) stack.getItem().getTileEntityItemStackRenderer();
             AbstractGunModel gunModel = renderer.getModel();
             Map<Integer, RendererModel> map = gunModel.getAnimatedPartMap();

@@ -140,6 +140,46 @@ function initializeCoreMod() {
                 }
 		        return methodNode;
 		    }
+		},
+		'itemRender': {
+			'target': {
+				'type': 'METHOD',
+				'class': 'net.minecraft.client.renderer.ItemRenderer',
+				'methodName': 'func_184394_a',
+				'methodDesc': '(Lnet/minecraft/item/ItemStack;Lnet/minecraft/client/renderer/model/IBakedModel;Lnet/minecraft/client/renderer/model/ItemCameraTransforms$TransformType;Z)V'
+			},
+			'transformer': function (methodNode) {
+				var target = ASMAPI.mapMethod('func_180454_a');
+				var instructions = methodNode.instructions;
+				for (var i = 0; i < instructions.size(); i++) {
+					var instruction = instructions.get(i);
+					if(instruction instanceof MethodInsnNode && instruction.getOpcode() == INVOKEVIRTUAL) {
+						if(instruction.name == target) {
+							var list_pre = new InsnList();
+							list_pre.add(new VarInsnNode(ALOAD, 3));
+							list_pre.add(new MethodInsnNode(
+								INVOKESTATIC,
+								'dev/toma/pubgmc/PubgmcHooks',
+								'preRenderItem',
+								'(Lnet/minecraft/client/renderer/model/ItemCameraTransforms$TransformType;)V',
+								false
+							));
+							instructions.insertBefore(instructions.get(i-2), list_pre);
+							var list_post = new InsnList();
+							list_post.add(new MethodInsnNode(
+								INVOKESTATIC,
+								'dev/toma/pubgmc/PubgmcHooks',
+								'postRenderItem',
+								'()V',
+								false
+							));
+							instructions.insert(instruction, list_post);
+							break;
+						}
+					}
+				}
+				return methodNode;
+			}
 		}
 	}
 }

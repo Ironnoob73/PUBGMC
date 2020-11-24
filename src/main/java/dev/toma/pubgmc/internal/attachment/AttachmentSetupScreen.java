@@ -6,7 +6,7 @@ import dev.toma.pubgmc.client.screen.component.ButtonComponent;
 import dev.toma.pubgmc.client.screen.component.Component;
 import dev.toma.pubgmc.client.screen.component.PlainTextComponent;
 import dev.toma.pubgmc.client.screen.component.PressableComponent;
-import dev.toma.pubgmc.common.item.gun.GunItem;
+import dev.toma.pubgmc.common.item.gun.core.AbstractGunItem;
 import dev.toma.pubgmc.util.RenderHelper;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
@@ -40,7 +40,7 @@ public class AttachmentSetupScreen extends ComponentScreen {
     @Override
     public void initComponents() {
         stack = minecraft.player.getHeldItemMainhand();
-        if(!(stack.getItem() instanceof GunItem)) {
+        if(!(stack.getItem() instanceof AbstractGunItem)) {
             minecraft.displayGuiScreen(null);
             minecraft.player.sendStatusMessage(new StringTextComponent(TextFormatting.RED + "Gun not found"), true);
         }

@@ -1,7 +1,7 @@
 package dev.toma.pubgmc.common.entity.goal;
 
 import dev.toma.pubgmc.common.entity.BotEntity;
-import dev.toma.pubgmc.common.item.gun.GunItem;
+import dev.toma.pubgmc.common.item.gun.core.AbstractGunItem;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.item.ItemStack;
@@ -62,7 +62,7 @@ public class GunAttackGoal extends Goal {
             }
             if(hasGun()) {
                 ItemStack stack = entity.getHeldItemMainhand();
-                GunItem gun = (GunItem) stack.getItem();
+                AbstractGunItem gun = (AbstractGunItem) stack.getItem();
                 int requiredSeeTime = requiredSeeTime(distanceToTarget);
                 if(!(distanceToTarget > gun.getCategory().getRange()) && seeTime > requiredSeeTime) {
                     entity.getNavigator().clearPath();
@@ -98,10 +98,10 @@ public class GunAttackGoal extends Goal {
     }
 
     protected boolean hasGun() {
-        return entity.getHeldItemMainhand().getItem() instanceof GunItem;
+        return entity.getHeldItemMainhand().getItem() instanceof AbstractGunItem;
     }
 
-    protected GunItem getGun() {
-        return (GunItem) entity.getHeldItemMainhand().getItem();
+    protected AbstractGunItem getGun() {
+        return (AbstractGunItem) entity.getHeldItemMainhand().getItem();
     }
 }

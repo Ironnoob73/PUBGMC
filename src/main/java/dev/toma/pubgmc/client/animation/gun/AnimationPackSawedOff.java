@@ -2,18 +2,18 @@ package dev.toma.pubgmc.client.animation.gun;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import dev.toma.pubgmc.client.animation.types.AimingAnimation;
-import dev.toma.pubgmc.common.item.gun.GunItem;
+import dev.toma.pubgmc.common.item.gun.core.AbstractGunItem;
 import net.minecraft.item.ItemStack;
 
 public class AnimationPackSawedOff extends AnimationPackPistols {
 
     @Override
-    public ReloadAnimation getReloadAnimation(GunItem gunItem, ItemStack stack) {
+    public ReloadAnimation getReloadAnimation(AbstractGunItem gunItem, ItemStack stack, boolean isContinued) {
         return new SawedOffReloadAnimation(gunItem, stack);
     }
 
     @Override
-    public AimingAnimation getAimingAnimation(GunItem item, ItemStack stack) {
+    public AimingAnimation getAimingAnimation(AbstractGunItem item, ItemStack stack) {
         return new AimingAnimation(-0.56F, this.getAimYOffset(item, stack), 0.2F).right(f -> {
             GlStateManager.translatef(-0.4F * f, (-0.1F + getAimYOffset(item, stack)) * f, 0.34F * f);
             GlStateManager.rotatef(6.0F * f, 1.0F, 0.0F, 0.0F);
@@ -25,7 +25,7 @@ public class AnimationPackSawedOff extends AnimationPackPistols {
     }
 
     @Override
-    public float getAimYOffset(GunItem item, ItemStack stack) {
+    public float getAimYOffset(AbstractGunItem item, ItemStack stack) {
         return 0.2F;
     }
 
@@ -45,7 +45,7 @@ public class AnimationPackSawedOff extends AnimationPackPistols {
 
     public static class SawedOffReloadAnimation extends ReloadAnimation {
 
-        public SawedOffReloadAnimation(GunItem item, ItemStack stack) {
+        public SawedOffReloadAnimation(AbstractGunItem item, ItemStack stack) {
             super(item, stack);
         }
 

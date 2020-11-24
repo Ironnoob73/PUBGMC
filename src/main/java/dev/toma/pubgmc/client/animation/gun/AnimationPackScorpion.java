@@ -1,21 +1,20 @@
 package dev.toma.pubgmc.client.animation.gun;
 
 import com.mojang.blaze3d.platform.GlStateManager;
-import dev.toma.pubgmc.client.animation.SimpleAnimation;
 import dev.toma.pubgmc.client.animation.types.AimingAnimation;
-import dev.toma.pubgmc.common.item.gun.GunItem;
+import dev.toma.pubgmc.common.item.gun.core.AbstractGunItem;
 import dev.toma.pubgmc.util.AttachmentHelper;
 import net.minecraft.item.ItemStack;
 
 public class AnimationPackScorpion extends AnimationPackPistols {
 
     @Override
-    public ReloadAnimation getReloadAnimation(GunItem gunItem, ItemStack stack) {
+    public ReloadAnimation getReloadAnimation(AbstractGunItem gunItem, ItemStack stack, boolean isContinued) {
         return new ScorpionReload(gunItem, stack);
     }
 
     @Override
-    public float getAimYOffset(GunItem item, ItemStack stack) {
+    public float getAimYOffset(AbstractGunItem item, ItemStack stack) {
         if (AttachmentHelper.hasRedDot(item, stack)) {
             return 0.045F;
         }
@@ -23,7 +22,7 @@ public class AnimationPackScorpion extends AnimationPackPistols {
     }
 
     @Override
-    public AimingAnimation getAimingAnimation(GunItem item, ItemStack stack) {
+    public AimingAnimation getAimingAnimation(AbstractGunItem item, ItemStack stack) {
         return new AimingAnimation(-0.56F, this.getAimYOffset(item, stack), 0.0F).right(f -> {
             GlStateManager.translatef(-0.4F * f, (0.025F + getAimYOffset(item, stack)) * f, 0.1F * f);
             GlStateManager.rotatef(10.0F * f, 0.0F, 1.0F, 0.0F);
@@ -49,7 +48,7 @@ public class AnimationPackScorpion extends AnimationPackPistols {
 
     public static class ScorpionReload extends ReloadAnimation {
 
-        ScorpionReload(GunItem item, ItemStack stack) {
+        ScorpionReload(AbstractGunItem item, ItemStack stack) {
             super(item, stack);
         }
 

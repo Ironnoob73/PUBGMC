@@ -9,7 +9,7 @@ import dev.toma.pubgmc.capability.player.PlayerCapFactory;
 import dev.toma.pubgmc.capability.player.PlayerCapProvider;
 import dev.toma.pubgmc.capability.world.WorldDataProvider;
 import dev.toma.pubgmc.common.inventory.SlotType;
-import dev.toma.pubgmc.common.item.gun.GunItem;
+import dev.toma.pubgmc.common.item.gun.core.AbstractGunItem;
 import dev.toma.pubgmc.common.item.utility.BackpackSlotItem;
 import dev.toma.pubgmc.network.NetworkManager;
 import dev.toma.pubgmc.network.packet.CPacketSendRecipes;
@@ -48,7 +48,7 @@ public class CommonEventHandler {
         ItemStack stack = event.getTo();
         EquipmentSlotType slotType = event.getSlot();
         if(entity instanceof PlayerEntity) {
-            if (stack.getItem() instanceof GunItem) {
+            if (stack.getItem() instanceof AbstractGunItem) {
                 if(slotType == EquipmentSlotType.OFFHAND) {
                     ItemStack copyOf = stack.copy();
                     stack.setCount(0);
@@ -57,6 +57,8 @@ public class CommonEventHandler {
                         itemEntity.setPickupDelay(0);
                         entity.world.addEntity(itemEntity);
                     }
+                } else if(slotType == EquipmentSlotType.MAINHAND) {
+                    ((AbstractGunItem) stack.getItem()).onEquip(entity, entity.world, stack);
                 }
             }
         }

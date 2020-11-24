@@ -2,7 +2,7 @@ package dev.toma.pubgmc.init;
 
 import dev.toma.pubgmc.Pubgmc;
 import dev.toma.pubgmc.common.item.PMCItem;
-import dev.toma.pubgmc.common.item.gun.GunItem;
+import dev.toma.pubgmc.common.item.gun.core.AbstractGunItem;
 import dev.toma.pubgmc.common.item.gun.attachment.AttachmentItem;
 import dev.toma.pubgmc.common.item.healing.HealingItem;
 import dev.toma.pubgmc.common.item.utility.*;
@@ -69,7 +69,7 @@ public class PMCItems {
     public static final AttachmentItem.Scope X6_SCOPE = null;
     public static final AttachmentItem.Scope X8_SCOPE = null;
     public static final AttachmentItem.Scope X15_SCOPE = null;
-    public static final GunItem P92 = null;
+    public static final AbstractGunItem P92 = null;
     public static final BackpackItem SMALL_BACKPACK = null;
     public static final BackpackItem MEDIUM_BACKPACK = null;
     public static final BackpackItem LARGE_BACKPACK = null;

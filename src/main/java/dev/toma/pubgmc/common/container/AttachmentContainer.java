@@ -3,7 +3,7 @@ package dev.toma.pubgmc.common.container;
 import dev.toma.pubgmc.capability.PMCInventoryHandler;
 import dev.toma.pubgmc.capability.player.InventoryFactory;
 import dev.toma.pubgmc.common.inventory.AttachmentInventory;
-import dev.toma.pubgmc.common.item.gun.GunItem;
+import dev.toma.pubgmc.common.item.gun.core.AbstractGunItem;
 import dev.toma.pubgmc.common.item.gun.attachment.AttachmentCategory;
 import dev.toma.pubgmc.common.item.gun.attachment.AttachmentItem;
 import dev.toma.pubgmc.common.item.gun.attachment.GunAttachments;
@@ -73,10 +73,10 @@ public class AttachmentContainer extends Container {
                 if(itemStack1.getItem() instanceof AttachmentItem) {
                     AttachmentItem item = (AttachmentItem) itemStack1.getItem();
                     int id = item.getCategory().ordinal();
-                    if(!(stack.getItem() instanceof GunItem)) {
+                    if(!(stack.getItem() instanceof AbstractGunItem)) {
                         return ItemStack.EMPTY;
                     }
-                    GunAttachments attachments = ((GunItem) stack.getItem()).getAttachmentList();
+                    GunAttachments attachments = ((AbstractGunItem) stack.getItem()).getAttachmentList();
                     if(attachments.canAttach(item)) {
                         handleInventoryTransfer = false;
                         Slot target = inventorySlots.get(id);
@@ -129,13 +129,13 @@ public class AttachmentContainer extends Container {
         }
 
         boolean isCategorySupported() {
-            return ((GunItem) this.stack.getItem()).getAttachmentList().supports(category);
+            return ((AbstractGunItem) this.stack.getItem()).getAttachmentList().supports(category);
         }
 
         @Override
         public boolean isItemValid(ItemStack stack) {
             if(stack.getItem() instanceof AttachmentItem) {
-                return ((GunItem) this.stack.getItem()).getAttachmentList().canAttach((AttachmentItem) stack.getItem());
+                return ((AbstractGunItem) this.stack.getItem()).getAttachmentList().canAttach((AttachmentItem) stack.getItem());
             }
             return false;
         }
