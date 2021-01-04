@@ -5,11 +5,10 @@ import net.minecraft.util.ResourceLocation;
 
 public class ScopeInfo {
 
+    public static final ScopeInfo DUMMY_INSTANCE = new ScopeInfo();
     public static final ResourceLocation BLUR_SMALL = Pubgmc.makeResource("shaders/blur_small.json");
     public static final ResourceLocation BLUR_MEDIUM = Pubgmc.makeResource("shaders/blur_medium.json");
     public static final ResourceLocation BLUR_LARGE = Pubgmc.makeResource("shaders/blur_large.json");
-    public static final ResourceLocation OVERLAY_RED_DOT = Pubgmc.makeResource("textures/scope/overlay_red_dot.png");
-    public static final ResourceLocation OVERLAY_HOLOGRAPHIC = Pubgmc.makeResource("textures/scope/overlay_holographic.png");
     public static final ResourceLocation OVERLAY_2X = Pubgmc.makeResource("textures/scope/overlay_2x.png");
     public static final ResourceLocation OVERLAY_3X = Pubgmc.makeResource("textures/scope/overlay_3x.png");
     public static final ResourceLocation OVERLAY_4X = Pubgmc.makeResource("textures/scope/overlay_4x.png");
@@ -27,6 +26,12 @@ public class ScopeInfo {
     private final float zoom;
     private final float sensitivityModifier;
     private final boolean renderWorldOverlay;
+    private boolean overlayDisabled;
+
+    public ScopeInfo() {
+        this(null);
+        overlayDisabled = true;
+    }
 
     public ScopeInfo(ResourceLocation overlay) {
         this(overlay, null, -1, false);
@@ -52,12 +57,21 @@ public class ScopeInfo {
         this.renderWorldOverlay = renderWorldOverlay;
     }
 
+    public ScopeInfo disableOverlay() {
+        this.overlayDisabled = true;
+        return this;
+    }
+
     public float getSensitivityModifier() {
         return sensitivityModifier;
     }
 
     public boolean shouldRenderPiP() {
         return renderWorldOverlay;
+    }
+
+    public boolean isOverlayDisabled() {
+        return overlayDisabled;
     }
 
     public float getZoom() {

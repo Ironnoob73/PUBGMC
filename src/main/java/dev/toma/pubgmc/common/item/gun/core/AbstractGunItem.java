@@ -5,7 +5,7 @@ import dev.toma.pubgmc.capability.player.PlayerCapFactory;
 import dev.toma.pubgmc.client.ScopeInfo;
 import dev.toma.pubgmc.client.animation.Animations;
 import dev.toma.pubgmc.client.animation.HandAnimate;
-import dev.toma.pubgmc.client.animation.gun.GunAnimationPack;
+import dev.toma.pubgmc.client.animation.gun.pack.GunAnimationPack;
 import dev.toma.pubgmc.common.item.PMCItem;
 import dev.toma.pubgmc.common.item.gun.*;
 import dev.toma.pubgmc.common.item.gun.attachment.AttachmentCategory;
@@ -14,6 +14,7 @@ import dev.toma.pubgmc.common.item.gun.attachment.GunAttachments;
 import dev.toma.pubgmc.network.NetworkManager;
 import dev.toma.pubgmc.network.packet.CPacketAnimation;
 import dev.toma.pubgmc.util.function.Bool2FloatFunction;
+import dev.toma.pubgmc.util.function.Bool2IntFunction;
 import dev.toma.pubgmc.util.function.Bool2ObjFunction;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -30,7 +31,6 @@ import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -48,7 +48,7 @@ public abstract class AbstractGunItem extends PMCItem implements HandAnimate {
     protected final ReloadManager reloadManager;
     protected final int reloadTime;
     protected final ShootManager shootManager;
-    protected final BiFunction<AbstractGunItem, ItemStack, Integer> ammoLimit;
+    protected final Bool2IntFunction ammoLimit;
     protected final AmmoType ammoType;
     protected final float verticalRecoil;
     protected final float horizontalRecoil;
@@ -194,7 +194,7 @@ public abstract class AbstractGunItem extends PMCItem implements HandAnimate {
     }
 
     public void setAmmo(ItemStack stack, int ammo) {
-        getOrCreateTag(stack).putInt("ammo", Math.min(ammoLimit.apply(this, stack), Math.max(0, ammo)));
+        getOrCreateTag(stack).putInt("ammo", Math.min(ammoLimit.apply(this.getAttachment(AttachmentCategory.MAGAZINE, stack).isExtended()), Math.max(0, ammo)));
     }
 
     public int getAmmo(ItemStack stack) {
@@ -206,7 +206,7 @@ public abstract class AbstractGunItem extends PMCItem implements HandAnimate {
     }
 
     public int getMaxAmmo(ItemStack stack) {
-        return ammoLimit.apply(this, stack);
+        return ammoLimit.apply(this.getAttachment(AttachmentCategory.MAGAZINE, stack).isExtended());
     }
 
     public GunCategory getCategory() {

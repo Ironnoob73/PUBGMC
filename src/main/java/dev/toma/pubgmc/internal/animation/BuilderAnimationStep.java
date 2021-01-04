@@ -80,7 +80,10 @@ public class BuilderAnimationStep implements GunPartAnimation {
 
     @Override
     public void animateModel(int path) {
-        map.get(new IAnimationPart.Model(path)).apply(smooth);
+        AnimationData data = map.get(new IAnimationPart.Model(path));
+        if(data != null) {
+            data.apply(smooth);
+        }
     }
 
     @Override

@@ -1,5 +1,6 @@
-package dev.toma.pubgmc.client.animation.gun;
+package dev.toma.pubgmc.client.animation.gun.pack.pistol;
 
+import dev.toma.pubgmc.client.animation.gun.ReloadAnimation;
 import dev.toma.pubgmc.common.item.gun.core.AbstractGunItem;
 import dev.toma.pubgmc.util.AttachmentHelper;
 import net.minecraft.item.ItemStack;

@@ -61,10 +61,7 @@ public abstract class GunRenderer extends ItemStackTileEntityRenderer {
         GlStateManager.rotatef(180.0F, 0.0F, 1.0F, 0.0F);
         this.getModel().render(itemStackIn);
         GlStateManager.popMatrix();
-        GlStateManager.pushMatrix();
-        manager.bindTexture(ATTACHMENT_TEXTURE_MAP);
         this.renderAttachments((AbstractGunItem) itemStackIn.getItem(), itemStackIn);
-        GlStateManager.popMatrix();
     }
 
     /* ============================= RENDERERS ================================== */
@@ -366,6 +363,83 @@ public abstract class GunRenderer extends ItemStackTileEntityRenderer {
             GlStateManager.rotatef(180.0F, 0.0F, 1.0F, 0.0F);
             GlStateManager.scalef(1.0F, 1.0F, 0.8F);
             GlStateManager.translatef(-0.85F, -0.15F, -0.95F);
+        }
+    }
+
+    public static class UziRenderer extends GunRenderer {
+        @Override
+        public AbstractGunModel createModel() {
+            return null;
+        }
+
+        @Override
+        protected void renderAttachments(AbstractGunItem item, ItemStack stack) {
+
+        }
+    }
+
+    public static class Mp5kRenderer extends GunRenderer {
+
+        @Override
+        public AbstractGunModel createModel() {
+            return null;
+        }
+
+        @Override
+        protected void renderAttachments(AbstractGunItem item, ItemStack stack) {
+
+        }
+    }
+
+    public static class PP19Renderer extends GunRenderer {
+
+        @Override
+        public AbstractGunModel createModel() {
+            return null;
+        }
+
+        @Override
+        protected void renderAttachments(AbstractGunItem item, ItemStack stack) {
+
+        }
+    }
+
+    public static class VectorRenderer extends GunRenderer {
+
+        @Override
+        public AbstractGunModel createModel() {
+            return null;
+        }
+
+        @Override
+        protected void renderAttachments(AbstractGunItem item, ItemStack stack) {
+
+        }
+    }
+
+    public static class Ump45Renderer extends GunRenderer {
+
+        @Override
+        public AbstractGunModel createModel() {
+            return null;
+        }
+
+        @Override
+        protected void renderAttachments(AbstractGunItem item, ItemStack stack) {
+
+        }
+    }
+
+    public static class ThompsonRenderer extends GunRenderer {
+
+        @Override
+        public AbstractGunModel createModel() {
+            return null;
+        }
+
+        @Override
+        protected void renderAttachments(AbstractGunItem item, ItemStack stack) {
+
         }
     }
 }

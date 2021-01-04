@@ -1,6 +1,8 @@
-package dev.toma.pubgmc.client.animation.gun;
+package dev.toma.pubgmc.client.animation.gun.pack.pistol;
 
 import com.mojang.blaze3d.platform.GlStateManager;
+import dev.toma.pubgmc.client.animation.gun.ReloadAnimation;
+import dev.toma.pubgmc.client.animation.gun.SimpleGunAnimation;
 import dev.toma.pubgmc.common.item.gun.core.AbstractGunItem;
 import net.minecraft.item.ItemStack;
 

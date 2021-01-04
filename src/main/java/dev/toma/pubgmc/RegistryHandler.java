@@ -1,7 +1,12 @@
 package dev.toma.pubgmc;
 
 import dev.toma.pubgmc.client.ScopeInfo;
-import dev.toma.pubgmc.client.animation.gun.*;
+import dev.toma.pubgmc.client.animation.gun.pack.pistol.*;
+import dev.toma.pubgmc.client.animation.gun.pack.shotgun.AnimationPackS12K;
+import dev.toma.pubgmc.client.animation.gun.pack.shotgun.AnimationPackS1897;
+import dev.toma.pubgmc.client.animation.gun.pack.shotgun.AnimationPackS686;
+import dev.toma.pubgmc.client.animation.gun.pack.shotgun.AnimationPackSawedOff;
+import dev.toma.pubgmc.client.animation.gun.pack.smg.*;
 import dev.toma.pubgmc.client.model.baked.DummyBakedModel;
 import dev.toma.pubgmc.client.model.baked.DummyGunBakedModel;
 import dev.toma.pubgmc.client.render.item.GunRenderer;
@@ -27,6 +32,7 @@ import dev.toma.pubgmc.common.item.gun.*;
 import dev.toma.pubgmc.common.item.gun.attachment.AttachmentCategory;
 import dev.toma.pubgmc.common.item.gun.attachment.AttachmentItem;
 import dev.toma.pubgmc.common.item.gun.core.AbstractGunItem;
+import dev.toma.pubgmc.common.item.gun.core.BoltGunBuilder;
 import dev.toma.pubgmc.common.item.gun.core.GunBuilder;
 import dev.toma.pubgmc.common.item.healing.*;
 import dev.toma.pubgmc.common.item.utility.*;
@@ -68,8 +74,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 
-import static dev.toma.pubgmc.init.PMCSounds.*;
 import static dev.toma.pubgmc.init.PMCItems.*;
+import static dev.toma.pubgmc.init.PMCSounds.*;
 
 public class RegistryHandler {
 
@@ -133,8 +139,8 @@ public class RegistryHandler {
                     new AttachmentItem.Stock("tactical_stock", false, 1.25F),
                     new AttachmentItem.Stock("cheekpad", false, 1.25F),
                     new AttachmentItem.Stock("bullet_loops", true, 1.0F),
-                    new AttachmentItem.Scope("red_dot", new ScopeInfo(ScopeInfo.OVERLAY_RED_DOT)),
-                    new AttachmentItem.Scope("holographic", new ScopeInfo(ScopeInfo.OVERLAY_HOLOGRAPHIC)),
+                    new AttachmentItem.Scope("red_dot", ScopeInfo.DUMMY_INSTANCE),
+                    new AttachmentItem.Scope("holographic", ScopeInfo.DUMMY_INSTANCE),
                     new AttachmentItem.Scope("x2_scope", new ScopeInfo(ScopeInfo.OVERLAY_2X, ScopeInfo.BLUR_SMALL, 34)),
                     new AttachmentItem.Scope("x3_scope", new ScopeInfo(ScopeInfo.OVERLAY_3X, ScopeInfo.BLUR_SMALL, 26)),
                     new AttachmentItem.Scope("x4_scope", new ScopeInfo(ScopeInfo.OVERLAY_4X, ScopeInfo.BLUR_MEDIUM, 20)),
@@ -148,7 +154,7 @@ public class RegistryHandler {
                             .recoil(1.5F, 0.75F)
                             .firerate(2)
                             .firemodes(Firemode.SINGLE, Function.identity())
-                            .ammo(AmmoType.AMMO_9MM, (p92, stack) -> p92.getAttachment(AttachmentCategory.MAGAZINE, stack).isExtended() ? 20 : 15)
+                            .ammo(AmmoType.AMMO_9MM, ext -> ext ? 20 : 15)
                             .reload(ReloadManager.Magazine.instance, 40)
                             .ister(() -> GunRenderer.P92Renderer::new)
                             .attachments()
@@ -167,7 +173,7 @@ public class RegistryHandler {
                             .recoil(1.5F, 0.75F)
                             .firerate(1)
                             .firemodes(Firemode.SINGLE, Function.identity())
-                            .ammo(AmmoType.AMMO_45ACP, (gunItem, stack) -> gunItem.getAttachment(AttachmentCategory.MAGAZINE, stack).isExtended() ? 12 : 7)
+                            .ammo(AmmoType.AMMO_45ACP, ext -> ext ? 12 : 7)
                             .reload(ReloadManager.Magazine.instance, 25)
                             .ister(() -> GunRenderer.P1911Renderer::new)
                             .attachments()
@@ -186,7 +192,7 @@ public class RegistryHandler {
                             .recoil(1.2F, 0.5F)
                             .firerate(1)
                             .firemodes(Firemode.SINGLE, Firemode::singleToAuto)
-                            .ammo(AmmoType.AMMO_9MM, (gunItem, stack) -> gunItem.getAttachment(AttachmentCategory.MAGAZINE, stack).isExtended() ? 23 : 18)
+                            .ammo(AmmoType.AMMO_9MM, ext -> ext ? 25 : 18)
                             .reload(ReloadManager.Magazine.instance, 30)
                             .ister(() -> GunRenderer.P18CRenderer::new)
                             .attachments()
@@ -205,7 +211,7 @@ public class RegistryHandler {
                             .recoil(2.6F, 0.7F)
                             .firerate(4)
                             .firemodes(Firemode.SINGLE, Function.identity())
-                            .ammo(AmmoType.AMMO_45ACP, (gunItem, stack) -> gunItem.getAttachment(AttachmentCategory.MAGAZINE, stack).isExtended() ? 12 : 7)
+                            .ammo(AmmoType.AMMO_45ACP, ext -> ext ? 12 : 7)
                             .reload(ReloadManager.Magazine.instance, 30)
                             .ister(() -> GunRenderer.DeagleRenderer::new)
                             .attachments()
@@ -223,7 +229,7 @@ public class RegistryHandler {
                             .recoil(2.0F, 0.8F)
                             .firerate(8)
                             .firemodes(Firemode.SINGLE, Function.identity())
-                            .ammo(AmmoType.AMMO_762MM, (gunItem, stack) -> 7)
+                            .ammo(AmmoType.AMMO_762MM, 7)
                             .reload(ReloadManager.Single.instance, 25)
                             .ister(() -> GunRenderer.R1895Renderer::new)
                             .attachments()
@@ -240,7 +246,7 @@ public class RegistryHandler {
                             .recoil(1.6F, 0.75F)
                             .firerate(6)
                             .firemodes(Firemode.SINGLE, Function.identity())
-                            .ammo(AmmoType.AMMO_45ACP, (gunItem, stack) -> 6)
+                            .ammo(AmmoType.AMMO_45ACP, 6)
                             .reload(ReloadManager.Magazine.instance, 25)
                             .ister(() -> GunRenderer.R45Renderer::new)
                             .attachments()
@@ -257,7 +263,7 @@ public class RegistryHandler {
                             .recoil(1.2F, 0.35F)
                             .firerate(1)
                             .firemodes(Firemode.SINGLE, Firemode::singleToAuto)
-                            .ammo(AmmoType.AMMO_9MM, (gunItem, stack) -> gunItem.getAttachment(AttachmentCategory.MAGAZINE, stack).isExtended() ? 30 : 20)
+                            .ammo(AmmoType.AMMO_9MM, ext -> ext ? 30 : 20)
                             .reload(ReloadManager.Magazine.instance, 35)
                             .ister(() -> GunRenderer.ScorpionRenderer::new)
                             .attachments()
@@ -276,7 +282,7 @@ public class RegistryHandler {
                             .recoil(1.5F, 0.7F)
                             .firerate(3)
                             .firemodes(Firemode.SINGLE, Function.identity())
-                            .ammo(AmmoType.AMMO_12G, (gunItem, stack) -> 2)
+                            .ammo(AmmoType.AMMO_12G, 2)
                             .reload(ReloadManager.Magazine.instance, 30)
                             .shoot(ShootManager::handleShotgun)
                             .ister(() -> GunRenderer.SawedOffRenderer::new)
@@ -284,44 +290,46 @@ public class RegistryHandler {
                             .shootingSound(s -> SAWED_OFF_SHOOT)
                             .shootingVolume(s -> 9.0F)
                             .build("sawed_off"),
-                    new GunBuilder()
-                            .reloadSound(q -> SAWED_OFF_RELOAD)
+                    new BoltGunBuilder()
+                            .boltSound(() -> S1897_CHAMBER)
+                            .chamberTime(q -> q ? 7 : 12)
+                            .reloadSound(q -> q ? S1897_RELOAD_FAST : S1897_RELOAD)
                             .category(GunCategory.SHOTGUN)
                             .gunProperties(4.0F, 2.5F, 11.0F, 0.15F, 3)
                             .recoil(1.5F, 0.7F)
                             .firerate(15)
                             .firemodes(Firemode.SINGLE, Function.identity())
-                            .ammo(AmmoType.AMMO_12G, (item, stack) -> 5)
+                            .ammo(AmmoType.AMMO_12G, 5)
                             .reload(ReloadManager.Single.instance, 16)
                             .shoot(ShootManager::handleShotgun)
                             .ister(() -> GunRenderer.S1897Renderer::new)
                             .animations(() -> () -> AnimationPackS1897::new)
-                            .shootingSound(s -> SAWED_OFF_SHOOT)
+                            .shootingSound(s -> S1897_SHOOT)
                             .shootingVolume(s -> 9.0F)
                             .build("s1897"),
                     new GunBuilder()
-                            .reloadSound(q -> SAWED_OFF_RELOAD)
+                            .reloadSound(q -> q ? S686_RELOAD_FAST : S686_RELOAD)
                             .category(GunCategory.SHOTGUN)
                             .gunProperties(4.0F, 2.5F, 11.0F, 0.15F, 3)
                             .recoil(1.5F, 0.7F)
                             .firerate(4)
                             .firemodes(Firemode.SINGLE, Function.identity())
-                            .ammo(AmmoType.AMMO_12G, (item, stack) -> 2)
+                            .ammo(AmmoType.AMMO_12G, 2)
                             .reload(ReloadManager.Magazine.instance, 30)
                             .shoot(ShootManager::handleShotgun)
                             .ister(() -> GunRenderer.S686Renderer::new)
                             .animations(() -> () -> AnimationPackS686::new)
-                            .shootingSound(s -> SAWED_OFF_SHOOT)
+                            .shootingSound(s -> S686_SHOOT)
                             .shootingVolume(s -> 9.0F)
                             .build("s686"),
                     new GunBuilder()
-                            .reloadSound(q -> SAWED_OFF_RELOAD)
+                            .reloadSound(q -> q ? S12K_RELOAD_FAST : S12K_RELOAD)
                             .category(GunCategory.SHOTGUN)
                             .gunProperties(4.0F, 2.5F, 11.0F, 0.15F, 3)
                             .recoil(3.5F, 2.7F)
                             .firerate(4)
                             .firemodes(Firemode.SINGLE, Function.identity())
-                            .ammo(AmmoType.AMMO_12G, (item, stack) -> item.getAttachment(AttachmentCategory.MAGAZINE, stack).isExtended() ? 8 : 5)
+                            .ammo(AmmoType.AMMO_12G, ext -> ext ? 8 : 5)
                             .reload(ReloadManager.Magazine.instance, 35)
                             .shoot(ShootManager::handleShotgun)
                             .ister(() -> GunRenderer.S12KRenderer::new)
@@ -331,9 +339,128 @@ public class RegistryHandler {
                             .magazine(() -> new AttachmentItem.Magazine[] {QUICKDRAW_AR, EXTENDED_AR, QUICKDRAW_EXTENDED_AR})
                             .build()
                             .animations(() -> () -> AnimationPackS12K::new)
-                            .shootingSound(s -> SAWED_OFF_SHOOT)
-                            .shootingVolume(s -> 9.0F)
+                            .shootingSound(s -> s ? S12K_SHOOT_SILENT : S12K_SHOOT)
+                            .shootingVolume(s -> s ? 5.0F : 9.0F)
                             .build("s12k"),
+                    /*new GunBuilder()
+                            .reloadSound(q -> q ? UZI_RELOAD_FAST : UZI_RELOAD)
+                            .category(GunCategory.SMG)
+                            .gunProperties(5.0F, 2.5F, 16.0F, 0.05F, 4)
+                            .recoil(1.5F, 0.75F)
+                            .firerate(1)
+                            .firemodes(Firemode.FULL_AUTO, Firemode::singleToAuto)
+                            .ammo(AmmoType.AMMO_9MM, ext -> ext ? 35 : 25)
+                            .reload(ReloadManager.Magazine.instance, 45)
+                            .ister(() -> GunRenderer.UziRenderer::new)
+                            .attachments()
+                            .barrel(() -> new AttachmentItem.Barrel[] {COMPENSATOR_SMG, SUPPRESSOR_SMG})
+                            .magazine(() -> new AttachmentItem.Magazine[] {QUICKDRAW_SMG, EXTENDED_SMG, QUICKDRAW_EXTENDED_SMG})
+                            .stock(() -> new AttachmentItem.Stock[] {FOLDING_STOCK})
+                            .scope(() -> new AttachmentItem.Scope[] {RED_DOT, HOLOGRAPHIC})
+                            .build()
+                            .animations(() -> () -> AnimationPackUzi::new)
+                            .shootingSound(s -> s ? UZI_SHOOT_SILENT : UZI_SHOOT)
+                            .shootingVolume(s -> s ? 7.0F : 12.0F)
+                            .build("uzi"),
+                    new GunBuilder()
+                            .reloadSound(q -> q ? MP5K_RELOAD_FAST : MP5K_RELOAD)
+                            .category(GunCategory.SMG)
+                            .gunProperties(5.0F, 2.5F, 16.0F, 0.05F, 4)
+                            .recoil(1.5F, 0.75F)
+                            .firerate(2)
+                            .firemodes(Firemode.FULL_AUTO, Firemode::singleToAuto)
+                            .ammo(AmmoType.AMMO_9MM, ext -> ext ? 40 : 30)
+                            .reload(ReloadManager.Magazine.instance, 45)
+                            .ister(() -> GunRenderer.Mp5kRenderer::new)
+                            .attachments()
+                            .barrel(() -> new AttachmentItem.Barrel[] {COMPENSATOR_SMG, SUPPRESSOR_SMG})
+                            .grip(() -> new AttachmentItem.Grip[] {ANGLED_GRIP, VERTICAL_GRIP})
+                            .magazine(() -> new AttachmentItem.Magazine[] {QUICKDRAW_SMG, EXTENDED_SMG, QUICKDRAW_EXTENDED_SMG})
+                            .stock(() -> new AttachmentItem.Stock[] {TACTICAL_STOCK})
+                            .scope(() -> new AttachmentItem.Scope[] {RED_DOT, HOLOGRAPHIC, X2_SCOPE, X4_SCOPE})
+                            .build()
+                            .animations(() -> () -> AnimationPackMpk5::new)
+                            .shootingSound(s -> s ? MP5K_SHOOT_SILENT : MP5K_SHOOT)
+                            .shootingVolume(s -> s ? 7.0F : 12.0F)
+                            .build("mp5k"),
+                    new GunBuilder()
+                            .reloadSound(q -> q ? VECTOR_RELOAD_FAST : VECTOR_RELOAD)
+                            .category(GunCategory.SMG)
+                            .gunProperties(5.0F, 2.5F, 16.0F, 0.05F, 4)
+                            .recoil(1.5F, 0.75F)
+                            .firerate(1)
+                            .firemodes(Firemode.FULL_AUTO, Firemode::singleToAuto)
+                            .ammo(AmmoType.AMMO_9MM, ext -> ext ? 33 : 19)
+                            .reload(ReloadManager.Magazine.instance, 45)
+                            .ister(() -> GunRenderer.VectorRenderer::new)
+                            .attachments()
+                            .barrel(() -> new AttachmentItem.Barrel[] {COMPENSATOR_SMG, SUPPRESSOR_SMG})
+                            .grip(() -> new AttachmentItem.Grip[] {VERTICAL_GRIP})
+                            .magazine(() -> new AttachmentItem.Magazine[] {QUICKDRAW_SMG, EXTENDED_SMG, QUICKDRAW_EXTENDED_SMG})
+                            .stock(() -> new AttachmentItem.Stock[] {TACTICAL_STOCK})
+                            .scope(() -> new AttachmentItem.Scope[] {RED_DOT, HOLOGRAPHIC, X2_SCOPE, X4_SCOPE})
+                            .build()
+                            .animations(() -> () -> AnimationPackVector::new)
+                            .shootingSound(s -> s ? VECTOR_SHOOT_SILENT : VECTOR_SHOOT)
+                            .shootingVolume(s -> s ? 7.0F : 12.0F)
+                            .build("vector"),
+                    new GunBuilder()
+                            .reloadSound(q -> PP19_RELOAD)
+                            .category(GunCategory.SMG)
+                            .gunProperties(5.0F, 2.5F, 16.0F, 0.05F, 4)
+                            .recoil(1.2F, 0.6F)
+                            .firerate(2)
+                            .firemodes(Firemode.FULL_AUTO, Firemode::singleToAuto)
+                            .ammo(AmmoType.AMMO_9MM, 53)
+                            .reload(ReloadManager.Magazine.instance, 45)
+                            .ister(() -> GunRenderer.PP19Renderer::new)
+                            .attachments()
+                            .barrel(() -> new AttachmentItem.Barrel[] {COMPENSATOR_SMG, SUPPRESSOR_SMG})
+                            .scope(() -> new AttachmentItem.Scope[] {RED_DOT, HOLOGRAPHIC, X2_SCOPE, X4_SCOPE})
+                            .build()
+                            .animations(() -> () -> AnimationPackPP19::new)
+                            .shootingSound(s -> s ? PP19_SHOOT_SILENT : PP19_SHOOT)
+                            .shootingVolume(s -> s ? 7.0F : 12.0F)
+                            .build("pp19"),
+                    new GunBuilder()
+                            .reloadSound(q -> q ? UMP45_RELOAD_FAST : UMP45_RELOAD)
+                            .category(GunCategory.SMG)
+                            .gunProperties(6.0F, 2.5F, 16.0F, 0.05F, 4)
+                            .recoil(1.6F, 0.8F)
+                            .firerate(2)
+                            .firemodes(Firemode.FULL_AUTO, Firemode::singleToAuto)
+                            .ammo(AmmoType.AMMO_45ACP, ext -> ext ? 35 : 25)
+                            .reload(ReloadManager.Magazine.instance, 45)
+                            .ister(() -> GunRenderer.Ump45Renderer::new)
+                            .attachments()
+                            .barrel(() -> new AttachmentItem.Barrel[] {COMPENSATOR_SMG, SUPPRESSOR_SMG})
+                            .grip(() -> new AttachmentItem.Grip[] {ANGLED_GRIP, VERTICAL_GRIP})
+                            .magazine(() -> new AttachmentItem.Magazine[] {QUICKDRAW_SMG, EXTENDED_SMG, QUICKDRAW_EXTENDED_SMG})
+                            .scope(() -> new AttachmentItem.Scope[] {RED_DOT, HOLOGRAPHIC, X2_SCOPE, X4_SCOPE})
+                            .build()
+                            .animations(() -> () -> AnimationPackUmp45::new)
+                            .shootingSound(s -> s ? UMP45_SHOOT_SILENT : UMP45_SHOOT)
+                            .shootingVolume(s -> s ? 7.0F : 12.0F)
+                            .build("ump45"),
+                    new GunBuilder()
+                            .reloadSound(q -> q ? THOMPSON_RELOAD_FAST : THOMPSON_RELOAD)
+                            .category(GunCategory.SMG)
+                            .gunProperties(6.0F, 2.5F, 16.0F, 0.05F, 4)
+                            .recoil(1.6F, 0.8F)
+                            .firerate(2)
+                            .firemodes(Firemode.FULL_AUTO, Firemode::singleToAuto)
+                            .ammo(AmmoType.AMMO_45ACP, ext -> ext ? 50 : 30)
+                            .reload(ReloadManager.Magazine.instance, 45)
+                            .ister(() -> GunRenderer.ThompsonRenderer::new)
+                            .attachments()
+                            .barrel(() -> new AttachmentItem.Barrel[] {SUPPRESSOR_SMG})
+                            .grip(() -> new AttachmentItem.Grip[] {VERTICAL_GRIP})
+                            .magazine(() -> new AttachmentItem.Magazine[] {QUICKDRAW_SMG, EXTENDED_SMG, QUICKDRAW_EXTENDED_SMG})
+                            .build()
+                            .animations(() -> () -> AnimationPackThompson::new)
+                            .shootingSound(s -> s ? THOMPSON_SHOOT_SILENT : THOMPSON_SHOOT)
+                            .shootingVolume(s -> s ? 7.0F : 12.0F)
+                            .build("thompson"),*/
                     new BackpackItem("small_backpack_desert", BackpackSlotItem.BackpackType.SMALL, BackpackItem.Variant.DESERT),
                     new BackpackItem("medium_backpack_desert", BackpackSlotItem.BackpackType.MEDIUM, BackpackItem.Variant.DESERT),
                     new BackpackItem("large_backpack_desert", BackpackSlotItem.BackpackType.LARGE, BackpackItem.Variant.DESERT),
@@ -422,7 +549,7 @@ public class RegistryHandler {
                             .name("deathmatch")
                             .addArgument(map -> map.putInt(ArgumentProvider.DURATION, 12000))
                             .description(
-                                    new StringTextComponent(TextFormatting.YELLOW + "Standart deathmacth game. Get the highest score"),
+                                    new StringTextComponent(TextFormatting.YELLOW + "Standart deathmatch game. Get the highest score"),
                                     new StringTextComponent(TextFormatting.YELLOW + "Supported arguments:"),
                                     new StringTextComponent(UsefulFunctions.addArgumentDesc(ArgumentProvider.DURATION, "Set match length", "int"))
                             )

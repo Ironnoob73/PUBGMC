@@ -14,9 +14,9 @@ import dev.toma.pubgmc.client.animation.types.SprintAnimation;
 import dev.toma.pubgmc.client.render.OverlayGameRenderer;
 import dev.toma.pubgmc.common.entity.IControllableEntity;
 import dev.toma.pubgmc.common.inventory.SlotType;
-import dev.toma.pubgmc.common.item.gun.core.AbstractGunItem;
 import dev.toma.pubgmc.common.item.gun.Firemode;
 import dev.toma.pubgmc.common.item.gun.attachment.AttachmentCategory;
+import dev.toma.pubgmc.common.item.gun.core.AbstractGunItem;
 import dev.toma.pubgmc.common.item.utility.BackpackSlotItem;
 import dev.toma.pubgmc.common.item.wearable.IPMCArmor;
 import dev.toma.pubgmc.config.Config;
@@ -46,7 +46,10 @@ import net.minecraft.util.CooldownTracker;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Util;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.*;
+import net.minecraftforge.client.event.GuiOpenEvent;
+import net.minecraftforge.client.event.InputEvent;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.RenderSpecificHandEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -105,7 +108,8 @@ public class ClientEventHandler {
                     renderBoundTexture(left, top, left + size, top + size);
                 }
                 // scope overlay
-                RenderHelper.drawTexturedShape(left, top, left + size, top + size, scopeInfo.getTextureOverlay());
+                if(!scopeInfo.isOverlayDisabled())
+                    RenderHelper.drawTexturedShape(left, top, left + size, top + size, scopeInfo.getTextureOverlay());
             }
 
             if(player.getRidingEntity() instanceof IControllableEntity) {

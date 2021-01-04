@@ -2,7 +2,7 @@ package dev.toma.pubgmc.common.item.gun.core;
 
 import dev.toma.pubgmc.client.animation.AnimationManager;
 import dev.toma.pubgmc.client.animation.Animations;
-import dev.toma.pubgmc.client.animation.gun.GunAnimationPack;
+import dev.toma.pubgmc.client.animation.gun.pack.GunAnimationPack;
 import dev.toma.pubgmc.common.item.gun.attachment.AttachmentCategory;
 import dev.toma.pubgmc.util.function.Bool2IntFunction;
 import net.minecraft.entity.LivingEntity;

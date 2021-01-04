@@ -1,4 +1,4 @@
-package dev.toma.pubgmc.client.animation.gun;
+package dev.toma.pubgmc.client.animation.gun.pack.shotgun;
 
 import dev.toma.pubgmc.common.item.gun.core.AbstractGunItem;
 import net.minecraft.item.ItemStack;

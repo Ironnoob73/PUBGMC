@@ -1,7 +1,7 @@
 package dev.toma.pubgmc.common.item.gun.core;
 
 import dev.toma.pubgmc.client.ScopeInfo;
-import dev.toma.pubgmc.client.animation.gun.GunAnimationPack;
+import dev.toma.pubgmc.client.animation.gun.pack.GunAnimationPack;
 import dev.toma.pubgmc.common.item.PMCItem;
 import dev.toma.pubgmc.common.item.gun.*;
 import dev.toma.pubgmc.common.item.gun.attachment.GunAttachments;
@@ -10,13 +10,11 @@ import dev.toma.pubgmc.util.function.Bool2IntFunction;
 import dev.toma.pubgmc.util.function.Bool2ObjFunction;
 import net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.concurrent.Callable;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -38,7 +36,7 @@ public abstract class AbstractGunBuilder<G extends AbstractGunItem> {
     int reloadTime;
     ShootManager shootManager = ShootManager::handleNormal;
     GunAttachments attachments = new GunAttachments();
-    BiFunction<AbstractGunItem, ItemStack, Integer> ammoLimit;
+    Bool2IntFunction ammoLimit;
     AmmoType ammoType;
     Item.Properties properties = new Item.Properties().group(PMCItem.GUNS).maxStackSize(1);
     Supplier<Callable<ItemStackTileEntityRenderer>> ister;
@@ -87,10 +85,14 @@ public abstract class AbstractGunBuilder<G extends AbstractGunItem> {
         return new AttachmentBuilder<>(this);
     }
 
-    public AbstractGunBuilder<G> ammo(AmmoType type, BiFunction<AbstractGunItem, ItemStack, Integer> ammoLimit) {
+    public AbstractGunBuilder<G> ammo(AmmoType type, Bool2IntFunction ammoLimit) {
         this.ammoType = type;
         this.ammoLimit = ammoLimit;
         return this;
+    }
+
+    public AbstractGunBuilder<G> ammo(AmmoType type, int limit) {
+        return this.ammo(type, ex -> limit);
     }
 
     public AbstractGunBuilder<G> shootingSound(Bool2ObjFunction<SoundEvent> shootSound) {

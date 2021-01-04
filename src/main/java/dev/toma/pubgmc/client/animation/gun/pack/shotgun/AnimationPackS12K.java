@@ -1,4 +1,4 @@
-package dev.toma.pubgmc.client.animation.gun;
+package dev.toma.pubgmc.client.animation.gun.pack.shotgun;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import dev.toma.pubgmc.client.animation.types.AimingAnimation;

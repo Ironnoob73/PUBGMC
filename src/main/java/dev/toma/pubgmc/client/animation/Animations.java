@@ -1,6 +1,6 @@
 package dev.toma.pubgmc.client.animation;
 
-import dev.toma.pubgmc.client.animation.gun.GunAnimationPack;
+import dev.toma.pubgmc.client.animation.gun.pack.GunAnimationPack;
 import dev.toma.pubgmc.client.animation.types.RecoilAnimation;
 import dev.toma.pubgmc.common.item.gun.core.AbstractGunItem;
 import net.minecraft.item.ItemStack;
