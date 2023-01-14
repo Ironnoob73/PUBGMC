@@ -1,6 +1,0 @@
-{
-	"parent": "pubgmc:block/carrier_barrels",
-	"textures": {
-		"color": "pubgmc:blocks/plastic_blue"
-	}
-}

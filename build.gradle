@@ -1,65 +1,110 @@
 buildscript {
     repositories {
-        jcenter()
-        maven { url = "http://files.minecraftforge.net/maven" }
+        maven { url = 'https://maven.minecraftforge.net' }
+        maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
+        mavenCentral()
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
     }
 }
-apply plugin: 'net.minecraftforge.gradle.forge'
 
-version = "1.7.0"
-group = "dev.toma.pubgmc" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "pubgmc"
+apply plugin: 'eclipse'
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'org.spongepowered.mixin'
 
-sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
-compileJava {
-    sourceCompatibility = targetCompatibility = '1.8'
-}
+
+version = "${mod_version}"
+group = "toma.${mod_id}"
+archivesBaseName = "${mod_id}-${mod_loader}"
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 minecraft {
-    version = "1.12.2-14.23.5.2838"
-    runDir = "run"
-    
-    mappings = "snapshot_20171003"
+    mappings channel: 'official', version: "${minecraft_version}"
+
+    // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+
+    runs {
+        client {
+            workingDirectory project.file('run/client')
+            property 'forge.logging.console.level', 'info'
+            property 'forge.enabledGameTestNamespaces', "${mod_id}"
+            properties 'mixin.env.remapRefMap': 'true'
+            property 'mixin.env.refMapRemappingFile', "${project.projectDir}/build/createSrgToMcp/output.srg"
+            arg "-mixin.config=${mod_id}.mixins.json"
+
+            mods {
+                examplemod {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        server {
+            workingDirectory project.file('run/server')
+
+            property 'forge.logging.console.level', 'info'
+            property 'forge.enabledGameTestNamespaces', "${mod_id}"
+            properties 'mixin.env.remapRefMap': 'true'
+            property 'mixin.env.refMapRemappingFile', "${project.projectDir}/build/createSrgToMcp/output.srg"
+            arg "-mixin.config=${mod_id}.mixins.json"
+
+            mods {
+                examplemod {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        data {
+            workingDirectory project.file('run/datagen')
+            property 'forge.logging.console.level', 'debug'
+            args '--mod', "${mod_id}", '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+
+            mods {
+                examplemod {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
 }
 
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
 repositories {
-    maven {
-        url = "https://www.cursemaven.com"
-    }
+    maven { url 'https://www.cursemaven.com' }
 }
 
 dependencies {
-    compile 'curse.maven:configuration-444699:3241921'
-    testCompile "junit:junit:4.11"
-}
-
-test {
-    useJUnit()
-    maxHeapSize = '1G'
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${loader_version}"
+    annotationProcessor "org.spongepowered:mixin:${mixin_version}:processor"
+    implementation fg.deobf("curse.maven:configuration-444699:${configuration_version}")
 }
 
 jar {
     manifest {
-        attributes 'FMLCorePlugin': 'dev.toma.pubgmc.asm.PMCPlugin'
-        attributes 'FMLCorePluginContainsFMLMod': 'true'
-        attributes 'FMLAT': 'pubgmc_at.cfg'
+        attributes([
+                "Specification-Title"     : "${mod_id}",
+                "Specification-Vendor"    : "Toma",
+                "Specification-Version"   : "1",
+                "Implementation-Title"    : project.name,
+                "Implementation-Version"  : project.jar.archiveVersion,
+                "Implementation-Vendor"   : "Toma",
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                "MixinConfigs": "${mod_id}.mixins.json"
+        ])
     }
 }
 
-processResources {
-    inputs.property "version", project.version
-    inputs.property "mcversion", project.minecraft.version
+mixin {
+    add sourceSets.main, "${mod_id}.refmap.json"
+}
 
-    from(sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info'
-        expand 'version':project.version, 'mcversion':project.minecraft.version
-    }
-        
-    from(sourceSets.main.resources.srcDirs) {
-        exclude 'mcmod.info'
-    }
-    rename '(.+_at.cfg)', 'META-INF/$1'
+jar.finalizedBy('reobfJar')
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
 }
