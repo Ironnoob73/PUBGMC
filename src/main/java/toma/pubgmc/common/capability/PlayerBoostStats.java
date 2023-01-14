@@ -1,8 +1,11 @@
 package toma.pubgmc.common.capability;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import toma.pubgmc.api.capability.BoostStats;
+import toma.pubgmc.network.Networking;
+import toma.pubgmc.network.s2c.S2C_SendBoostData;
 
 public final class PlayerBoostStats implements BoostStats {
 
@@ -25,7 +28,9 @@ public final class PlayerBoostStats implements BoostStats {
 
     @Override
     public void sendToClient() {
-        // TODO implement once Networking is done
+        if (!this.attachedPlayer.level.isClientSide) {
+            Networking.dispatchClientMessage((ServerPlayer) this.attachedPlayer, new S2C_SendBoostData(this.serializeNBT()));
+        }
     }
 
     @Override

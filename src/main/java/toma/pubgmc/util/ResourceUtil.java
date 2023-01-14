@@ -5,7 +5,7 @@ import toma.pubgmc.Pubgmc;
 
 public final class ResourceUtil {
 
-    public static ResourceLocation fromPath(String path) {
+    public static ResourceLocation of(String path) {
         return new ResourceLocation(Pubgmc.MODID, path);
     }
 }
