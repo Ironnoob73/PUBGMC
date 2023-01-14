@@ -9,6 +9,7 @@ import toma.pubgmc.network.s2c.S2C_SendBoostData;
 
 public final class PlayerBoostStats implements BoostStats {
 
+    public static final float MAX_BOOST_VALUE = 100.0F;
     private final Player attachedPlayer;
     private float boost;
 
