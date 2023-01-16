@@ -7,7 +7,9 @@ import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import toma.pubgmc.api.GuiOverlayIds;
 import toma.pubgmc.client.render.overlay.BoostOverlay;
+import toma.pubgmc.client.render.overlay.ItemUseTimerOverlay;
 import toma.pubgmc.config.PubgmcClientConfig;
 
 public class PubgmcClient {
@@ -36,6 +38,7 @@ public class PubgmcClient {
     }
 
     private void registerHudOverlays(RegisterGuiOverlaysEvent event) {
-        event.registerBelow(new ResourceLocation("player_health"), "boost", new BoostOverlay());
+        event.registerBelow(new ResourceLocation("player_health"), GuiOverlayIds.GUI_BOOST_OVERLAY.getPath(), new BoostOverlay());
+        event.registerBelowAll(GuiOverlayIds.GUI_USAGE_TIMER_OVERLAY.getPath(), new ItemUseTimerOverlay());
     }
 }

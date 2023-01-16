@@ -2,6 +2,7 @@ package toma.pubgmc.common.capability;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import toma.pubgmc.api.capability.BoostStats;
 import toma.pubgmc.network.Networking;
@@ -24,7 +25,7 @@ public final class PlayerBoostStats implements BoostStats {
 
     @Override
     public void setBoostValue(float value) {
-        this.boost = value;
+        this.boost = Mth.clamp(value, 0.0F, MAX_BOOST_VALUE);
     }
 
     @Override

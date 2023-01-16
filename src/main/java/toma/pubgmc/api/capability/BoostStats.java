@@ -12,4 +12,8 @@ public interface BoostStats extends INBTSerializable<CompoundTag> {
     void setBoostValue(float value);
 
     void sendToClient();
+
+    default void addBoostValue(float toAdd) {
+        setBoostValue(getBoostValue() + toAdd);
+    }
 }
